@@ -1,0 +1,124 @@
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE}
+    default: dev
+  application:
+    name:
+      Toomeet_play_api
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    database: postgresql
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1000MB
+      max-request-size: 1000MB
+  mail:
+    verify:
+      host: ${VERIFY_HOST}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_ID}
+    password: ${MAIL_PASSWORD}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        mime:
+          charset: UTF-8
+        smtp:
+          writetimeout: 10000
+          connectiontimeout: 10000
+          timeout: 10000
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      fail-on-empty-beans: false
+      close-closeable: true
+      flush-after-write-value: true
+      write-date-keys-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+      url:
+        google:
+          oauth_url: https://accounts.google.com/o/oauth2/auth
+          access_token_url: https://oauth2.googleapis.com/token
+          user_info_url: https://www.googleapis.com/oauth2/v1/userinfo?alt=json
+        github:
+          oauth_url: https://github.com/login/oauth/authorize
+          access_token_url: https://github.com/login/oauth/access_token
+          user_info_url: https://api.github.com/user
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /api/v1/
+  error:
+    path: /error
+    whitelabel:
+      enabled: true
+
+
+logging:
+  level:
+    org.springframework.security: TRACE
+
+
+springdoc:
+  swagger-ui:
+    path: "/docs"
+    disable-swagger-default-url: true
+
+jwt:
+  key:
+    access_token:
+      public_key: ${ACCESS_TOKEN_PUBLIC_KEY}
+      private_key: ${ACCESS_TOKEN_PRIVATE_KEY}
+      expireIn: 2 # hour
+    refresh_token:
+      public_key: ${REFRESH_TOKEN_PUBLIC_KEY}
+      private_key: ${REFRESH_TOKEN_PRIVATE_KEY}
+      expireIn: 120 # hour == 5 days
+
+
+
+cache:
+  redis_url: ${REDIS_URL}
+
+
+frontend:
+  home_url: ${FRONTEND_HOME_URL}
+  oauth_callback: ${FRONT_END_OAUTH_CALLBACK_URL}
