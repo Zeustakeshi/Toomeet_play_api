@@ -1,7 +1,7 @@
 package com.toomeet.toomeet_play_api.controller;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
-import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
+import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
 import com.toomeet.toomeet_play_api.service.AuthService;
 import com.toomeet.toomeet_play_api.service.OAuthService;
@@ -37,11 +37,20 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<?>> login(
-            @RequestBody() @Valid LoginRequest loginRequest,
+            @RequestBody() @Valid LoginREequest loginRequest,
             HttpServletRequest request
     ) {
         ApiResponse<?> response = ApiResponse.success(request, authService.loginWithEmailAndPassword(loginRequest));
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/refresh-token")
+    public ResponseEntity<ApiResponse<?>> refreshToken(
+            @RequestBody @Valid RefreshTokenRequest refreshTokenRequest,
+            HttpServletRequest request
+    ) {
+        ApiResponse<?> response = ApiResponse.success(request, authService.refreshToken(refreshTokenRequest));
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 

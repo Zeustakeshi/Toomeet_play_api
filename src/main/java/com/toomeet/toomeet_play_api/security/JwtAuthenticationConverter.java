@@ -19,7 +19,6 @@ public class JwtAuthenticationConverter implements Converter<Jwt, AbstractAuthen
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         String userId = jwt.getSubject();
-        System.out.println(userId);
         User user = (User) userDetailsService.loadUserByUsername(userId);
         return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
     }

@@ -245,6 +245,8 @@ public class OAuthServiceImpl implements OAuthService {
         String userInfo = userInfoResponse.getBody();
         JsonNode userInfoJson = mapper.readTree(userInfo);
 
+        System.out.println("userInfoJson = " + userInfoJson);
+
         return User.builder()
                 .fullName(userInfoJson.get("name").asText())
                 .firstName(userInfoJson.get("family_name").asText())

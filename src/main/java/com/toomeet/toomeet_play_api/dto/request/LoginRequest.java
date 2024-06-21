@@ -9,7 +9,7 @@ public class LoginRequest {
     @NotEmpty(message = "Email can not be empty or null")
     @Email(message = "Invalid email format")
     private String email;
-    
+
     @NotEmpty(message = "Password can not be empty or null")
     private String password;
 }

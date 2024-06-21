@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
 import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
+import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
 import com.toomeet.toomeet_play_api.dto.response.AccountAuthenticationResponse;
 import com.toomeet.toomeet_play_api.dto.response.CreateAccountResponse;
 import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
@@ -112,12 +113,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AccountAuthenticationResponse loginWithEmailAndPassword(LoginRequest loginRequest) {
+    public AccountAuthenticationResponse loginWithEmailAndPassword(LoginRequest request) {
 
-        User user = Optional.ofNullable(userService.getUserByEmail(loginRequest.getEmail()))
+        User user = Optional.ofNullable(userService.getUserByEmail(request.getEmail()))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CREDENTIAL));
 
-        boolean isInValidCredential = user.getPassword() == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
+        boolean isInValidCredential = user.getPassword() == null || !passwordEncoder.matches(request.getPassword(), user.getPassword());
 
         if (isInValidCredential) throw new ApiException(ErrorCode.INVALID_CREDENTIAL);
 
@@ -132,4 +133,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
+    @Override
+    public TokenResponse refreshToken(RefreshTokenRequest request) {
+        return jwtService.refreshToken(request.getToken());
+    }
 }

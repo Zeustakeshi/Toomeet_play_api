@@ -5,10 +5,10 @@ import com.toomeet.toomeet_play_api.entity.User;
 import com.toomeet.toomeet_play_api.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,6 +19,9 @@ import java.time.temporal.ChronoUnit;
 public class JwtServiceImpl implements JwtService {
 
     private final JwtEncoder jwtEncoder;
+    private final JwtDecoder jwtDecoder;
+    private final UserDetailsService userDetailsService;
+
     @Value("${jwt.key.access_token.expireIn}")
     private Long accessTokenExpiresTime;
     @Value("${jwt.key.refresh_token.expireIn}")
@@ -61,15 +64,15 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public Instant getAccessTokenExpiresTime() {
+    public Long getAccessTokenExpiresTime() {
         Instant now = Instant.now();
-        return now.plus(accessTokenExpiresTime, ChronoUnit.HOURS);
+        return now.plus(accessTokenExpiresTime, ChronoUnit.HOURS).toEpochMilli();
     }
 
     @Override
-    public Instant getRefreshTokenExpiresTime() {
+    public Long getRefreshTokenExpiresTime() {
         Instant now = Instant.now();
-        return now.plus(refreshTokenExpiresTime, ChronoUnit.HOURS);
+        return now.plus(refreshTokenExpiresTime, ChronoUnit.HOURS).toEpochMilli();
     }
 
 
@@ -81,5 +84,14 @@ public class JwtServiceImpl implements JwtService {
                 .accessTokenExpiresIn(getAccessTokenExpiresTime())
                 .refreshTokenExpiresIn(getRefreshTokenExpiresTime())
                 .build();
+    }
+
+    @Override
+    public TokenResponse refreshToken(String refreshToken) {
+        Jwt jwt = jwtDecoder.decode(refreshToken);
+        String userId = jwt.getSubject();
+        User user = (User) userDetailsService.loadUserByUsername(userId);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        return generateTokenPair(authentication);
     }
 }
