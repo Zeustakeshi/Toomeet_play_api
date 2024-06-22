@@ -34,4 +34,9 @@ public class UserServiceImpl implements UserService {
     public UserAuthenticationResponse getUserAuthentication(User user) {
         return userMapper.toUserAuthenticationResponse(user);
     }
+
+    @Override
+    public User getUserByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+    }
 }

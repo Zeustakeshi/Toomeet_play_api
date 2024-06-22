@@ -10,5 +10,7 @@ public interface UserService {
 
     User saveUser(User user);
 
+    User getUserByUserId(String userId);
+
     UserAuthenticationResponse getUserAuthentication(User user);
 }

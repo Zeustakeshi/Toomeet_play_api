@@ -1,7 +1,7 @@
 package com.toomeet.toomeet_play_api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.servlet.http.HttpServletRequest;
+import com.toomeet.toomeet_play_api.domain.context.RequestContext;
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,23 +21,25 @@ public class ApiResponse<T> {
     private String path;
 
 
-    public static <T> ApiResponse<T> success(HttpServletRequest request, T data) {
+    public static <T> ApiResponse<T> success(T data) {
+
+
         return ApiResponse.<T>builder()
                 .code(DEFAULT_SUCCESS_CODE)
                 .data(data)
                 .isSuccess(true)
                 .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .path(RequestContext.getRequest().getRequestURI())
                 .build();
     }
 
-    public static <T> ApiResponse<T> error(int code, HttpServletRequest request, Object errors) {
+    public static <T> ApiResponse<T> error(int code, Object errors) {
         return ApiResponse.<T>builder()
                 .code(code)
                 .errors(errors)
                 .isSuccess(false)
                 .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .path(RequestContext.getRequest().getRequestURI())
                 .build();
     }
 

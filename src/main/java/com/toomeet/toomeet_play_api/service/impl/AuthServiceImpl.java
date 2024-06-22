@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = confirmation.getUser();
 
-        user.setAuthorities(Set.of(Authority.NORMAL_USER));
+        user.addAllAuthority(Set.of(Authority.NORMAL_USER));
         user.setVerified(true);
 
         userService.saveUser(user);

@@ -3,7 +3,6 @@ package com.toomeet.toomeet_play_api.controller;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.User;
 import com.toomeet.toomeet_play_api.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +20,9 @@ public class UserController {
 
     @GetMapping("/my-info")
     public ResponseEntity<ApiResponse<?>> getUserAuthenticationInfo(
-            @AuthenticationPrincipal User user,
-            HttpServletRequest request
+            @AuthenticationPrincipal User user
     ) {
-        ApiResponse<?> response = ApiResponse.success(request, userService.getUserAuthentication(user));
+        ApiResponse<?> response = ApiResponse.success(userService.getUserAuthentication(user));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

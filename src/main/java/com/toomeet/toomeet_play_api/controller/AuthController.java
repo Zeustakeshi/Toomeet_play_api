@@ -1,11 +1,11 @@
 package com.toomeet.toomeet_play_api.controller;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
+import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
 import com.toomeet.toomeet_play_api.service.AuthService;
 import com.toomeet.toomeet_play_api.service.OAuthService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,12 +22,10 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<ApiResponse<?>> createAccount(
-            @RequestBody() @Valid CreateAccountRequest createAccountRequest,
-            HttpServletRequest request
+            @RequestBody() @Valid CreateAccountRequest createAccountRequest
     ) {
 
         ApiResponse<?> response = ApiResponse.success(
-                request,
                 authService.createAccountWithEmailAndPassword(createAccountRequest)
         );
 
@@ -37,61 +35,53 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<?>> login(
-            @RequestBody() @Valid LoginREequest loginRequest,
-            HttpServletRequest request
+            @RequestBody() @Valid LoginRequest loginRequest
     ) {
-        ApiResponse<?> response = ApiResponse.success(request, authService.loginWithEmailAndPassword(loginRequest));
+        ApiResponse<?> response = ApiResponse.success(authService.loginWithEmailAndPassword(loginRequest));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/auth/refresh-token")
     public ResponseEntity<ApiResponse<?>> refreshToken(
-            @RequestBody @Valid RefreshTokenRequest refreshTokenRequest,
-            HttpServletRequest request
+            @RequestBody @Valid RefreshTokenRequest refreshTokenRequest
     ) {
-        ApiResponse<?> response = ApiResponse.success(request, authService.refreshToken(refreshTokenRequest));
+        ApiResponse<?> response = ApiResponse.success(authService.refreshToken(refreshTokenRequest));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 
     @GetMapping("/auth/verify-account")
     public ResponseEntity<ApiResponse<?>> verifyConfirmation(
-            @RequestParam("code") String code,
-            HttpServletRequest request
+            @RequestParam("code") String code
     ) {
-        ApiResponse<?> response = ApiResponse.success(request, authService.verifyAccountConfirmation(code));
+        ApiResponse<?> response = ApiResponse.success(authService.verifyAccountConfirmation(code));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     @GetMapping("/oauth/google")
-    public ResponseEntity<ApiResponse<?>> getGoogleOAuthUrl(
-            HttpServletRequest request
-    ) {
-        ApiResponse<?> response = ApiResponse.success(request, oAuthService.getGoogleOAuthUrl());
+    public ResponseEntity<ApiResponse<?>> getGoogleOAuthUrl() {
+        ApiResponse<?> response = ApiResponse.success(oAuthService.getGoogleOAuthUrl());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/oauth/github")
-    public ResponseEntity<ApiResponse<?>> getGithubOAuthUrl(
-            HttpServletRequest request
-    ) {
-        ApiResponse<?> response = ApiResponse.success(request, oAuthService.getGithubOAuthUrl());
+    public ResponseEntity<ApiResponse<?>> getGithubOAuthUrl() {
+        ApiResponse<?> response = ApiResponse.success(oAuthService.getGithubOAuthUrl());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     @GetMapping("/oauth/login/github")
-    public ResponseEntity<ApiResponse<?>> loginWithGithub(@RequestParam("code") String code, HttpServletRequest request) {
-        ApiResponse<?> response = ApiResponse.success(request, oAuthService.loginWidthGithub(code));
+    public ResponseEntity<ApiResponse<?>> loginWithGithub(@RequestParam("code") String code) {
+        ApiResponse<?> response = ApiResponse.success(oAuthService.loginWidthGithub(code));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/oauth/login/google")
-    public ResponseEntity<ApiResponse<?>> loginWithGoogle(@RequestParam("code") String code, HttpServletRequest request) {
-        ApiResponse<?> response = ApiResponse.success(request, oAuthService.loginWithGoogle(code));
+    public ResponseEntity<ApiResponse<?>> loginWithGoogle(@RequestParam("code") String code) {
+        ApiResponse<?> response = ApiResponse.success(oAuthService.loginWithGoogle(code));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
 }

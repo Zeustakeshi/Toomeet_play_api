@@ -28,8 +28,6 @@ spring:
       max-file-size: 1000MB
       max-request-size: 1000MB
   mail:
-    verify:
-      host: ${VERIFY_HOST}
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
     username: ${MAIL_ID}
@@ -92,9 +90,8 @@ server:
       enabled: true
 
 
-logging:
-  level:
-    org.springframework.security: TRACE
+
+
 
 
 springdoc:
