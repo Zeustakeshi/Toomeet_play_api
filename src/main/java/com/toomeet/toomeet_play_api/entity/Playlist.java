@@ -17,7 +17,7 @@ public class Playlist extends Auditable {
     @Builder.Default
     @Setter(AccessLevel.PRIVATE)
     @Column(nullable = false, unique = true)
-    private String playListId = UUID.randomUUID().toString();
+    private String playlistId = UUID.randomUUID().toString();
 
     private String thumbnail;
 
@@ -34,6 +34,4 @@ public class Playlist extends Auditable {
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Video> videos;
 
-    @Builder.Default
-    private Integer videoCount = 0;
 }

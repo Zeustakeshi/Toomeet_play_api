@@ -9,7 +9,7 @@ public class ChannelGeneralResponse {
     private String channelId;
     private String name;
     private String background;
-    private UserAuthenticationResponse owner;
+    private AccountResponse owner;
     private Integer memberCount;
     private Integer subscriberCount;
     private Long totalWatchTime;

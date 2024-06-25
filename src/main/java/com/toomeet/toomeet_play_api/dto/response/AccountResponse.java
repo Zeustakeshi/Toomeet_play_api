@@ -5,10 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserAuthenticationResponse {
-    private String firstName;
-    private String lastName;
-    private String fullName;
+public class AccountResponse {
+    private String name;
     private String image;
     private String email;
 }

@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.toomeet.toomeet_play_api.dto.response.AccountAuthenticationResponse;
-import com.toomeet.toomeet_play_api.dto.response.UserAuthenticationResponse;
-import com.toomeet.toomeet_play_api.entity.User;
-import com.toomeet.toomeet_play_api.enums.Authority;
+import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
+import com.toomeet.toomeet_play_api.mapper.AccountMapper;
+import com.toomeet.toomeet_play_api.service.AccountService;
 import com.toomeet.toomeet_play_api.service.JwtService;
 import com.toomeet.toomeet_play_api.service.OAuthService;
 import com.toomeet.toomeet_play_api.service.UserService;
@@ -25,21 +25,18 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class OAuthServiceImpl implements OAuthService {
 
-    private final UserService userService;
-
     private final RestTemplate restTemplate;
-
     private final ObjectMapper mapper;
-
     private final JwtService jwtService;
+    private final AccountMapper accountMapper;
+    private final AccountService accountService;
+    private final UserService userService;
 
 
     @Value("${spring.security.oauth2.url.google.oauth_url}")
@@ -92,20 +89,8 @@ public class OAuthServiceImpl implements OAuthService {
 
             String accessToken = extractGoogleAccessToken(response);
 
-            User user = upsertOauthUser(getGoogleUserInfo(accessToken));
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-            return AccountAuthenticationResponse.builder()
-                    .tokens(jwtService.generateTokenPair(authentication))
-                    .user(UserAuthenticationResponse.builder()
-                            .email(user.getEmail())
-                            .firstName(user.getFirstName())
-                            .lastName(user.getLastName())
-                            .image(user.getImage())
-                            .build()
-                    )
-                    .build();
+            Account account = upsertOauthAccount(getGoogleUserInfo(accessToken));
+            return getAccountAuthenticationResponse(account);
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -130,20 +115,8 @@ public class OAuthServiceImpl implements OAuthService {
 
             String accessToken = extractGithubAccessToken(response);
 
-            User user = upsertOauthUser(getGithubUserInfo(accessToken));
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-
-            return AccountAuthenticationResponse.builder()
-                    .tokens(jwtService.generateTokenPair(authentication))
-                    .user(UserAuthenticationResponse.builder()
-                            .email(user.getEmail())
-                            .firstName(user.getFirstName())
-                            .lastName(user.getLastName())
-                            .image(user.getImage())
-                            .build()
-                    )
-                    .build();
+            Account account = upsertOauthAccount(getGithubUserInfo(accessToken));
+            return getAccountAuthenticationResponse(account);
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -151,21 +124,27 @@ public class OAuthServiceImpl implements OAuthService {
 
     }
 
-    private User upsertOauthUser(User user) {
-        if (userService.existedByEmail(user.getEmail())) {
-            user = userService.getUserByEmail(user.getEmail());
-        } else {
-            Set<Authority> authorities = new HashSet<>();
-            authorities.add(Authority.NORMAL_USER);
-            user.setAuthorities(authorities);
-
-            user = userService.saveUser(user);
-        }
-
-        return user;
+    private AccountAuthenticationResponse getAccountAuthenticationResponse(Account account) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
+        return AccountAuthenticationResponse.builder()
+                .tokens(jwtService.generateTokenPair(authentication))
+                .user(accountMapper.toAccountResponse(account))
+                .build();
     }
 
-    private User getGithubUserInfo(String accessToken) throws JsonProcessingException {
+
+    private Account upsertOauthAccount(Account account) {
+        String email = account.getEmail();
+        if (accountService.existsByEmail(email)) {
+            account = accountService.getAccountByEmail(email);
+        } else {
+
+            account = accountService.saveNewAccount(account);
+        }
+        return account;
+    }
+
+    private Account getGithubUserInfo(String accessToken) throws JsonProcessingException {
         HttpHeaders userInfoHeaders = new HttpHeaders();
         userInfoHeaders.setBearerAuth(accessToken);
         HttpEntity<String> userInfoRequest = new HttpEntity<>(userInfoHeaders);
@@ -186,13 +165,12 @@ public class OAuthServiceImpl implements OAuthService {
             throw new ApiException(ErrorCode.OAUTH_LOAD_USER_INFO_ERROR);
         }
 
-        return User.builder()
-                .fullName(userInfoJson.get("name").asText())
+        return Account.builder()
+                .name(userInfoJson.get("name").asText())
                 .email(email)
                 .image(userInfoJson.get("avatar_url").asText())
                 .isVerified(true)
                 .build();
-
     }
 
     private String getGithubUserEmail(String accessToken) throws JsonProcessingException {
@@ -227,7 +205,7 @@ public class OAuthServiceImpl implements OAuthService {
 
     }
 
-    private User getGoogleUserInfo(String accessToken) throws JsonProcessingException {
+    private Account getGoogleUserInfo(String accessToken) throws JsonProcessingException {
         HttpHeaders userInfoHeaders = new HttpHeaders();
         userInfoHeaders.setBearerAuth(accessToken);
         HttpEntity<String> userInfoRequest = new HttpEntity<>(userInfoHeaders);
@@ -247,10 +225,8 @@ public class OAuthServiceImpl implements OAuthService {
 
         System.out.println("userInfoJson = " + userInfoJson);
 
-        return User.builder()
-                .fullName(userInfoJson.get("name").asText())
-                .firstName(userInfoJson.get("family_name").asText())
-                .lastName(userInfoJson.get("given_name").asText())
+        return Account.builder()
+                .name(userInfoJson.get("name").asText())
                 .email(userInfoJson.get("email").asText())
                 .image(userInfoJson.get("picture").asText())
                 .isVerified(userInfoJson.get("verified_email").asBoolean())

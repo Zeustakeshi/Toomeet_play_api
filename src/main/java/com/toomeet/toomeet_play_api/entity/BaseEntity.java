@@ -19,5 +19,4 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "primary_key_seq")
     private Long id;
 
-
 }

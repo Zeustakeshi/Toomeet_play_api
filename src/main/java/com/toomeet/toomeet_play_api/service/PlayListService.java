@@ -1,9 +1,22 @@
 package com.toomeet.toomeet_play_api.service;
 
+import com.toomeet.toomeet_play_api.dto.playlist.PlaylistBasicInfo;
 import com.toomeet.toomeet_play_api.dto.request.CreatePlaylistRequest;
-import com.toomeet.toomeet_play_api.dto.response.PlayListResponse;
-import com.toomeet.toomeet_play_api.entity.User;
+import com.toomeet.toomeet_play_api.dto.response.PlaylistResponse;
+import com.toomeet.toomeet_play_api.entity.Playlist;
 
-public interface PlayListService {
-    PlayListResponse createPlayList(CreatePlaylistRequest request, User user);
+import java.util.List;
+
+public interface PlaylistService {
+    PlaylistResponse createPlaylist(CreatePlaylistRequest request, String userId);
+
+    Playlist getByPlaylistId(String playlistId);
+
+    List<PlaylistResponse> getAllPlayList(String userId);
+
+    Integer getPlaylistSize(String playlistId);
+
+    PlaylistBasicInfo getPlayListBasicInfo(String playlistId);
+
+    boolean isPlaylistOwner(String playlistId, String userId);
 }

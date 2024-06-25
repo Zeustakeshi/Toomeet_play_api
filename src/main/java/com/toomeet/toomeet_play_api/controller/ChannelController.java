@@ -2,7 +2,7 @@ package com.toomeet.toomeet_play_api.controller;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateChannelRequest;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
-import com.toomeet.toomeet_play_api.entity.User;
+import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.service.ChannelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +20,10 @@ public class ChannelController {
     @GetMapping("{channelId}/general")
     public ResponseEntity<ApiResponse<?>> getChannelGeneralInfo(
             @PathVariable String channelId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                channelService.getChanelGeneralInfo(channelId, user)
+                channelService.getChanelGeneralInfo(channelId, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -31,11 +31,13 @@ public class ChannelController {
     @PostMapping()
     public ResponseEntity<ApiResponse<?>> createChannel(
             @RequestBody @Valid CreateChannelRequest createChannelRequest,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                channelService.createChannel(createChannelRequest, user.getUserId())
+                channelService.createChannel(createChannelRequest, account.getUserId())
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+
 }

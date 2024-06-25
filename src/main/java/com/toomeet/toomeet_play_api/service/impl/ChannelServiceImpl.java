@@ -2,14 +2,16 @@ package com.toomeet.toomeet_play_api.service.impl;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateChannelRequest;
 import com.toomeet.toomeet_play_api.dto.response.ChannelGeneralResponse;
+import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.entity.User;
 import com.toomeet.toomeet_play_api.enums.Authority;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
+import com.toomeet.toomeet_play_api.mapper.AccountMapper;
 import com.toomeet.toomeet_play_api.mapper.ChannelMapper;
-import com.toomeet.toomeet_play_api.mapper.UserMapper;
 import com.toomeet.toomeet_play_api.repository.ChannelRepository;
+import com.toomeet.toomeet_play_api.service.AccountService;
 import com.toomeet.toomeet_play_api.service.ChannelService;
 import com.toomeet.toomeet_play_api.service.UserService;
 import jakarta.transaction.Transactional;
@@ -25,24 +27,28 @@ public class ChannelServiceImpl implements ChannelService {
     private final ChannelRepository channelRepository;
     private final UserService userService;
     private final ChannelMapper channelMapper;
-    private final UserMapper userMapper;
+    private final AccountService accountService;
+    private final AccountMapper accountMapper;
 
     @Override
-    public ChannelGeneralResponse getChanelGeneralInfo(String channelId, User user) {
+    public ChannelGeneralResponse getChanelGeneralInfo(String channelId, Account account) {
 
         Channel channel = Optional.ofNullable(channelRepository.findByChannelId(channelId))
                 .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
 
-        if (!channel.getOwner().getUserId().equals(user.getUserId())) {
+        if (!channel.getOwner().getUserId().equals(account.getUserId())) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
-
         var channelResponse = channelMapper.toChannelGeneralResponse(channel);
-        channelResponse.setOwner(userMapper.toUserAuthenticationResponse(user));
+        channelResponse.setOwner(accountMapper.toAccountResponse(account));
 
         return channelResponse;
     }
 
+    @Override
+    public Channel getChannelByOwnerId(String ownerId) {
+        return channelRepository.findByOwnerUserId(ownerId);
+    }
 
     @Override
     @Transactional
@@ -57,13 +63,16 @@ public class ChannelServiceImpl implements ChannelService {
 
         Channel channel = channelMapper.toChannel(request);
 
-        user.addAuthority(Authority.CHANNEL_OWNER);
+        Account account = user.getAccount();
+        account.addAuthority(Authority.CHANNEL_OWNER);
+        accountService.updateAccount(account);
+
         channel.setOwner(user);
 
         Channel newChannel = channelRepository.save(channel);
 
         var channelResponse = channelMapper.toChannelGeneralResponse(newChannel);
-        channelResponse.setOwner(userMapper.toUserAuthenticationResponse(user));
+        channelResponse.setOwner(accountMapper.toAccountResponse(account));
         return channelResponse;
     }
 }

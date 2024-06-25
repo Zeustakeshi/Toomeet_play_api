@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChannelRepository extends JpaRepository<Channel, Long> {
     Channel findByChannelId(String channelId);
+
+    Channel findByOwnerUserId(String ownerId);
 }

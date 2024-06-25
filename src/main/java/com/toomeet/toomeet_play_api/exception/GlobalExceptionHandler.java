@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +51,12 @@ public class GlobalExceptionHandler {
         return errorCodeToResponseEntity(ex.getErrorCode());
     }
 
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<?>> handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        ErrorCode errorCode = ErrorCode.METHOD_NOT_SUPPORTED_EXCEPTION;
+        ApiResponse<?> response = ApiResponse.error(errorCode.getCode(), ex.getMessage());
+        return new ResponseEntity<>(response, errorCode.getStatus());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleException(Exception ex) {
