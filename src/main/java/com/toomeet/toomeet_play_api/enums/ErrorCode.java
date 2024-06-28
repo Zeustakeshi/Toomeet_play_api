@@ -25,7 +25,9 @@ public enum ErrorCode {
     UPLOAD_VIDEO_EXCEPTION(1016, "An error has occurred during the video upload process.", HttpStatus.BAD_REQUEST),
     VIDEO_NOT_FOUND(1017, "Video not found", HttpStatus.NOT_FOUND),
     PLAYLIST_NOT_FOUND(1018, "Playlist not found", HttpStatus.NOT_FOUND),
-    METHOD_NOT_SUPPORTED_EXCEPTION(1020, "Method not supported exception", HttpStatus.METHOD_NOT_ALLOWED);
+    METHOD_NOT_SUPPORTED_EXCEPTION(1020, "Method not supported exception", HttpStatus.METHOD_NOT_ALLOWED),
+    UPLOAD_IMAGE_EXCEPTION(1021, "Upload image error", HttpStatus.INTERNAL_SERVER_ERROR);
+
 
     private final String message;
     private final HttpStatus status;

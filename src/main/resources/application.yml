@@ -15,7 +15,7 @@ spring:
     database: postgresql
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -126,3 +126,4 @@ cloudinary:
 frontend:
   home_url: ${FRONTEND_HOME_URL}
   oauth_callback: ${FRONT_END_OAUTH_CALLBACK_URL}
+  studio_url: ${FRONTEND_STUDIO_URL}

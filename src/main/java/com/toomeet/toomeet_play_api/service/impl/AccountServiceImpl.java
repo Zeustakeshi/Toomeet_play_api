@@ -62,4 +62,9 @@ public class AccountServiceImpl implements AccountService {
 
         return accountRepository.save(account);
     }
+
+    @Override
+    public boolean existedChannel(String accountId) {
+        return accountRepository.existedChannel(accountId);
+    }
 }

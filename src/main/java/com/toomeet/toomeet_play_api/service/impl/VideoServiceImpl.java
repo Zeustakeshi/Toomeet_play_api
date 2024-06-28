@@ -1,9 +1,8 @@
 package com.toomeet.toomeet_play_api.service.impl;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.toomeet.toomeet_play_api.dto.response.StudioVideoResponse;
-import com.toomeet.toomeet_play_api.dto.video.VideoBasicInfo;
+import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.entity.Playlist;
 import com.toomeet.toomeet_play_api.entity.Video;
@@ -16,19 +15,19 @@ import com.toomeet.toomeet_play_api.repository.VideoRepository;
 import com.toomeet.toomeet_play_api.service.ChannelService;
 import com.toomeet.toomeet_play_api.service.PlaylistService;
 import com.toomeet.toomeet_play_api.service.VideoService;
+import com.toomeet.toomeet_play_api.utils.ResourceUploader;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +38,7 @@ public class VideoServiceImpl implements VideoService {
     private final ApplicationEventPublisher publisher;
     private final PlaylistService playlistService;
     private final ChannelService channelService;
-
-
-    @Value("${cloudinary.dir_prefix}")
-    private String dirPrefix;
+    private final ResourceUploader resourceUploader;
 
     @Async
     @Override
@@ -50,19 +46,12 @@ public class VideoServiceImpl implements VideoService {
 
         Video video = Optional.ofNullable(videoRepository.findByVideoId(videoId))
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-
         try {
-            Map<?, ?> uploadResult = cloudinary.uploader().upload(file, ObjectUtils.asMap(
-                    "resource_type", "video",
-                    "folder", dirPrefix + "/videos",
-                    "public_id", video.getVideoId(),
-                    "allowed_formats", "mp4"
-            ));
-
-            video.setUrl(uploadResult.get("url").toString());
-            video.setWidth(Long.parseLong(uploadResult.get("width").toString()));
-            video.setHeight(Long.parseLong(uploadResult.get("height").toString()));
-            video.setFormat(uploadResult.get("format").toString());
+            ResourceUploaderResponse uploadResponse = resourceUploader.uploadVideo(file, video.getVideoId(), "/video");
+            video.setUrl(uploadResponse.getUrl());
+            video.setWidth(uploadResponse.getWidth());
+            video.setHeight(uploadResponse.getHeight());
+            video.setFormat(uploadResponse.getFormat());
             video.setStatus(VideoStatus.ENABLE);
 
             //TODO: send notify video upload success to user (userId)
@@ -72,7 +61,6 @@ public class VideoServiceImpl implements VideoService {
         } finally {
             videoRepository.save(video);
         }
-
     }
 
     @Override
@@ -80,6 +68,7 @@ public class VideoServiceImpl implements VideoService {
 
         Channel channel = Optional.ofNullable(channelService.getChannelByOwnerId(userId))
                 .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
+
 
         Video video = Video.builder()
                 .title("Untitled Videos-" + UUID.randomUUID())
@@ -90,10 +79,9 @@ public class VideoServiceImpl implements VideoService {
         Video newVideo = videoRepository.save(video);
 
         try {
-
             UploadVideoEvent event = UploadVideoEvent.builder()
                     .video(file.getInputStream().readAllBytes())
-                    .userId(newVideo.getCreatedBy().getUserId())
+                    .userId(userId)
                     .videoId(newVideo.getVideoId())
                     .build();
 
@@ -111,8 +99,9 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public Set<Video> getAllVideoFormPlaylist(String playlistId) {
-        return videoRepository.findAllByPlaylistId(playlistId);
+    public Set<StudioVideoResponse> getAllVideoFormPlaylist(String playlistId) {
+        return videoRepository.findAllByPlaylistId(playlistId)
+                .stream().map(videoMapper::toVideoResponse).collect(Collectors.toSet());
     }
 
     @Override
@@ -125,18 +114,20 @@ public class VideoServiceImpl implements VideoService {
         Playlist playlist = Optional.ofNullable(playlistService.getByPlaylistId(playlistId))
                 .orElseThrow(() -> new ApiException(ErrorCode.PLAYLIST_NOT_FOUND));
 
+
         if (!playlistService.isPlaylistOwner(playlistId, userId)) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
 
+
         video.setPlaylist(playlist);
         videoRepository.save(video);
-
         return "Added video " + video.getTitle() + "to playlist: " + playlist.getName();
     }
 
     @Override
-    public VideoBasicInfo getVideoBasicInfo(String videoId) {
-        return videoRepository.getVideoBasicInfoByVideoId(videoId);
+    public Set<StudioVideoResponse> getAllVideoByOwner(String userId) {
+        return videoRepository.findAllByOwnerId(userId)
+                .stream().map(videoMapper::toVideoResponse).collect(Collectors.toSet());
     }
 }

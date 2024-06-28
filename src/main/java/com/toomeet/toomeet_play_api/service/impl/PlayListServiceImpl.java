@@ -1,6 +1,5 @@
 package com.toomeet.toomeet_play_api.service.impl;
 
-import com.toomeet.toomeet_play_api.dto.playlist.PlaylistBasicInfo;
 import com.toomeet.toomeet_play_api.dto.request.CreatePlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.response.PlaylistResponse;
 import com.toomeet.toomeet_play_api.entity.Playlist;
@@ -24,7 +23,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public PlaylistResponse createPlaylist(CreatePlaylistRequest request, String userId) {
 
-        if (playlistRepository.existsByNameAndCreatedByUserId(request.getName(), userId)) {
+        if (playlistRepository.existsByNameAndUserId(request.getName(), userId)) {
             throw new ApiException(ErrorCode.PLAYLIST_ALREADY_EXIST);
         }
 
@@ -40,7 +39,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public List<PlaylistResponse> getAllPlayList(String userId) {
-        return playlistRepository.findAllByCreatedByUserId(userId)
+        return playlistRepository.findAllByUserId(userId)
                 .stream().map(playlistMapper::toPlaylistResponse).toList();
     }
 
@@ -49,14 +48,9 @@ public class PlaylistServiceImpl implements PlaylistService {
         return playlistRepository.getPlaylistSize(playlistId);
     }
 
-    @Override
-    public PlaylistBasicInfo getPlayListBasicInfo(String playlistId) {
-        return playlistRepository.getBasicInfoByPlaylistId(playlistId);
-    }
 
     @Override
     public boolean isPlaylistOwner(String playlistId, String userId) {
-        PlaylistBasicInfo playlistBasicInfo = getPlayListBasicInfo(playlistId);
-        return playlistBasicInfo.getOwnerId().equals(userId);
+        return playlistRepository.isPlaylistOwner(playlistId, userId);
     }
 }

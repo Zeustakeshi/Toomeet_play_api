@@ -38,6 +38,9 @@ public class Account extends BaseEntity implements UserDetails {
     @JoinColumn(unique = true, updatable = false)
     private User user;
 
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Channel channel;
+
     @Column(name = "_user_id", unique = true, nullable = false)
     private String userId;
 

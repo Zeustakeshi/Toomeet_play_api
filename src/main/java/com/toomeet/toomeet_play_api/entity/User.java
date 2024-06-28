@@ -50,11 +50,7 @@ public class User extends BaseEntity {
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
     private List<Channel> memberChannels;
 
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Channel channel;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "createdBy")
     private List<Playlist> playlists;
-
-
 }
