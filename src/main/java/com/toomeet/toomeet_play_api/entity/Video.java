@@ -1,12 +1,14 @@
 package com.toomeet.toomeet_play_api.entity;
 
 import com.toomeet.toomeet_play_api.enums.Language;
+import com.toomeet.toomeet_play_api.enums.VideoStatus;
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -16,7 +18,8 @@ import java.util.List;
 @Builder
 public class Video extends Auditable {
     @Column(nullable = false, unique = true)
-    private String videoId;
+    @Builder.Default
+    private String videoId = UUID.randomUUID().toString();
 
     @Column(nullable = false, unique = true)
     private String title;
@@ -25,6 +28,18 @@ public class Video extends Auditable {
     private String description;
 
     private String thumbnail;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private VideoStatus status = VideoStatus.PROCESSING;
+
+    private String url;
+
+    private Long width;
+
+    private Long height;
+
+    private String format;
 
     @ManyToOne()
     private Channel channel;
@@ -49,5 +64,6 @@ public class Video extends Auditable {
     private LocalDateTime recordingDate;
 
     @ManyToOne
+    @JoinColumn(name = "playlist_id")
     private Playlist playlist;
 }

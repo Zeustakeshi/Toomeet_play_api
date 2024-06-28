@@ -1,7 +1,7 @@
 package com.toomeet.toomeet_play_api.service.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
-import com.toomeet.toomeet_play_api.entity.User;
+import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,15 +30,15 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateAccessToken(Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        Account account = (Account) authentication.getPrincipal();
         Instant now = Instant.now();
 
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                .subject(user.getUserId())
+                .subject(account.getAccountId())
                 .issuedAt(now)
                 .issuer("Toomeet Play")
-                .claim("email", user.getEmail())
-                .claim("scope", user.getAuthorities())
+                .claim("email", account.getEmail())
+                .claim("scope", account.getAuthorities())
                 .claim("type", "access_token")
                 .expiresAt(now.plus(accessTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
@@ -48,15 +48,15 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateRefreshToken(Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        Account account = (Account) authentication.getPrincipal();
         Instant now = Instant.now();
 
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                .subject(user.getUserId())
+                .subject(account.getAccountId())
                 .issuedAt(now)
                 .issuer("Toomeet Play")
-                .claim("email", user.getEmail())
-                .claim("scope", user.getAuthorities())
+                .claim("email", account.getEmail())
+                .claim("scope", account.getAuthorities())
                 .claim("type", "refresh")
                 .expiresAt(now.plus(accessTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
@@ -90,7 +90,7 @@ public class JwtServiceImpl implements JwtService {
     public TokenResponse refreshToken(String refreshToken) {
         Jwt jwt = jwtDecoder.decode(refreshToken);
         String userId = jwt.getSubject();
-        User user = (User) userDetailsService.loadUserByUsername(userId);
+        Account user = (Account) userDetailsService.loadUserByUsername(userId);
         Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         return generateTokenPair(authentication);
     }

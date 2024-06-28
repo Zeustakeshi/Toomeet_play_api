@@ -48,7 +48,10 @@ public class SecurityConfig {
     private final HttpServletRequestFilter httpServletRequestFilter;
 
     @Value("${frontend.home_url}")
-    private String frontendUrl;
+    private String frontendHomeUrl;
+
+    @Value("${frontend.studio_url}")
+    private String frontEndStudioUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -70,7 +73,8 @@ public class SecurityConfig {
                                         "/swagger-ui.html",
                                         "/swagger-ui/**",
                                         "/auth/**",
-                                        "/oauth/**"
+                                        "/oauth/**",
+                                        "/studio/channel/general"
                                 ).permitAll()
                                 .requestMatchers(HttpMethod.POST, "/studio/channel").permitAll()
                                 .requestMatchers("/studio/**").hasRole(Authority.CHANNEL_OWNER.name())
@@ -89,7 +93,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource apiConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin(frontendHomeUrl);
+        configuration.addAllowedOrigin(frontEndStudioUrl);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

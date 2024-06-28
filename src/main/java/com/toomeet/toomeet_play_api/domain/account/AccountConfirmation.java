@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.domain.account;
 
-import com.toomeet.toomeet_play_api.entity.User;
+import com.toomeet.toomeet_play_api.entity.Account;
 import lombok.*;
 
 import java.util.UUID;
@@ -14,5 +14,5 @@ public class AccountConfirmation {
     @Builder.Default
     @Setter(AccessLevel.PRIVATE)
     private String code = UUID.randomUUID().toString();
-    private User user;
+    private Account account;
 }

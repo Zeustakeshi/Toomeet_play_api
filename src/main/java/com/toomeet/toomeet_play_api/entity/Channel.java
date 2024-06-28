@@ -20,18 +20,20 @@ public class Channel extends Auditable {
     private String channelId = UUID.randomUUID().toString();
     private String name;
 
+    @OneToOne()
+    private Account account;
+
     @Column(columnDefinition = "TEXT")
     private String description;
     private String background;
+
+    private String avatar;
 
     @Builder.Default
     private Long totalWatchTime = 0L;
 
     @Builder.Default
     private Long viewCount = 0L;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private User owner;
 
     @ManyToMany
     private List<User> members;
@@ -41,6 +43,5 @@ public class Channel extends Auditable {
 
     @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Video> videos;
-
 
 }

@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.config.auditing;
 
+import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
@@ -17,9 +18,8 @@ public class AuditorAwareImpl implements AuditorAware<User> {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (Objects.isNull(authentication)) return Optional.empty();
+        Account account = (Account) authentication.getPrincipal();
 
-        User user = (User) authentication.getPrincipal();
-        return Optional.ofNullable(user);
-
+        return Optional.ofNullable(account.getUser());
     }
 }

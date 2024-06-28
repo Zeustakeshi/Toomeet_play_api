@@ -9,10 +9,10 @@ public class ChannelGeneralResponse {
     private String channelId;
     private String name;
     private String background;
-    private UserAuthenticationResponse owner;
+    private String avatar;
     private Integer memberCount;
     private Integer subscriberCount;
     private Long totalWatchTime;
     private Long viewCount;
-
+    private Long videoCount;
 }

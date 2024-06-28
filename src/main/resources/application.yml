@@ -27,6 +27,7 @@ spring:
       enabled: true
       max-file-size: 1000MB
       max-request-size: 1000MB
+      location: D:\Workspace\java\Toomeet_play\server\temp
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}
@@ -81,15 +82,14 @@ spring:
           user_info_url: https://api.github.com/user
 
 server:
+  api_version: ${API_VERSION}
   port: ${SERVER_PORT:8080}
   servlet:
-    context-path: /api/v1/
+    context-path: /api/${API_VERSION}/
   error:
     path: /error
     whitelabel:
       enabled: true
-
-
 
 
 
@@ -116,6 +116,14 @@ cache:
   redis_url: ${REDIS_URL}
 
 
+cloudinary:
+  cloud_name: ${CLOUDINARY_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+  dir_prefix: ${CLOUDINARY_DIR_PREFIX}
+
+
 frontend:
   home_url: ${FRONTEND_HOME_URL}
   oauth_callback: ${FRONT_END_OAUTH_CALLBACK_URL}
+  studio_url: ${FRONTEND_STUDIO_URL}

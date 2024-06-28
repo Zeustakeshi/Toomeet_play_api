@@ -21,7 +21,13 @@ public enum ErrorCode {
     USER_ALREADY_A_OWNER_CHANNEL(1013, "You are already a channel owner and cannot create a new channel.", HttpStatus.CONFLICT),
     USER_NOT_FOUND(1014, "User not found", HttpStatus.NOT_FOUND),
     PLAYLIST_ALREADY_EXIST(1015, "Playlist already exist.", HttpStatus.CONFLICT),
-    ;
+    INVALID_VIDEO_FORMAT(1016, "Videos in the wrong format. Only .mp4 files are allowed.", HttpStatus.BAD_REQUEST),
+    UPLOAD_VIDEO_EXCEPTION(1016, "An error has occurred during the video upload process.", HttpStatus.BAD_REQUEST),
+    VIDEO_NOT_FOUND(1017, "Video not found", HttpStatus.NOT_FOUND),
+    PLAYLIST_NOT_FOUND(1018, "Playlist not found", HttpStatus.NOT_FOUND),
+    METHOD_NOT_SUPPORTED_EXCEPTION(1020, "Method not supported exception", HttpStatus.METHOD_NOT_ALLOWED),
+    UPLOAD_IMAGE_EXCEPTION(1021, "Upload image error", HttpStatus.INTERNAL_SERVER_ERROR);
+
 
     private final String message;
     private final HttpStatus status;

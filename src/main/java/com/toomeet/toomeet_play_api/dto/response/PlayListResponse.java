@@ -6,11 +6,10 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class PlayListResponse {
+public class PlaylistResponse {
     protected Visibility visibility;
-    private String playListId;
+    private String playlistId;
     private String name;
-    private String videoCount;
     private String thumbnail;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

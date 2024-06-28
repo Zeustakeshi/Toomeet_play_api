@@ -2,7 +2,7 @@ package com.toomeet.toomeet_play_api.controller;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateChannelRequest;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
-import com.toomeet.toomeet_play_api.entity.User;
+import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.service.ChannelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController()
 @RequestMapping("/studio/channel")
@@ -17,13 +18,12 @@ import org.springframework.web.bind.annotation.*;
 public class ChannelController {
     private final ChannelService channelService;
 
-    @GetMapping("{channelId}/general")
+    @GetMapping("general")
     public ResponseEntity<ApiResponse<?>> getChannelGeneralInfo(
-            @PathVariable String channelId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                channelService.getChanelGeneralInfo(channelId, user)
+                channelService.getChanelGeneralInfo(account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -31,11 +31,21 @@ public class ChannelController {
     @PostMapping()
     public ResponseEntity<ApiResponse<?>> createChannel(
             @RequestBody @Valid CreateChannelRequest createChannelRequest,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                channelService.createChannel(createChannelRequest, user.getUserId())
+                channelService.createChannel(createChannelRequest, account)
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @PatchMapping("/upload-avatar")
+    public ResponseEntity<ApiResponse<?>> uploadAvatar(
+            @RequestParam(value = "image") MultipartFile image,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(channelService.uploadChannelAvatar(image, account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
