@@ -1,8 +1,10 @@
 package com.toomeet.toomeet_play_api.entity;
 
-import com.toomeet.toomeet_play_api.enums.Authority;
+import com.toomeet.toomeet_play_api.entity.auditing.AccountEntityListener;
+import com.toomeet.toomeet_play_api.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,22 +12,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 
-@Builder
-@AllArgsConstructor
 @Entity
+@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@Table(indexes = @Index(columnList = "accountId"))
+@Data
+@SuperBuilder
+@Table(name = "Account", indexes = @Index(columnList = "email"))
+@EqualsAndHashCode(callSuper = true, exclude = {"user", "channel"})
+@EntityListeners(AccountEntityListener.class)
 public class Account extends BaseEntity implements UserDetails {
-
-    @Setter(AccessLevel.PRIVATE)
-    @Column(unique = true)
-    @Builder.Default
-    private String accountId = UUID.randomUUID().toString();
 
     private String password;
 
@@ -34,24 +31,28 @@ public class Account extends BaseEntity implements UserDetails {
 
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(unique = true, updatable = false)
-    private User user;
-
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Channel channel;
-
-    @Column(name = "_user_id", unique = true, nullable = false)
+    @Column(name = "_user_id", unique = true, nullable = false, updatable = false)
     private String userId;
 
     private String image;
 
     private boolean isVerified;
 
-    @ElementCollection(targetClass = Authority.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "Account_authority", joinColumns = @JoinColumn(name = "account_id"))
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private Set<Authority> authorities = new HashSet<>();
+    private Set<Role> authorities = new HashSet<>();
+
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(unique = true, updatable = false)
+    private User user;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(unique = true, updatable = false)
+    private Channel channel;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -59,19 +60,22 @@ public class Account extends BaseEntity implements UserDetails {
         return this.authorities
                 .stream()
                 .map(
-                        authority -> new SimpleGrantedAuthority("ROLE_" + authority.name())
+                        role -> new SimpleGrantedAuthority("ROLE_" + role.name())
                 ).toList();
     }
 
-
-    public void addAuthority(Authority authority) {
-        this.authorities.add(authority);
+    public void setUser(User user) {
+        this.user = user;
+        this.userId = user.getId();
     }
 
-    public void addAllAuthority(Set<Authority> authorities) {
+    public void addAuthority(Role role) {
+        this.authorities.add(role);
+    }
+
+    public void addAllAuthority(Set<Role> authorities) {
         this.authorities.addAll(authorities);
     }
-
 
     @Override
     public String getPassword() {
@@ -102,5 +106,6 @@ public class Account extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return isVerified;
     }
+
 
 }

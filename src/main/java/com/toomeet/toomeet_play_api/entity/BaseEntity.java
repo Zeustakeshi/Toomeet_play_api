@@ -1,22 +1,42 @@
 package com.toomeet.toomeet_play_api.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Getter
-@Setter
+import java.time.LocalDateTime;
+
+@Data
 @MappedSuperclass
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
 public class BaseEntity {
-
     @Id
-    @SequenceGenerator(
-            name = "primary_key_seq",
-            sequenceName = "primary_key_seq",
-            initialValue = 1000,
-            allocationSize = 1
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "primary_key_seq")
-    private Long id;
+    @Builder.Default
+    private String id = NanoIdUtils.randomNanoId();
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) {
+            this.id = NanoIdUtils.randomNanoId();
+        }
+    }
 }

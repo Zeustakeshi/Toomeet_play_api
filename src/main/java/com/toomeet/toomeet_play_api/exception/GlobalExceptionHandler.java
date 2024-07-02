@@ -3,6 +3,7 @@ package com.toomeet.toomeet_play_api.exception;
 
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
+import jakarta.validation.UnexpectedTypeException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -29,6 +30,13 @@ public class GlobalExceptionHandler {
         }
         ErrorCode errorCode = ErrorCode.REQUEST_VALIDATION_FAILED;
         return new ResponseEntity<>(ApiResponse.error(errorCode.getCode(), errors), ex.getStatusCode());
+    }
+
+    @ExceptionHandler(UnexpectedTypeException.class)
+    public ResponseEntity<ApiResponse<?>> handleUnexpectedTypeException(UnexpectedTypeException ex) {
+        ErrorCode errorCode = ErrorCode.REQUEST_VALIDATION_FAILED;
+        ApiResponse<?> response = ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
+        return new ResponseEntity<>(response, errorCode.getStatus());
     }
 
     @ExceptionHandler(AccessDeniedException.class)

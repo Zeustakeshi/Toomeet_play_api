@@ -5,18 +5,15 @@ import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
 import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.response.AccountAuthenticationResponse;
 import com.toomeet.toomeet_play_api.dto.response.CreateAccountResponse;
 import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.event.EmailVerifyAccountEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.mapper.AccountMapper;
 import com.toomeet.toomeet_play_api.service.AccountService;
 import com.toomeet.toomeet_play_api.service.AuthService;
 import com.toomeet.toomeet_play_api.service.JwtService;
-import com.toomeet.toomeet_play_api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,10 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final Gson gson;
     private final ApplicationEventPublisher publisher;
-    private final AccountMapper accountMapper;
     private final AccountService accountService;
-    private final UserService userService;
-
 
     @Override
     public CreateAccountResponse createAccountWithEmailAndPassword(CreateAccountRequest request) {
@@ -64,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
 
-        int confirmationExpiresTime = 24;
+        int confirmationExpiresTime = 1;
 
         String confirmationJson = gson.toJson(accountConfirmation);
 
@@ -105,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AccountAuthenticationResponse loginWithEmailAndPassword(LoginRequest request) {
+    public TokenResponse loginWithEmailAndPassword(LoginRequest request) {
 
         Account account = Optional.ofNullable(accountService.getAccountByEmail(request.getEmail()))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CREDENTIAL));
@@ -116,12 +110,8 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
 
-        TokenResponse tokens = jwtService.generateTokenPair(authentication);
+        return jwtService.generateTokenPair(authentication);
 
-        return AccountAuthenticationResponse.builder()
-                .user(accountMapper.toAccountResponse(account))
-                .tokens(tokens)
-                .build();
     }
 
 

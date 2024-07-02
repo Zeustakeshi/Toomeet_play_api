@@ -1,23 +1,29 @@
 package com.toomeet.toomeet_play_api.service;
 
-import com.toomeet.toomeet_play_api.dto.response.StudioVideoResponse;
-import com.toomeet.toomeet_play_api.entity.Video;
+import com.toomeet.toomeet_play_api.dto.request.UpdateVideoCategoryRequest;
+import com.toomeet.toomeet_play_api.dto.request.UpdateVideoMetadataRequest;
+import com.toomeet.toomeet_play_api.dto.request.UpdateVideoSettingRequest;
+import com.toomeet.toomeet_play_api.dto.request.UpdateVideoTagRequest;
+import com.toomeet.toomeet_play_api.dto.response.VideoResponse;
+import com.toomeet.toomeet_play_api.entity.Account;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Set;
-
 public interface VideoService {
-    void uploadVideo(String videoId, String userId, byte[] file);
 
-    StudioVideoResponse createVideo(MultipartFile file, String userId);
+    VideoResponse uploadVideo(MultipartFile video, Account account);
 
-    Video getVideoByVideoId(String videoId);
+    void uploadVideoAsync(String videoId, String userId, byte[] video);
 
-    Set<StudioVideoResponse> getAllVideoFormPlaylist(String playlistId);
+    VideoResponse getVideoById(String videoId, Account account);
 
-    String addToPlaylist(String videoId, String playlistId, String userId);
+    VideoResponse updateVideoMetadata(UpdateVideoMetadataRequest request, String videoId, Account account);
 
-    Set<StudioVideoResponse> getAllVideoByOwner(String userId);
+    VideoResponse updateVideoSettings(UpdateVideoSettingRequest request, String videoId, Account account);
 
+    String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account);
 
+    String updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account);
+
+    String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account);
+    
 }

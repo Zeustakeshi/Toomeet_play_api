@@ -3,7 +3,7 @@ package com.toomeet.toomeet_play_api.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toomeet.toomeet_play_api.dto.response.AccountAuthenticationResponse;
+import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
@@ -75,7 +75,7 @@ public class OAuthServiceImpl implements OAuthService {
     }
 
     @Override
-    public AccountAuthenticationResponse loginWithGoogle(String code) {
+    public TokenResponse loginWithGoogle(String code) {
         try {
             ResponseEntity<String> responseEntity = getOAuthAccessToken(
                     googleAccessTokenUrl,
@@ -99,7 +99,7 @@ public class OAuthServiceImpl implements OAuthService {
     }
 
     @Override
-    public AccountAuthenticationResponse loginWidthGithub(String code) {
+    public TokenResponse loginWidthGithub(String code) {
         try {
             ResponseEntity<String> responseEntity = getOAuthAccessToken(
                     githubAccessTokenUrl,
@@ -124,12 +124,9 @@ public class OAuthServiceImpl implements OAuthService {
 
     }
 
-    private AccountAuthenticationResponse getAccountAuthenticationResponse(Account account) {
+    private TokenResponse getAccountAuthenticationResponse(Account account) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
-        return AccountAuthenticationResponse.builder()
-                .tokens(jwtService.generateTokenPair(authentication))
-                .user(accountMapper.toAccountResponse(account))
-                .build();
+        return jwtService.generateTokenPair(authentication);
     }
 
 
@@ -138,7 +135,6 @@ public class OAuthServiceImpl implements OAuthService {
         if (accountService.existsByEmail(email)) {
             account = accountService.getAccountByEmail(email);
         } else {
-
             account = accountService.saveNewAccount(account);
         }
         return account;
@@ -222,8 +218,6 @@ public class OAuthServiceImpl implements OAuthService {
 
         String userInfo = userInfoResponse.getBody();
         JsonNode userInfoJson = mapper.readTree(userInfo);
-
-        System.out.println("userInfoJson = " + userInfoJson);
 
         return Account.builder()
                 .name(userInfoJson.get("name").asText())

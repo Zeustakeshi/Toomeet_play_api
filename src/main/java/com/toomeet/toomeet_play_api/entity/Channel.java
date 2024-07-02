@@ -1,47 +1,47 @@
 package com.toomeet.toomeet_play_api.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
 
-import java.util.List;
-import java.util.UUID;
+import com.toomeet.toomeet_play_api.entity.video.Video;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Channel extends Auditable {
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+public class Channel extends BaseEntity {
 
-    @Builder.Default
-    @Setter(AccessLevel.PRIVATE)
-    @Column(nullable = false, unique = true)
-    private String channelId = UUID.randomUUID().toString();
-    private String name;
-
-    @OneToOne()
+    @OneToOne(mappedBy = "channel", fetch = FetchType.LAZY)
+    @JoinColumn(unique = true)
     private Account account;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    private String background;
-
-    private String avatar;
-
-    @Builder.Default
-    private Long totalWatchTime = 0L;
-
-    @Builder.Default
-    private Long viewCount = 0L;
+    @ManyToMany
+    @JoinTable(
+            name = "channel_subscriber",
+            joinColumns = @JoinColumn(name = "channel_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id"),
+            indexes = @Index(columnList = "channel_id")
+    )
+    private Set<User> subscribers;
 
     @ManyToMany
-    private List<User> members;
+    @JoinTable(
+            name = "channel_member",
+            joinColumns = @JoinColumn(name = "channel_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"),
+            indexes = @Index(columnList = "channel_id")
+    )
+    private Set<User> members;
 
-    @ManyToMany
-    private List<User> subscribers;
-
-    @OneToMany(mappedBy = "channel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Video> videos;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Video> videos;
 
 }

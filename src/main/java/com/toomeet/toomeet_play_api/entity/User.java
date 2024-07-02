@@ -1,56 +1,41 @@
 package com.toomeet.toomeet_play_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.toomeet.toomeet_play_api.entity.video.Video;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "Users")
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
 public class User extends BaseEntity {
 
-    @Builder.Default
-    @Setter(AccessLevel.PRIVATE)
-    @Column(nullable = false, unique = true)
-    private String userId = UUID.randomUUID().toString();
-
-    private boolean isVerified;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     @JoinColumn(unique = true)
     private Account account;
 
-    @Column(name = "_account_id", unique = true, nullable = false)
-    private String accountId;
-
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonProperty("createdAt")
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    @JsonProperty("updatedAt")
-    private LocalDateTime updatedAt;
-
-    @ManyToMany(mappedBy = "subscribers", fetch = FetchType.LAZY)
-    private List<Channel> subscribedChannels;
-
-    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
-    private List<Channel> memberChannels;
+    @ManyToMany(mappedBy = "subscribers")
+    private Set<Channel> subscribedChannels;
 
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "createdBy")
-    private List<Playlist> playlists;
+    @ManyToMany(mappedBy = "members")
+    private Set<Channel> memberChannels;
+
+    @ManyToMany
+    @JoinTable(
+            name = "watched_list",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "video_id"),
+            indexes = @Index(columnList = "user_id")
+    )
+    private Set<Video> watchedVideos;
+    
 }
