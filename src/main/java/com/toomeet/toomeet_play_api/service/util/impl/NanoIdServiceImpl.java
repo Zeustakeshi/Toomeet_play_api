@@ -1,7 +1,7 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.util.impl;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
-import com.toomeet.toomeet_play_api.service.NanoIdService;
+import com.toomeet.toomeet_play_api.service.util.NanoIdService;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;

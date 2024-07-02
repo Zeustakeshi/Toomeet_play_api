@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.google.gson.Gson;
 import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
@@ -11,9 +11,9 @@ import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.event.EmailVerifyAccountEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.service.AccountService;
-import com.toomeet.toomeet_play_api.service.AuthService;
-import com.toomeet.toomeet_play_api.service.JwtService;
+import com.toomeet.toomeet_play_api.service.user.AccountService;
+import com.toomeet.toomeet_play_api.service.user.AuthService;
+import com.toomeet.toomeet_play_api.service.util.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;

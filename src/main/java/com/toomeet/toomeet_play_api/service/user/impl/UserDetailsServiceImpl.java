@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;

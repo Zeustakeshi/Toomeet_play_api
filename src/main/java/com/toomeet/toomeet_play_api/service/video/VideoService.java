@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service;
+package com.toomeet.toomeet_play_api.service.video;
 
 import com.toomeet.toomeet_play_api.dto.request.UpdateVideoCategoryRequest;
 import com.toomeet.toomeet_play_api.dto.request.UpdateVideoMetadataRequest;
@@ -25,5 +25,5 @@ public interface VideoService {
     String updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account);
 
     String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account);
-    
+
 }

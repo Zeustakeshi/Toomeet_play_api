@@ -6,7 +6,7 @@ import com.toomeet.toomeet_play_api.dto.request.UpdateVideoSettingRequest;
 import com.toomeet.toomeet_play_api.dto.request.UpdateVideoTagRequest;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import com.toomeet.toomeet_play_api.service.VideoService;
+import com.toomeet.toomeet_play_api.service.video.VideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("video")
+@RequestMapping("studio/video")
 @RequiredArgsConstructor
 public class VideoController {
     private final VideoService videoService;

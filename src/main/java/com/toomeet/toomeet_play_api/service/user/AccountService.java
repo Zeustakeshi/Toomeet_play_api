@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service;
+package com.toomeet.toomeet_play_api.service.user;
 
 import com.toomeet.toomeet_play_api.dto.response.AccountResponse;
 import com.toomeet.toomeet_play_api.entity.Account;

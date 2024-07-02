@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.video.impl;
 
 import com.toomeet.toomeet_play_api.dto.request.UpdateVideoCategoryRequest;
 import com.toomeet.toomeet_play_api.dto.request.UpdateVideoMetadataRequest;
@@ -20,9 +20,9 @@ import com.toomeet.toomeet_play_api.mapper.VideoMapper;
 import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
 import com.toomeet.toomeet_play_api.repository.video.TagRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
-import com.toomeet.toomeet_play_api.service.NanoIdService;
-import com.toomeet.toomeet_play_api.service.ResourceService;
-import com.toomeet.toomeet_play_api.service.VideoService;
+import com.toomeet.toomeet_play_api.service.util.NanoIdService;
+import com.toomeet.toomeet_play_api.service.util.ResourceService;
+import com.toomeet.toomeet_play_api.service.video.VideoService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

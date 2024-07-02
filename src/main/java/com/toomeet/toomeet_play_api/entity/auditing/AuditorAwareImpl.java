@@ -2,7 +2,7 @@ package com.toomeet.toomeet_play_api.entity.auditing;
 
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.User;
-import com.toomeet.toomeet_play_api.service.UserService;
+import com.toomeet.toomeet_play_api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

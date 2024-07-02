@@ -1,9 +1,9 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.util.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
-import com.toomeet.toomeet_play_api.service.ResourceService;
+import com.toomeet.toomeet_play_api.service.util.ResourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

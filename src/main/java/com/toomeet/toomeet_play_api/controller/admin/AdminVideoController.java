@@ -2,7 +2,7 @@ package com.toomeet.toomeet_play_api.controller.admin;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateVideoCategoryRequest;
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
-import com.toomeet.toomeet_play_api.service.AdminVideoService;
+import com.toomeet.toomeet_play_api.service.video.AdminVideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,8 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.util.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import com.toomeet.toomeet_play_api.service.JwtService;
+import com.toomeet.toomeet_play_api.service.util.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim("type", "access_token")
                 .expiresAt(now.plus(accessTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
-        
+
         return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 

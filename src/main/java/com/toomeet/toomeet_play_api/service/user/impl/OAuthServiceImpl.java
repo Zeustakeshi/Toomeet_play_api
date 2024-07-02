@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,10 +8,10 @@ import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.AccountMapper;
-import com.toomeet.toomeet_play_api.service.AccountService;
-import com.toomeet.toomeet_play_api.service.JwtService;
-import com.toomeet.toomeet_play_api.service.OAuthService;
-import com.toomeet.toomeet_play_api.service.UserService;
+import com.toomeet.toomeet_play_api.service.user.AccountService;
+import com.toomeet.toomeet_play_api.service.user.OAuthService;
+import com.toomeet.toomeet_play_api.service.user.UserService;
+import com.toomeet.toomeet_play_api.service.util.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

@@ -2,7 +2,7 @@ package com.toomeet.toomeet_play_api.event.listener;
 
 
 import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
-import com.toomeet.toomeet_play_api.service.VideoService;
+import com.toomeet.toomeet_play_api.service.video.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

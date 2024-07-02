@@ -2,8 +2,8 @@ package com.toomeet.toomeet_play_api.controller;
 
 import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import com.toomeet.toomeet_play_api.service.AccountService;
-import com.toomeet.toomeet_play_api.service.UserService;
+import com.toomeet.toomeet_play_api.service.user.AccountService;
+import com.toomeet.toomeet_play_api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

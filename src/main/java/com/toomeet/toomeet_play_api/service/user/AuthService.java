@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service;
+package com.toomeet.toomeet_play_api.service.user;
 
 import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.LoginRequest;

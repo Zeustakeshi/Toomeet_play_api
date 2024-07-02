@@ -4,7 +4,7 @@ package com.toomeet.toomeet_play_api.event.listener;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.event.EmailVerifyAccountEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.service.MailService;
+import com.toomeet.toomeet_play_api.service.util.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

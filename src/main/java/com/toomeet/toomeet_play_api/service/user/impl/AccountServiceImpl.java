@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.AccountResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
@@ -9,7 +9,7 @@ import com.toomeet.toomeet_play_api.enums.Role;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.AccountMapper;
 import com.toomeet.toomeet_play_api.repository.AccountRepository;
-import com.toomeet.toomeet_play_api.service.AccountService;
+import com.toomeet.toomeet_play_api.service.user.AccountService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

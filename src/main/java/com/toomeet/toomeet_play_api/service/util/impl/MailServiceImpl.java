@@ -1,6 +1,6 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.util.impl;
 
-import com.toomeet.toomeet_play_api.service.MailService;
+import com.toomeet.toomeet_play_api.service.util.MailService;
 import com.toomeet.toomeet_play_api.utils.EmailUtils;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

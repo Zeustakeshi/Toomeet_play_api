@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.service;
+package com.toomeet.toomeet_play_api.service.util;
 
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 

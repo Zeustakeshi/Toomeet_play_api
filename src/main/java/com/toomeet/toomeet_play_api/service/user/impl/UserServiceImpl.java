@@ -1,11 +1,11 @@
-package com.toomeet.toomeet_play_api.service.impl;
+package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.toomeet.toomeet_play_api.entity.User;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.UserMapper;
 import com.toomeet.toomeet_play_api.repository.UserRepository;
-import com.toomeet.toomeet_play_api.service.UserService;
+import com.toomeet.toomeet_play_api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
