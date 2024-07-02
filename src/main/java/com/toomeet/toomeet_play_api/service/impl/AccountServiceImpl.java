@@ -2,11 +2,15 @@ package com.toomeet.toomeet_play_api.service.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.AccountResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
+import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.entity.User;
-import com.toomeet.toomeet_play_api.enums.Authority;
+import com.toomeet.toomeet_play_api.enums.ErrorCode;
+import com.toomeet.toomeet_play_api.enums.Role;
+import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.AccountMapper;
 import com.toomeet.toomeet_play_api.repository.AccountRepository;
 import com.toomeet.toomeet_play_api.service.AccountService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +29,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getAccountByAccountId(String accountId) {
-        return accountRepository.findByAccountId(accountId);
+    public Account getAccountById(String accountId) {
+        return accountRepository.findById(accountId).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Override
@@ -45,26 +49,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Account saveNewAccount(Account account) {
 
         User user = User.builder()
                 .account(account)
                 .build();
 
-        account.addAllAuthority(Set.of(Authority.NORMAL_USER));
+        Channel channel = Channel.builder()
+                .account(account)
+                .build();
+
+        account.addAllAuthority(Set.of(Role.NORMAL_USER));
         account.setVerified(true);
-
-
-        account.setUserId(user.getUserId());
-        user.setAccountId(account.getAccountId());
-
         account.setUser(user);
+        account.setChannel(channel);
 
         return accountRepository.save(account);
     }
 
-    @Override
-    public boolean existedChannel(String accountId) {
-        return accountRepository.existedChannel(accountId);
-    }
 }

@@ -6,7 +6,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.toomeet.toomeet_play_api.enums.Authority;
 import com.toomeet.toomeet_play_api.filter.HttpServletRequestFilter;
 import com.toomeet.toomeet_play_api.security.JwtAuthenticationConverter;
 import com.toomeet.toomeet_play_api.utils.KeyUtils;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -73,12 +71,8 @@ public class SecurityConfig {
                                         "/swagger-ui.html",
                                         "/swagger-ui/**",
                                         "/auth/**",
-                                        "/oauth/**",
-                                        "/studio/channel/general"
-                                ).permitAll()
-                                .requestMatchers(HttpMethod.POST, "/studio/channel").permitAll()
-                                .requestMatchers("/studio/**").hasRole(Authority.CHANNEL_OWNER.name())
-                                .requestMatchers("/hello").hasRole(Authority.ADMIN.name())
+                                        "/oauth/**").permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(httpServletRequestFilter, BearerTokenAuthenticationFilter.class)

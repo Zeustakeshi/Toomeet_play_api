@@ -1,9 +1,8 @@
 package com.toomeet.toomeet_play_api.domain.account;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.toomeet.toomeet_play_api.entity.Account;
 import lombok.*;
-
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,6 +12,6 @@ import java.util.UUID;
 public class AccountConfirmation {
     @Builder.Default
     @Setter(AccessLevel.PRIVATE)
-    private String code = UUID.randomUUID().toString();
+    private String code = NanoIdUtils.randomNanoId();
     private Account account;
 }

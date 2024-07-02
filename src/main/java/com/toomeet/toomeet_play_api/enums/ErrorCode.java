@@ -26,7 +26,11 @@ public enum ErrorCode {
     VIDEO_NOT_FOUND(1017, "Video not found", HttpStatus.NOT_FOUND),
     PLAYLIST_NOT_FOUND(1018, "Playlist not found", HttpStatus.NOT_FOUND),
     METHOD_NOT_SUPPORTED_EXCEPTION(1020, "Method not supported exception", HttpStatus.METHOD_NOT_ALLOWED),
-    UPLOAD_IMAGE_EXCEPTION(1021, "Upload image error", HttpStatus.INTERNAL_SERVER_ERROR);
+    UPLOAD_IMAGE_EXCEPTION(1021, "Upload image error", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_NAME_ALREADY_EXISTS(1022, "Category name already exists", HttpStatus.CONFLICT),
+    CATEGORY_NOT_FOUND(1023, "Category not found", HttpStatus.NOT_FOUND),
+    PUBLIC_VIDEO_ERROR(1024, "Something went wrong!. Can't public this video, please check video information again.", HttpStatus.BAD_REQUEST),
+    ;
 
 
     private final String message;

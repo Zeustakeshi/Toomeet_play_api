@@ -34,7 +34,7 @@ public class JwtServiceImpl implements JwtService {
         Instant now = Instant.now();
 
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                .subject(account.getAccountId())
+                .subject(account.getId())
                 .issuedAt(now)
                 .issuer("Toomeet Play")
                 .claim("email", account.getEmail())
@@ -42,6 +42,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim("type", "access_token")
                 .expiresAt(now.plus(accessTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
+        
         return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }
 
@@ -52,7 +53,7 @@ public class JwtServiceImpl implements JwtService {
         Instant now = Instant.now();
 
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
-                .subject(account.getAccountId())
+                .subject(account.getId())
                 .issuedAt(now)
                 .issuer("Toomeet Play")
                 .claim("email", account.getEmail())
