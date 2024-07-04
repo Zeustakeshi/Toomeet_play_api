@@ -1,5 +1,6 @@
-package com.toomeet.toomeet_play_api.dto.response;
+package com.toomeet.toomeet_play_api.dto.response.video;
 
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelSummaryResponse;
 import lombok.Data;
 
 import java.time.LocalDateTime;

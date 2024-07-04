@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.service.user.impl;
 
-import com.toomeet.toomeet_play_api.dto.response.AccountResponse;
+import com.toomeet.toomeet_play_api.dto.response.account.AccountResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.entity.User;
@@ -10,6 +10,7 @@ import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.AccountMapper;
 import com.toomeet.toomeet_play_api.repository.AccountRepository;
 import com.toomeet.toomeet_play_api.service.user.AccountService;
+import com.toomeet.toomeet_play_api.service.util.NanoIdService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final NanoIdService nanoIdService;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -58,6 +60,8 @@ public class AccountServiceImpl implements AccountService {
 
         Channel channel = Channel.builder()
                 .account(account)
+                .avatar(account.getImage())
+                .name(account.getUsername() + nanoIdService.generateCustomNanoId(8))
                 .build();
 
         account.addAllAuthority(Set.of(Role.NORMAL_USER));

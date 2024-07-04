@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.dto.response;
+package com.toomeet.toomeet_play_api.dto.response.video;
 
 import com.toomeet.toomeet_play_api.enums.Language;
 import com.toomeet.toomeet_play_api.enums.ResourceUploadStatus;
@@ -23,4 +23,5 @@ public class VideoResponse {
     private ResourceUploadStatus uploadStatus;
     private LocalDateTime recordeDate;
     private boolean allowedComment;
+    private boolean forKid;
 }

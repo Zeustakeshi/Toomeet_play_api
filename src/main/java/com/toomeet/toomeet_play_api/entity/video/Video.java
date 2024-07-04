@@ -25,6 +25,9 @@ public class Video extends Auditable {
     @Builder.Default
     private boolean allowedComment = true;
 
+    @Builder.Default
+    private boolean forKid = true;
+
     @Length(max = 3000)
     private String title;
 

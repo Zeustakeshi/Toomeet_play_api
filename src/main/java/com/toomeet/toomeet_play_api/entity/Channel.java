@@ -17,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@Table(indexes = @Index(columnList = "name"))
 public class Channel extends BaseEntity {
 
     @OneToOne(mappedBy = "channel", fetch = FetchType.LAZY)
@@ -41,7 +42,11 @@ public class Channel extends BaseEntity {
     )
     private Set<User> members;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "channel")
     private Set<Video> videos;
 
+    @Column(unique = true)
+    private String name;
+
+    private String avatar;
 }

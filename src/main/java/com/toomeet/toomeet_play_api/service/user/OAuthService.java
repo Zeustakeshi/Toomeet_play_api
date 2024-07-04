@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.service.user;
 
-import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
+import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 
 public interface OAuthService {
     String getGoogleOAuthUrl();

@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.dto.request;
+package com.toomeet.toomeet_play_api.dto.request.video;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

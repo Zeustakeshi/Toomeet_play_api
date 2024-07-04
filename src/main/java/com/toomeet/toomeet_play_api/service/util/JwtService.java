@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.service.util;
 
-import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
+import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import org.springframework.security.core.Authentication;
 
 public interface JwtService {

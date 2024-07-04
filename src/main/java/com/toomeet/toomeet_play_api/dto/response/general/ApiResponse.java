@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.dto.response;
+package com.toomeet.toomeet_play_api.dto.response.general;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.toomeet.toomeet_play_api.domain.context.RequestContext;

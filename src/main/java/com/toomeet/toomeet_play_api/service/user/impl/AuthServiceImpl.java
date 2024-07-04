@@ -2,11 +2,11 @@ package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.google.gson.Gson;
 import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
-import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
-import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
-import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.response.CreateAccountResponse;
-import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
+import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
+import com.toomeet.toomeet_play_api.dto.response.account.CreateAccountResponse;
+import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.event.EmailVerifyAccountEvent;
@@ -54,7 +54,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         AccountConfirmation accountConfirmation = AccountConfirmation.builder()
-                .account(account)
+                .email(account.getEmail())
+                .password(account.getPassword())
+                .name(account.getUsername())
                 .build();
 
 
@@ -92,7 +94,12 @@ public class AuthServiceImpl implements AuthService {
 
         AccountConfirmation confirmation = gson.fromJson(confirmationJson, AccountConfirmation.class);
 
-        accountService.saveNewAccount(confirmation.getAccount());
+        accountService.saveNewAccount(Account.builder()
+                .name(confirmation.getName())
+                .email(confirmation.getEmail())
+                .password(confirmation.getPassword())
+                .isVerified(true)
+                .build());
 
         jedis.del(code);
         return "Your account has been verified. Please login !";
