@@ -8,4 +8,6 @@ public interface ChannelService {
     String updateChannelName(UpdateChannelNameRequest request, Account account);
 
     String updateChannelAvatar(MultipartFile avatar, Account account);
+
+    void updateChannelAvatarAsync(byte[] avatar, String channelId, String userId);
 }

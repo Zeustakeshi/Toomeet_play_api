@@ -5,12 +5,15 @@ import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
+import com.toomeet.toomeet_play_api.event.UploadChannelAvatarEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.repository.ChannelRepository;
 import com.toomeet.toomeet_play_api.service.channel.ChannelService;
 import com.toomeet.toomeet_play_api.service.util.ResourceService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +23,7 @@ public class ChannelServiceImpl implements ChannelService {
 
     private final ChannelRepository channelRepository;
     private final ResourceService resourceService;
+    private final ApplicationEventPublisher publisher;
 
 
     @Override
@@ -39,9 +43,36 @@ public class ChannelServiceImpl implements ChannelService {
         Channel channel = channelRepository.findAllByAccountId(account.getId());
 
         try {
+
+            UploadChannelAvatarEvent uploadEvent = UploadChannelAvatarEvent
+                    .builder()
+                    .avatar(avatar.getInputStream().readAllBytes())
+                    .channelId(channel.getId())
+                    .userId(account.getUserId())
+                    .build();
+
+            publisher.publishEvent(uploadEvent);
+
+            return "Your channel avatar has been successfully uploaded and is now pending processing.";
+
+        } catch (Exception ex) {
+            throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
+        }
+
+    }
+
+
+    @Async
+    @Override
+    @Transactional
+    public void updateChannelAvatarAsync(byte[] avatar, String channelId, String userId) {
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
+
+        try {
             ResourceUploaderResponse uploadResponse = resourceService
                     .uploadImage(
-                            avatar.getInputStream().readAllBytes(),
+                            avatar,
                             channel.getId(),
                             "channel_avatars"
                     );
@@ -52,9 +83,8 @@ public class ChannelServiceImpl implements ChannelService {
 
             channelRepository.save(channel);
 
-            return avatarUrl;
-
         } catch (Exception ex) {
+            // TODO: Send notification to user (userId)
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
         }
 
