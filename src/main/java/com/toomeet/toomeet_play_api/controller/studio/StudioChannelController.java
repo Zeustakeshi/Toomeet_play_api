@@ -18,6 +18,22 @@ import org.springframework.web.multipart.MultipartFile;
 public class StudioChannelController {
     private final ChannelService channelService;
 
+    @GetMapping("/general")
+    public ResponseEntity<ApiResponse<?>> getChannelGeneral(
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(channelService.getChannelGeneral(account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/analytics")
+    public ResponseEntity<ApiResponse<?>> getChannelAnalytics(
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(channelService.getChannelAnalytics(account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PatchMapping("/name")
     public ResponseEntity<ApiResponse<?>> updateChannelName(
             @RequestBody @Valid UpdateChannelNameRequest request,
@@ -39,5 +55,6 @@ public class StudioChannelController {
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
 }

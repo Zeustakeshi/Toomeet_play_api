@@ -30,6 +30,14 @@ public class StudioVideoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/top")
+    public ResponseEntity<ApiResponse<?>> getTopVideo(
+            @RequestParam(value = "n", required = false, defaultValue = "3") int count,
+            @AuthenticationPrincipal Account account
+    ) {
+
+    }
+
     @PostMapping("upload")
     public ResponseEntity<ApiResponse<?>> uploadVideo(
             @RequestParam("video") MultipartFile video,
@@ -107,5 +115,6 @@ public class StudioVideoController {
         ApiResponse<?> response = ApiResponse.success(videoService.updateVideoCategory(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
 }
