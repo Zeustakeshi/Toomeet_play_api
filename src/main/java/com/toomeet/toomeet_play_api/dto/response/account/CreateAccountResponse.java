@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.dto.response;
+package com.toomeet.toomeet_play_api.dto.response.account;
 
 import lombok.Builder;
 import lombok.Data;

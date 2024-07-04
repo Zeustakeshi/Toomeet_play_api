@@ -1,9 +1,9 @@
 package com.toomeet.toomeet_play_api.controller;
 
-import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
-import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
-import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
+import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
+import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.service.user.AuthService;
 import com.toomeet.toomeet_play_api.service.user.OAuthService;
 import jakarta.validation.Valid;

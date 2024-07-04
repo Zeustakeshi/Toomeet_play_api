@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.dto.request;
+package com.toomeet.toomeet_play_api.dto.request.auth;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;

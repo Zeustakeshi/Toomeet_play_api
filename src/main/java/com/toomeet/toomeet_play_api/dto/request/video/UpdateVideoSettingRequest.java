@@ -1,4 +1,4 @@
-package com.toomeet.toomeet_play_api.dto.request;
+package com.toomeet.toomeet_play_api.dto.request.video;
 
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import jakarta.validation.constraints.NotNull;
@@ -11,4 +11,9 @@ public class UpdateVideoSettingRequest {
 
     @NotNull(message = "Visibility must be not null or empty")
     private Visibility visibility;
+
+    @NotNull(message = "VideoForKid must be not null or empty")
+    private boolean videoForKid;
+
+
 }

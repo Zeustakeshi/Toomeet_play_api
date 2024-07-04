@@ -3,7 +3,7 @@ package com.toomeet.toomeet_play_api.service.user.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
+import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;

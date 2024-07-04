@@ -1,7 +1,7 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
-import com.toomeet.toomeet_play_api.dto.request.CreateVideoCategoryRequest;
-import com.toomeet.toomeet_play_api.dto.response.VideoCategoryResponse;
+import com.toomeet.toomeet_play_api.dto.request.video.CreateVideoCategoryRequest;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoCategoryResponse;
 import com.toomeet.toomeet_play_api.entity.video.Category;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;

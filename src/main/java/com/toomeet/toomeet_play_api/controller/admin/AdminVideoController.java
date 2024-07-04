@@ -1,7 +1,7 @@
 package com.toomeet.toomeet_play_api.controller.admin;
 
-import com.toomeet.toomeet_play_api.dto.request.CreateVideoCategoryRequest;
-import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
+import com.toomeet.toomeet_play_api.dto.request.video.CreateVideoCategoryRequest;
+import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.service.video.AdminVideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +25,6 @@ public class AdminVideoController {
         ApiResponse<?> response = ApiResponse.success(videoService.createCategory(request));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
 }

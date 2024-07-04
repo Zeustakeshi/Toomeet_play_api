@@ -1,10 +1,7 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoCategoryRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoMetadataRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoSettingRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoTagRequest;
-import com.toomeet.toomeet_play_api.dto.response.VideoResponse;
+import com.toomeet.toomeet_play_api.dto.request.video.*;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
@@ -34,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.FAIL;
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.PROCESSING;
@@ -105,8 +103,6 @@ public class VideoServiceImpl implements VideoService {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         video.setTitle(request.getTitle());
         video.setDescription(request.getDescription());
-        video.setRecordeDate(request.getRecordeDate());
-        video.setLanguage(request.getLanguage());
         return videoMapper.toVideoResponse(videoRepository.save(video));
     }
 
@@ -154,20 +150,7 @@ public class VideoServiceImpl implements VideoService {
     @Transactional
     public String updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-
-        tagRepository.deleteAllByVideoId(videoId);
-
-        List<Tag> tags = new ArrayList<>();
-
-        for (var tagName : request.getTags()) {
-            Tag tag = Tag.builder()
-                    .name(tagName)
-                    .video(video)
-                    .build();
-            tags.add(tag);
-        }
-
-        tagRepository.saveAll(tags);
+        updateVideoTag(video, request.getTags());
         return "Video tag has been updated";
     }
 
@@ -175,13 +158,8 @@ public class VideoServiceImpl implements VideoService {
     @Transactional
     public String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-
-        Category category = categoryRepository.findById(request.getCategory())
-                .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
-        video.setCategory(category);
-
+        updateVideoCategory(video, request.getCategory());
         videoRepository.save(video);
-
         return "update video category successful";
     }
 
@@ -191,9 +169,51 @@ public class VideoServiceImpl implements VideoService {
         else video.setVisibility(visibility);
     }
 
+    @Override
+    @Transactional
+    public VideoResponse updateVideoDetails(UpdateVideoDetails request, String videoId, Account account) {
+
+        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
+
+        video.setAllowedComment(request.isAllowedComment());
+        video.setForKid(request.isVideoForKid());
+        video.setLanguage(request.getLanguage());
+        video.setRecordeDate(request.getRecordeDate());
+
+        updateVideoCategory(video, request.getCategory());
+        updateVideoTag(video, request.getTags());
+        updateVideoVisibility(video, request.getVisibility());
+
+        videoRepository.save(video);
+        return videoMapper.toVideoResponse(video);
+    }
+
+    private void updateVideoCategory(Video video, String categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
+        video.setCategory(category);
+    }
+
+    private void updateVideoTag(Video video, Set<String> tags) {
+
+        tagRepository.deleteAllByVideoId(video.getId());
+
+        List<Tag> newTags = new ArrayList<>();
+
+        for (var tagName : tags) {
+            Tag tag = Tag.builder()
+                    .name(tagName)
+                    .video(video)
+                    .build();
+            newTags.add(tag);
+        }
+
+        tagRepository.saveAll(newTags);
+    }
+
     private void publicVideo(Video video) {
         if (isPublicVideo(video)) return;
-        if (!canPublicVideo(video)) {
+        if (canNotPublicVideo(video)) {
             throw new ApiException(ErrorCode.PUBLIC_VIDEO_ERROR);
         }
         video.setVisibility(Visibility.PUBLIC);
@@ -201,14 +221,14 @@ public class VideoServiceImpl implements VideoService {
 
     private void publicVideoMember(Video video) {
         if (isMemberVideo(video)) return;
-        if (!canPublicVideo(video) || !canPublicMemberVideo(video)) {
+        if (canNotPublicVideo(video) || canNotPublicMemberVideo(video)) {
             throw new ApiException(ErrorCode.PUBLIC_VIDEO_ERROR);
         }
         video.setVisibility(Visibility.MEMBER);
     }
 
-    private boolean canPublicMemberVideo(Video video) {
-        return true;
+    private boolean canNotPublicMemberVideo(Video video) {
+        return false;
     }
 
     private boolean isPublicVideo(Video video) {
@@ -219,11 +239,11 @@ public class VideoServiceImpl implements VideoService {
         return video.getVisibility() == Visibility.MEMBER;
     }
 
-    private boolean canPublicVideo(Video video) {
-        if (video.getCategory() == null) return false;
-        if (tagRepository.countByVideoId(video.getId()) < 5) return false;
-        if (video.getUploadStatus() == FAIL || video.getUploadStatus() == PROCESSING) return false;
-        return true;
+    private boolean canNotPublicVideo(Video video) {
+        if (video.getThumbnail() == null) return true;
+        if (video.getCategory() == null) return true;
+        if (tagRepository.countByVideoId(video.getId()) < 5) return true;
+        return video.getUploadStatus() == FAIL || video.getUploadStatus() == PROCESSING;
     }
 }
 

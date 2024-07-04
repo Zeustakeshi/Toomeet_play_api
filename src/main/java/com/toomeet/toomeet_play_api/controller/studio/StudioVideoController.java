@@ -1,10 +1,7 @@
 package com.toomeet.toomeet_play_api.controller.studio;
 
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoCategoryRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoMetadataRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoSettingRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoTagRequest;
-import com.toomeet.toomeet_play_api.dto.response.ApiResponse;
+import com.toomeet.toomeet_play_api.dto.request.video.*;
+import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.service.video.VideoService;
 import jakarta.validation.Valid;
@@ -18,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("studio/video")
 @RequiredArgsConstructor
-public class VideoController {
+public class StudioVideoController {
     private final VideoService videoService;
 
 
@@ -77,6 +74,16 @@ public class VideoController {
         ApiResponse<?> response = ApiResponse.success(
                 videoService.updateVideoSettings(request, videoId, account)
         );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("{videoId}/details")
+    public ResponseEntity<ApiResponse<?>> updateVideoDetails(
+            @PathVariable("videoId") String videoId,
+            @RequestBody UpdateVideoDetails request,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(videoService.updateVideoDetails(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

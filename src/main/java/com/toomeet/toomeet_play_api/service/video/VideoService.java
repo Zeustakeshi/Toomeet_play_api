@@ -1,10 +1,7 @@
 package com.toomeet.toomeet_play_api.service.video;
 
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoCategoryRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoMetadataRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoSettingRequest;
-import com.toomeet.toomeet_play_api.dto.request.UpdateVideoTagRequest;
-import com.toomeet.toomeet_play_api.dto.response.VideoResponse;
+import com.toomeet.toomeet_play_api.dto.request.video.*;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,4 +23,5 @@ public interface VideoService {
 
     String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account);
 
+    VideoResponse updateVideoDetails(UpdateVideoDetails request, String videoId, Account account);
 }

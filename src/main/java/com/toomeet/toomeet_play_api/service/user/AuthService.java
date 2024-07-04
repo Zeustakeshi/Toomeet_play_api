@@ -1,10 +1,10 @@
 package com.toomeet.toomeet_play_api.service.user;
 
-import com.toomeet.toomeet_play_api.dto.request.CreateAccountRequest;
-import com.toomeet.toomeet_play_api.dto.request.LoginRequest;
-import com.toomeet.toomeet_play_api.dto.request.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.response.CreateAccountResponse;
-import com.toomeet.toomeet_play_api.dto.response.TokenResponse;
+import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
+import com.toomeet.toomeet_play_api.dto.response.account.CreateAccountResponse;
+import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 
 public interface AuthService {
     CreateAccountResponse createAccountWithEmailAndPassword(CreateAccountRequest request);
