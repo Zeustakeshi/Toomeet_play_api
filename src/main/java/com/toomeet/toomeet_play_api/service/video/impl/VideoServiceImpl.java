@@ -12,6 +12,7 @@ import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.enums.ResourceUploadStatus;
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
+import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.VideoMapper;
 import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
@@ -135,12 +136,36 @@ public class VideoServiceImpl implements VideoService {
     public String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         try {
-            ResourceUploaderResponse uploadResponse = resourceService.uploadImage(thumbnail.getInputStream().readAllBytes(), videoId, "video_thumbnails");
+
+            UploadVideoThumbnailEvent uploadEvent = UploadVideoThumbnailEvent.builder()
+                    .thumbnail(thumbnail.getInputStream().readAllBytes())
+                    .userId(account.getUserId())
+                    .videoId(video.getId())
+                    .build();
+
+            publisher.publishEvent(uploadEvent);
+
+            return "Your video thumbnail has been successfully uploaded and is now pending processing.";
+        } catch (Exception ex) {
+            throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
+        }
+
+    }
+
+    @Async
+    @Override
+    @Transactional
+    public void uploadThumbnailAsync(byte[] thumbnail, String videoId, String userId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+        try {
+            ResourceUploaderResponse uploadResponse = resourceService.uploadImage(thumbnail, videoId, "video_thumbnails");
             String thumbnailUrl = uploadResponse.getUrl();
             video.setThumbnail(thumbnailUrl);
             videoRepository.save(video);
-            return thumbnailUrl;
+
         } catch (Exception ex) {
+            // TODO: send notification upload thumbnail failed for user (userId)
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
         }
 

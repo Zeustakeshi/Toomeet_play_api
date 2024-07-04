@@ -3,6 +3,7 @@ package com.toomeet.toomeet_play_api.event.listener;
 
 import com.toomeet.toomeet_play_api.event.UploadChannelAvatarEvent;
 import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
+import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
 import com.toomeet.toomeet_play_api.service.channel.ChannelService;
 import com.toomeet.toomeet_play_api.service.video.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,12 @@ public class ResourceUploadListener {
     @EventListener
     public void handleChannelAvatarUploadEvent(UploadChannelAvatarEvent event) {
         channelService.updateChannelAvatarAsync(event.getAvatar(), event.getChannelId(), event.getUserId());
+    }
+
+
+    @EventListener
+    public void handleVideoThumbnailUploadEvent(UploadVideoThumbnailEvent event) {
+        videoService.uploadThumbnailAsync(event.getThumbnail(), event.getVideoId(), event.getUserId());
     }
 
 }
