@@ -19,6 +19,8 @@ public interface VideoService {
 
     String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account);
 
+    void uploadThumbnailAsync(byte[] thumbnail, String videoId, String userId);
+
     String updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account);
 
     String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account);
