@@ -1,6 +1,9 @@
 package com.toomeet.toomeet_play_api.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +25,8 @@ public class Channel extends BaseEntity {
 
     @OneToOne(mappedBy = "channel", fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Account account;
 
     @ManyToMany

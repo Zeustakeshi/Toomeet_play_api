@@ -45,7 +45,7 @@ public class Video extends Auditable {
     @Builder.Default
     private Language language = Language.VI;
 
-    private LocalDateTime recordeDate;
+    private LocalDateTime recordDate;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)

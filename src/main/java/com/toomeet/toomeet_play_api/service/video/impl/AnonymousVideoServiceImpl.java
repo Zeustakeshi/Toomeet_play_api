@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelSummaryResponse;
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoCategoryResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoPreviewResponse;
 import com.toomeet.toomeet_play_api.entity.video.Video;
@@ -36,7 +36,7 @@ public class AnonymousVideoServiceImpl implements AnonymousVideoService {
         return videos.stream().map(video -> {
             VideoPreviewResponse videoResponse = videoMapper.toVideoPreviewResponse(video);
 
-            ChannelSummaryResponse channelResponse = channelMapper.toChannelSummaryResponse(video.getChannel());
+            ChannelGeneralResponse channelResponse = channelMapper.toChannelGeneralResponse(video.getChannel());
 
             videoResponse.setViewCount(videoRepository.countVideoView(video.getId()));
             videoResponse.setChannel(channelResponse);

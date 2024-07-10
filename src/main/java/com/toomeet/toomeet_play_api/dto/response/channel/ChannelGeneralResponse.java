@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ChannelGeneralResponse {
-    private String id;
-    private String name;
     private String avatar;
+    private String name;
+    private String id;
 }

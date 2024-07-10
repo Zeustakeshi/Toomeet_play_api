@@ -1,7 +1,10 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
 import com.toomeet.toomeet_play_api.dto.request.video.*;
+import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoSmallResponse;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
@@ -14,6 +17,7 @@ import com.toomeet.toomeet_play_api.enums.Visibility;
 import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
 import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
+import com.toomeet.toomeet_play_api.mapper.PageMapper;
 import com.toomeet.toomeet_play_api.mapper.VideoMapper;
 import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
 import com.toomeet.toomeet_play_api.repository.video.TagRepository;
@@ -25,14 +29,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.FAIL;
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.PROCESSING;
@@ -47,6 +50,7 @@ public class VideoServiceImpl implements VideoService {
     private final VideoMapper videoMapper;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+    private final PageMapper pageMapper;
 
 
     @Override
@@ -203,7 +207,7 @@ public class VideoServiceImpl implements VideoService {
         video.setAllowedComment(request.isAllowedComment());
         video.setForKid(request.isVideoForKid());
         video.setLanguage(request.getLanguage());
-        video.setRecordeDate(request.getRecordeDate());
+        video.setRecordDate(request.getRecordDate());
 
         updateVideoCategory(video, request.getCategory());
         updateVideoTag(video, request.getTags());
@@ -211,6 +215,46 @@ public class VideoServiceImpl implements VideoService {
 
         videoRepository.save(video);
         return videoMapper.toVideoResponse(video);
+    }
+
+    @Override
+    public List<VideoSmallResponse> getTopVideo(int count, Account account) {
+        System.out.println(count);
+        PageRequest pageRequest = PageRequest.of(0, count);
+        Page<Video> topVideos = videoRepository.getTopVideoByChannelId(account.getChannelId(), pageRequest);
+        return topVideos.map(videoMapper::toVideoSmallResponse).stream().toList();
+    }
+
+    @Override
+    public PageableResponse<StudioVideoSummaryResponse> getAllVideo(int page, int limit, Account account) {
+
+        PageRequest pageRequest = PageRequest.of(page, limit);
+        Page<Video> videos = videoRepository.getAllByChannelId(account.getChannelId(), pageRequest);
+
+        Page<StudioVideoSummaryResponse> pageResponse = videos.map(video -> {
+            var videoResponse = videoMapper.toStudioVideoSummaryResponse(video);
+
+            videoResponse.setViewCount(videoRepository.countVideoView(video.getId()));
+
+            // TODO: implement count video like, dislike, comment, ....
+
+            Random rand = new Random();
+
+            // fake video data
+            videoResponse.setCommendCount(rand.nextInt(10, 2000));
+            videoResponse.setDislikeCount(rand.nextInt(0, 50));
+            videoResponse.setLikeCount(rand.nextInt(0, 3000));
+
+            return videoResponse;
+        });
+
+        return (PageableResponse<StudioVideoSummaryResponse>) pageMapper.toPageableResponse(pageResponse);
+    }
+
+    @Override
+    public List<String> getVideoTags(String videoId, Account account) {
+        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
+        return tagRepository.getAllByVideoId(videoId).stream().map(tag -> tag.getName()).toList();
     }
 
     private void updateVideoCategory(Video video, String categoryId) {
@@ -270,5 +314,6 @@ public class VideoServiceImpl implements VideoService {
         if (tagRepository.countByVideoId(video.getId()) < 5) return true;
         return video.getUploadStatus() == FAIL || video.getUploadStatus() == PROCESSING;
     }
+
 }
 

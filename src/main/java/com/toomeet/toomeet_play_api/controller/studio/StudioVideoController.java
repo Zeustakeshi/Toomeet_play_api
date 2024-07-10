@@ -18,6 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class StudioVideoController {
     private final VideoService videoService;
 
+    @GetMapping()
+    public ResponseEntity<ApiResponse<?>> getAllVideo(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "limit", required = false, defaultValue = "5") int limit,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(videoService.getAllVideo(page, limit, account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("{videoId}")
     public ResponseEntity<ApiResponse<?>> getVideoInfo(
@@ -27,6 +36,26 @@ public class StudioVideoController {
         ApiResponse<?> response = ApiResponse.success(
                 videoService.getVideoById(videoId, account)
         );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("{videoId}/tags")
+    public ResponseEntity<ApiResponse<?>> getVideoTags(
+            @PathVariable("videoId") String videoId,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(
+                videoService.getVideoTags(videoId, account)
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<ApiResponse<?>> getTopVideo(
+            @RequestParam(value = "n", required = false, defaultValue = "3") int count,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(videoService.getTopVideo(count, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -107,5 +136,6 @@ public class StudioVideoController {
         ApiResponse<?> response = ApiResponse.success(videoService.updateVideoCategory(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
 }

@@ -34,6 +34,10 @@ public class Account extends BaseEntity implements UserDetails {
     @Column(name = "_user_id", unique = true, nullable = false, updatable = false)
     private String userId;
 
+    @Column(name = "_channel_id", unique = true, nullable = false, updatable = false)
+    private String channelId;
+
+
     private String image;
 
     private boolean isVerified;
@@ -67,6 +71,11 @@ public class Account extends BaseEntity implements UserDetails {
     public void setUser(User user) {
         this.user = user;
         this.userId = user.getId();
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+        this.channelId = channel.getId();
     }
 
     public void addAuthority(Role role) {

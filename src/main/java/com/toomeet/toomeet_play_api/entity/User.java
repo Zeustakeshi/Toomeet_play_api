@@ -1,5 +1,8 @@
 package com.toomeet.toomeet_play_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +23,8 @@ public class User extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     @JoinColumn(unique = true)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Account account;
 
     @ManyToMany(mappedBy = "subscribers")
@@ -37,5 +42,5 @@ public class User extends BaseEntity {
             indexes = @Index(columnList = "user_id")
     )
     private Set<Video> watchedVideos;
-    
+
 }

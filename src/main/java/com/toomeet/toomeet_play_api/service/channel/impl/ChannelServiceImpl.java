@@ -1,12 +1,15 @@
 package com.toomeet.toomeet_play_api.service.channel.impl;
 
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelNameRequest;
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelAnalyticsResponse;
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.event.UploadChannelAvatarEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
+import com.toomeet.toomeet_play_api.mapper.ChannelMapper;
 import com.toomeet.toomeet_play_api.repository.ChannelRepository;
 import com.toomeet.toomeet_play_api.service.channel.ChannelService;
 import com.toomeet.toomeet_play_api.service.util.ResourceService;
@@ -24,7 +27,7 @@ public class ChannelServiceImpl implements ChannelService {
     private final ChannelRepository channelRepository;
     private final ResourceService resourceService;
     private final ApplicationEventPublisher publisher;
-
+    private final ChannelMapper channelMapper;
 
     @Override
     @Transactional
@@ -87,6 +90,26 @@ public class ChannelServiceImpl implements ChannelService {
             // TODO: Send notification to user (userId)
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
         }
+
+    }
+
+    @Override
+    public ChannelGeneralResponse getChannelGeneral(Account account) {
+        Channel channel = channelRepository.findById(account.getChannelId())
+                .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
+
+        return channelMapper.toChannelGeneralResponse(channel);
+    }
+
+    @Override
+    public ChannelAnalyticsResponse getChannelAnalytics(Account account) {
+        String channelId = account.getChannelId();
+
+        return ChannelAnalyticsResponse.builder()
+                .members(channelRepository.countMember(channelId))
+                .subscribers(channelRepository.countSubscriber(channelId))
+                .videos(channelRepository.countVideo(channelId))
+                .build();
 
     }
 }
