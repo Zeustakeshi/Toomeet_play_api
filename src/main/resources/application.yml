@@ -25,8 +25,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 1000MB
-      max-request-size: 1000MB
+      max-file-size: 1026MB
+      max-request-size: 1026MB
       location: D:\Workspace\java\Toomeet_play\server\temp
   mail:
     host: ${MAIL_HOST}

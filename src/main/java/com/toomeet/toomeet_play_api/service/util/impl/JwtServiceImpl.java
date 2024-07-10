@@ -59,7 +59,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim("email", account.getEmail())
                 .claim("scope", account.getAuthorities())
                 .claim("type", "refresh")
-                .expiresAt(now.plus(accessTokenExpiresTime, ChronoUnit.HOURS))
+                .expiresAt(now.plus(refreshTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }

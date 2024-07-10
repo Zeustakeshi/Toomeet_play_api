@@ -1,6 +1,8 @@
 package com.toomeet.toomeet_play_api.service.video;
 
 import com.toomeet.toomeet_play_api.dto.request.video.*;
+import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoSmallResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
@@ -15,6 +17,8 @@ public interface VideoService {
     void uploadVideoAsync(String videoId, String userId, byte[] video);
 
     VideoResponse getVideoById(String videoId, Account account);
+
+    List<String> getVideoTags(String videoId, Account account);
 
     VideoResponse updateVideoMetadata(UpdateVideoMetadataRequest request, String videoId, Account account);
 
@@ -31,4 +35,6 @@ public interface VideoService {
     VideoResponse updateVideoDetails(UpdateVideoDetails request, String videoId, Account account);
 
     List<VideoSmallResponse> getTopVideo(int count, Account account);
+
+    PageableResponse<StudioVideoSummaryResponse> getAllVideo(int page, int limit, Account account);
 }

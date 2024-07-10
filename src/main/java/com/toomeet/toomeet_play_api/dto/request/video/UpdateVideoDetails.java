@@ -31,7 +31,7 @@ public class UpdateVideoDetails {
     @NotNull(message = "Language must be not null or empty")
     private Language language;
 
-    @NotNull(message = "RecordeDate must be not null or empty")
-    private LocalDateTime recordeDate;
+    @NotNull(message = "RecordDate must be not null or empty")
+    private LocalDateTime recordDate;
 
 }

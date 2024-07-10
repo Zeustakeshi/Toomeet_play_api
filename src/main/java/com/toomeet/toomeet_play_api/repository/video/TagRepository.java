@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TagRepository extends JpaRepository<Tag, String> {
 
@@ -17,4 +19,6 @@ public interface TagRepository extends JpaRepository<Tag, String> {
 
     @Query("select count(t) from Tag t where t.video.id = :videoId")
     Integer countByVideoId(String videoId);
+
+    List<Tag> getAllByVideoId(String videoId);
 }

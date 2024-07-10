@@ -14,5 +14,4 @@ public class VideoPreviewResponse {
     private Integer viewCount;
     private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
-
 }

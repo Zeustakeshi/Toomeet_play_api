@@ -8,4 +8,5 @@ import lombok.Data;
 public class VideoSmallResponse {
     private String id;
     private String thumbnail;
+    private String title;
 }
