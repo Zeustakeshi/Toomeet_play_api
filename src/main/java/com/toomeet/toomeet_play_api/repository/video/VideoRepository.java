@@ -8,9 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, String> {
 
-    @Query("select case when v.createdBy.id = :userId then true else false end from Video v where v.id = :videoId")
-    boolean isOwner(String userId, String videoId);
-
     @Query(value = "select count(u) from Video v join v.viewers u where v.id = :videoId")
     Integer countVideoView(String videoId);
 

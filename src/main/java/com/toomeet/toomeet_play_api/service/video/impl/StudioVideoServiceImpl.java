@@ -132,7 +132,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
         Optional<Video> optionalVideo = videoRepository.findById(videoId);
 
         Video video = optionalVideo.orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-        if (!videoRepository.isOwner(account.getUserId(), videoId)) {
+        if (!studioVideoRepository.isOwner(account.getChannelId(), videoId)) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
         return video;

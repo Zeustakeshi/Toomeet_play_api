@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudioVideoRepository extends JpaRepository<Video, String> {
-    @Query("select case when v.createdBy.id = :userId then true else false end from Video v where v.id = :videoId")
-    boolean isOwner(String userId, String videoId);
+    @Query("select case when v.channel.id = :channelId then true else false end from Video v where v.id = :videoId")
+    boolean isOwner(String channelId, String videoId);
 
     @Query("select v from Video v left join v.viewers viewer where v.channel.id = :channelId group by v order by count(viewer) desc")
     Page<Video> getTopVideoByChannelId(String channelId, Pageable pageable);

@@ -6,4 +6,6 @@ import com.toomeet.toomeet_play_api.enums.ReactionType;
 
 public interface VideoService {
     VideoReactionResponse reactionVideo(String videoId, ReactionType type, Account account);
+
+    VideoReactionResponse unReactionVideo(String videoId, ReactionType type, Account account);
 }
