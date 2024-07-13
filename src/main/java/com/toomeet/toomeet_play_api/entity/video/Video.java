@@ -77,4 +77,17 @@ public class Video extends Auditable {
     )
     private Set<User> viewers;
 
+    @ManyToMany
+    @JoinTable(name = "liked_video",
+            joinColumns = @JoinColumn(name = "video_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likes;
+
+    @ManyToMany
+    @JoinTable(name = "disliked_video",
+            joinColumns = @JoinColumn(name = "video_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> dislikes;
 }

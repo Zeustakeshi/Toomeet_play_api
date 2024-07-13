@@ -30,8 +30,13 @@ public enum ErrorCode {
     CATEGORY_NAME_ALREADY_EXISTS(1022, "Category name already exists", HttpStatus.CONFLICT),
     CATEGORY_NOT_FOUND(1023, "Category not found", HttpStatus.NOT_FOUND),
     PUBLIC_VIDEO_ERROR(1024, "Something went wrong!. Can't public this video, please check video information again.", HttpStatus.BAD_REQUEST),
-    INVALID_TOKEN_ERROR(1025, "Invalid token", HttpStatus.FORBIDDEN);
-
+    INVALID_TOKEN_ERROR(1025, "Invalid token", HttpStatus.FORBIDDEN),
+    VIDEO_ALREADY_SAVED_IN_HISTORY(1026, "Video already saved in history", HttpStatus.CONFLICT),
+    USER_ALREADY_LIKED_VIDEO(1027, "User already liked video", HttpStatus.CONFLICT),
+    USER_ALREADY_DISLIKED_VIDEO(1028, "User already disliked video", HttpStatus.CONFLICT),
+    VIDEO_NOT_LIKED_YET(1029, "This video has not been liked by the user.", HttpStatus.BAD_REQUEST),
+    VIDEO_NOT_DISLIKED_YET(1030, "This video has not been disliked by the user.", HttpStatus.BAD_REQUEST),
+    ;
 
     private final String message;
     private final HttpStatus status;

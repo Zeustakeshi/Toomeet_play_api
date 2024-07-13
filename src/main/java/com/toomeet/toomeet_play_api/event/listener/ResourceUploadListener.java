@@ -5,7 +5,7 @@ import com.toomeet.toomeet_play_api.event.UploadChannelAvatarEvent;
 import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
 import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
 import com.toomeet.toomeet_play_api.service.channel.ChannelService;
-import com.toomeet.toomeet_play_api.service.video.VideoService;
+import com.toomeet.toomeet_play_api.service.video.StudioVideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ResourceUploadListener {
-    private final VideoService videoService;
+    private final StudioVideoService studioVideoService;
     private final ChannelService channelService;
 
     @EventListener
     public void handleVideoUploadEvent(UploadVideoEvent event) {
-        videoService.uploadVideoAsync(event.getVideoId(), event.getUserId(), event.getVideo());
+        studioVideoService.uploadVideoAsync(event.getVideoId(), event.getUserId(), event.getVideo());
     }
 
     @EventListener
@@ -29,7 +29,7 @@ public class ResourceUploadListener {
 
     @EventListener
     public void handleVideoThumbnailUploadEvent(UploadVideoThumbnailEvent event) {
-        videoService.uploadThumbnailAsync(event.getThumbnail(), event.getVideoId(), event.getUserId());
+        studioVideoService.uploadThumbnailAsync(event.getThumbnail(), event.getVideoId(), event.getUserId());
     }
 
 }

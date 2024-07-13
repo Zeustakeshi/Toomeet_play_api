@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface VideoRepository extends JpaRepository<Video, String> {
+import java.util.List;
 
-    @Query(value = "select count(u) from Video v join v.viewers u where v.id = :videoId")
-    Integer countVideoView(String videoId);
+@Repository
+public interface AnonymousVideoRepository extends JpaRepository<Video, String> {
+    @Query("select v from Video v join fetch v.channel where v.visibility = 'PUBLIC'")
+    List<Video> getAllAnonymous();
 
 }

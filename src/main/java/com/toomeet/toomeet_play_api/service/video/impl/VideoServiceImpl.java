@@ -1,319 +1,103 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
-import com.toomeet.toomeet_play_api.dto.request.video.*;
-import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoSmallResponse;
-import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoReactionResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import com.toomeet.toomeet_play_api.entity.Channel;
-import com.toomeet.toomeet_play_api.entity.video.Category;
-import com.toomeet.toomeet_play_api.entity.video.Tag;
+import com.toomeet.toomeet_play_api.entity.User;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
-import com.toomeet.toomeet_play_api.enums.ResourceUploadStatus;
+import com.toomeet.toomeet_play_api.enums.ReactionType;
 import com.toomeet.toomeet_play_api.enums.Visibility;
-import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
-import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.mapper.PageMapper;
-import com.toomeet.toomeet_play_api.mapper.VideoMapper;
-import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
-import com.toomeet.toomeet_play_api.repository.video.TagRepository;
+import com.toomeet.toomeet_play_api.repository.UserRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
-import com.toomeet.toomeet_play_api.service.util.NanoIdService;
-import com.toomeet.toomeet_play_api.service.util.ResourceService;
 import com.toomeet.toomeet_play_api.service.video.VideoService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.*;
-
-import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.FAIL;
-import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.PROCESSING;
 
 @Service
 @RequiredArgsConstructor
 public class VideoServiceImpl implements VideoService {
-    private final ResourceService resourceService;
-    private final NanoIdService nanoIdService;
     private final VideoRepository videoRepository;
-    private final ApplicationEventPublisher publisher;
-    private final VideoMapper videoMapper;
-    private final TagRepository tagRepository;
-    private final CategoryRepository categoryRepository;
-    private final PageMapper pageMapper;
-
-
-    @Override
-    @SneakyThrows
-    public VideoResponse uploadVideo(MultipartFile file, Account account) {
-
-        Channel channel = account.getChannel();
-
-        Video video = Video.builder()
-                .allowedComment(true)
-                .title("Untitled Videos-" + nanoIdService.generateCustomNanoId(12))
-                .channel(channel)
-                .description("No description")
-                .build();
-
-        Video newVideo = videoRepository.save(video);
-
-        UploadVideoEvent uploadEvent = UploadVideoEvent.builder()
-                .videoId(newVideo.getId())
-                .userId(account.getUserId())
-                .video(file.getInputStream().readAllBytes())
-                .build();
-
-        publisher.publishEvent(uploadEvent);
-
-        return videoMapper.toVideoResponse(newVideo);
-    }
-
-    @Async
-    @Override
-    public void uploadVideoAsync(String videoId, String userId, byte[] file) {
-        Video video = videoRepository
-                .findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-
-        try {
-            ResourceUploaderResponse uploadResponse = resourceService.uploadVideo(file, videoId, "/videos");
-            video.setUploadStatus(ResourceUploadStatus.SUCCESS);
-            video.setUrl(uploadResponse.getUrl());
-            video.setWidth(uploadResponse.getWidth());
-            video.setHeight(uploadResponse.getHeight());
-            //TODO: send notify video upload success to user (userId)
-        } catch (Exception ex) {
-            video.setUploadStatus(FAIL);
-            // TODO: send notify video upload failed to user (userId)
-        }
-
-        videoRepository.save(video);
-
-    }
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
-    public VideoResponse updateVideoMetadata(UpdateVideoMetadataRequest request, String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        video.setTitle(request.getTitle());
-        video.setDescription(request.getDescription());
-        return videoMapper.toVideoResponse(videoRepository.save(video));
-    }
+    public VideoReactionResponse reactionVideo(String videoId, ReactionType type, Account account) {
 
-    @Override
-    @Transactional
-    public VideoResponse updateVideoSettings(UpdateVideoSettingRequest request, String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        video.setAllowedComment(request.isAllowedComment());
-        updateVideoVisibility(video, request.getVisibility());
-        return videoMapper.toVideoResponse(videoRepository.save(video));
-    }
-
-    @Override
-    public VideoResponse getVideoById(String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        return videoMapper.toVideoResponse(video);
-    }
-
-    private Video getVideoByIdWithOwnershipCheck(String videoId, Account account) {
-        Optional<Video> optionalVideo = videoRepository.findById(videoId);
-
-        Video video = optionalVideo.orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-        if (!videoRepository.isOwner(account.getUserId(), videoId)) {
-            throw new ApiException(ErrorCode.ACCESS_DENIED);
-        }
-        return video;
-    }
-
-    @Override
-    public String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        try {
-
-            UploadVideoThumbnailEvent uploadEvent = UploadVideoThumbnailEvent.builder()
-                    .thumbnail(thumbnail.getInputStream().readAllBytes())
-                    .userId(account.getUserId())
-                    .videoId(video.getId())
-                    .build();
-
-            publisher.publishEvent(uploadEvent);
-
-            return "Your video thumbnail has been successfully uploaded and is now pending processing.";
-        } catch (Exception ex) {
-            throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
-        }
-
-    }
-
-    @Async
-    @Override
-    @Transactional
-    public void uploadThumbnailAsync(byte[] thumbnail, String videoId, String userId) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-        try {
-            ResourceUploaderResponse uploadResponse = resourceService.uploadImage(thumbnail, videoId, "video_thumbnails");
-            String thumbnailUrl = uploadResponse.getUrl();
-            video.setThumbnail(thumbnailUrl);
-            videoRepository.save(video);
 
-        } catch (Exception ex) {
-            // TODO: send notification upload thumbnail failed for user (userId)
-            throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
+        if (video.getVisibility() != Visibility.PUBLIC) {
+            throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
 
+        User user = userRepository.findById(account.getUserId())
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+
+        if (type == ReactionType.LIKE) return likeVideo(video, user);
+        else return dislikeVideo(video, user);
     }
 
     @Override
     @Transactional
-    public String updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        updateVideoTag(video, request.getTags());
-        return "Video tag has been updated";
+    public VideoReactionResponse unReactionVideo(String videoId, ReactionType type, Account account) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+
+        User user = userRepository.findById(account.getUserId())
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+        if (type == ReactionType.LIKE) return unLikeVideo(video, user);
+        else return unDislikeVideo(video, user);
     }
 
-    @Override
-    @Transactional
-    public String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        updateVideoCategory(video, request.getCategory());
+
+    private VideoReactionResponse likeVideo(Video video, User user) {
+        if (video.getLikes().contains(user)) {
+            throw new ApiException(ErrorCode.USER_ALREADY_LIKED_VIDEO);
+        }
+        video.getLikes().add(user);
+        video.getDislikes().remove(user);
         videoRepository.save(video);
-        return "update video category successful";
+        return getVideoReactionCount(video);
     }
 
-    private void updateVideoVisibility(Video video, Visibility visibility) {
-        if (visibility == Visibility.PUBLIC) publicVideo(video);
-        else if (visibility == Visibility.MEMBER) publicVideoMember(video);
-        else video.setVisibility(visibility);
-    }
-
-    @Override
-    @Transactional
-    public VideoResponse updateVideoDetails(UpdateVideoDetails request, String videoId, Account account) {
-
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-
-        video.setAllowedComment(request.isAllowedComment());
-        video.setForKid(request.isVideoForKid());
-        video.setLanguage(request.getLanguage());
-        video.setRecordDate(request.getRecordDate());
-
-        updateVideoCategory(video, request.getCategory());
-        updateVideoTag(video, request.getTags());
-        updateVideoVisibility(video, request.getVisibility());
-
+    private VideoReactionResponse dislikeVideo(Video video, User user) {
+        if (video.getDislikes().contains(user)) {
+            throw new ApiException(ErrorCode.USER_ALREADY_DISLIKED_VIDEO);
+        }
+        video.getDislikes().add(user);
+        video.getLikes().remove(user);
         videoRepository.save(video);
-        return videoMapper.toVideoResponse(video);
+        return getVideoReactionCount(video);
     }
 
-    @Override
-    public List<VideoSmallResponse> getTopVideo(int count, Account account) {
-        System.out.println(count);
-        PageRequest pageRequest = PageRequest.of(0, count);
-        Page<Video> topVideos = videoRepository.getTopVideoByChannelId(account.getChannelId(), pageRequest);
-        return topVideos.map(videoMapper::toVideoSmallResponse).stream().toList();
-    }
-
-    @Override
-    public PageableResponse<StudioVideoSummaryResponse> getAllVideo(int page, int limit, Account account) {
-
-        PageRequest pageRequest = PageRequest.of(page, limit);
-        Page<Video> videos = videoRepository.getAllByChannelId(account.getChannelId(), pageRequest);
-
-        Page<StudioVideoSummaryResponse> pageResponse = videos.map(video -> {
-            var videoResponse = videoMapper.toStudioVideoSummaryResponse(video);
-
-            videoResponse.setViewCount(videoRepository.countVideoView(video.getId()));
-
-            // TODO: implement count video like, dislike, comment, ....
-
-            Random rand = new Random();
-
-            // fake video data
-            videoResponse.setCommendCount(rand.nextInt(10, 2000));
-            videoResponse.setDislikeCount(rand.nextInt(0, 50));
-            videoResponse.setLikeCount(rand.nextInt(0, 3000));
-
-            return videoResponse;
-        });
-
-        return (PageableResponse<StudioVideoSummaryResponse>) pageMapper.toPageableResponse(pageResponse);
-    }
-
-    @Override
-    public List<String> getVideoTags(String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        return tagRepository.getAllByVideoId(videoId).stream().map(tag -> tag.getName()).toList();
-    }
-
-    private void updateVideoCategory(Video video, String categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
-        video.setCategory(category);
-    }
-
-    private void updateVideoTag(Video video, Set<String> tags) {
-
-        tagRepository.deleteAllByVideoId(video.getId());
-
-        List<Tag> newTags = new ArrayList<>();
-
-        for (var tagName : tags) {
-            Tag tag = Tag.builder()
-                    .name(tagName)
-                    .video(video)
-                    .build();
-            newTags.add(tag);
+    private VideoReactionResponse unLikeVideo(Video video, User user) {
+        if (!video.getLikes().contains(user)) {
+            throw new ApiException(ErrorCode.VIDEO_NOT_LIKED_YET);
         }
-
-        tagRepository.saveAll(newTags);
+        video.getLikes().remove(user);
+        videoRepository.save(video);
+        return getVideoReactionCount(video);
     }
 
-    private void publicVideo(Video video) {
-        if (isPublicVideo(video)) return;
-        if (canNotPublicVideo(video)) {
-            throw new ApiException(ErrorCode.PUBLIC_VIDEO_ERROR);
+    private VideoReactionResponse unDislikeVideo(Video video, User user) {
+        if (!video.getDislikes().contains(user)) {
+            throw new ApiException(ErrorCode.VIDEO_NOT_DISLIKED_YET);
         }
-        video.setVisibility(Visibility.PUBLIC);
+        video.getDislikes().remove(user);
+        videoRepository.save(video);
+        return getVideoReactionCount(video);
     }
 
-    private void publicVideoMember(Video video) {
-        if (isMemberVideo(video)) return;
-        if (canNotPublicVideo(video) || canNotPublicMemberVideo(video)) {
-            throw new ApiException(ErrorCode.PUBLIC_VIDEO_ERROR);
-        }
-        video.setVisibility(Visibility.MEMBER);
+    private VideoReactionResponse getVideoReactionCount(Video video) {
+        return VideoReactionResponse.builder()
+                .like(video.getLikes().size())
+                .dislike(video.getDislikes().size())
+                .build();
     }
 
-    private boolean canNotPublicMemberVideo(Video video) {
-        return false;
-    }
-
-    private boolean isPublicVideo(Video video) {
-        return video.getVisibility() == Visibility.PUBLIC;
-    }
-
-    private boolean isMemberVideo(Video video) {
-        return video.getVisibility() == Visibility.MEMBER;
-    }
-
-    private boolean canNotPublicVideo(Video video) {
-        if (video.getThumbnail() == null) return true;
-        if (video.getCategory() == null) return true;
-        if (tagRepository.countByVideoId(video.getId()) < 5) return true;
-        return video.getUploadStatus() == FAIL || video.getUploadStatus() == PROCESSING;
-    }
 
 }
-

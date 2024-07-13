@@ -8,6 +8,6 @@
 #
 #
 
-logging:
-  level:
-    org.hibernate.type: trace
+#logging:
+#  level:
+#    org.hibernate.type: trace

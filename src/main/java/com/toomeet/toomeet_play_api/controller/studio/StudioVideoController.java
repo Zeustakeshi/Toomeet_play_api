@@ -3,7 +3,7 @@ package com.toomeet.toomeet_play_api.controller.studio;
 import com.toomeet.toomeet_play_api.dto.request.video.*;
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import com.toomeet.toomeet_play_api.service.video.VideoService;
+import com.toomeet.toomeet_play_api.service.video.StudioVideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("studio/video")
 @RequiredArgsConstructor
 public class StudioVideoController {
-    private final VideoService videoService;
+    private final StudioVideoService studioVideoService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<?>> getAllVideo(
@@ -24,7 +24,7 @@ public class StudioVideoController {
             @RequestParam(value = "limit", required = false, defaultValue = "5") int limit,
             @AuthenticationPrincipal Account account
     ) {
-        ApiResponse<?> response = ApiResponse.success(videoService.getAllVideo(page, limit, account));
+        ApiResponse<?> response = ApiResponse.success(studioVideoService.getAllVideo(page, limit, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -34,7 +34,7 @@ public class StudioVideoController {
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                videoService.getVideoById(videoId, account)
+                studioVideoService.getVideoById(videoId, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -45,7 +45,7 @@ public class StudioVideoController {
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                videoService.getVideoTags(videoId, account)
+                studioVideoService.getVideoTags(videoId, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -55,7 +55,7 @@ public class StudioVideoController {
             @RequestParam(value = "n", required = false, defaultValue = "3") int count,
             @AuthenticationPrincipal Account account
     ) {
-        ApiResponse<?> response = ApiResponse.success(videoService.getTopVideo(count, account));
+        ApiResponse<?> response = ApiResponse.success(studioVideoService.getTopVideo(count, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -65,7 +65,7 @@ public class StudioVideoController {
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                videoService.uploadVideo(video, account)
+                studioVideoService.uploadVideo(video, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -77,7 +77,7 @@ public class StudioVideoController {
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                videoService.uploadThumbnail(thumbnail, videoId, account)
+                studioVideoService.uploadThumbnail(thumbnail, videoId, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -89,7 +89,7 @@ public class StudioVideoController {
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                videoService.updateVideoMetadata(request, videoId, account)
+                studioVideoService.updateVideoMetadata(request, videoId, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -101,7 +101,7 @@ public class StudioVideoController {
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                videoService.updateVideoSettings(request, videoId, account)
+                studioVideoService.updateVideoSettings(request, videoId, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -112,7 +112,7 @@ public class StudioVideoController {
             @RequestBody UpdateVideoDetails request,
             @AuthenticationPrincipal Account account
     ) {
-        ApiResponse<?> response = ApiResponse.success(videoService.updateVideoDetails(request, videoId, account));
+        ApiResponse<?> response = ApiResponse.success(studioVideoService.updateVideoDetails(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -122,7 +122,7 @@ public class StudioVideoController {
             @RequestBody UpdateVideoTagRequest request,
             @AuthenticationPrincipal Account account
     ) {
-        ApiResponse<?> response = ApiResponse.success(videoService.updateVideoTag(request, videoId, account));
+        ApiResponse<?> response = ApiResponse.success(studioVideoService.updateVideoTag(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -133,9 +133,8 @@ public class StudioVideoController {
             @RequestBody UpdateVideoCategoryRequest request,
             @AuthenticationPrincipal Account account
     ) {
-        ApiResponse<?> response = ApiResponse.success(videoService.updateVideoCategory(request, videoId, account));
+        ApiResponse<?> response = ApiResponse.success(studioVideoService.updateVideoCategory(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
 }
