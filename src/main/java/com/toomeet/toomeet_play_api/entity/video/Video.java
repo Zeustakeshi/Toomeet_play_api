@@ -90,4 +90,8 @@ public class Video extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> dislikes;
+
+    @OneToMany(mappedBy = "video", fetch = FetchType.LAZY)
+    private Set<Comment> comments;
+
 }

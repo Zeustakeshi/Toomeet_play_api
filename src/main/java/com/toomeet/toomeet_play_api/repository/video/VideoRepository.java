@@ -11,4 +11,13 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     @Query(value = "select count(u) from Video v join v.viewers u where v.id = :videoId")
     Integer countVideoView(String videoId);
 
+    @Query(value = "select count(u) from Video v join v.comments u where v.id = :videoId")
+    Integer countVideoComment(String videoId);
+
+
+    @Query(value = "select count(u) from Video v join v.likes u where v.id = :videoId")
+    Integer countVideoLike(String videoId);
+
+    @Query(value = "select count(u) from Video v join v.dislikes u where v.id = :videoId")
+    Integer countVideoDislike(String videoId);
 }
