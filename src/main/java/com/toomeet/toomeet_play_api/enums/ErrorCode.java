@@ -42,7 +42,7 @@ public enum ErrorCode {
     COMMENT_NOT_DISLIKED_YET(1034, "This comment has not been disliked by the user.", HttpStatus.BAD_REQUEST),
     USER_ALREADY_LIKED_COMMENT(1035, "User already liked comment", HttpStatus.CONFLICT),
     USER_ALREADY_DISLIKED_COMMENT(1036, "User already disliked comment", HttpStatus.CONFLICT),
-    ;
+    VIDEO_COMMENT_UNAVAILABLE(1037, "Video comment unavailable", HttpStatus.FORBIDDEN);;
 
     private final String message;
     private final HttpStatus status;

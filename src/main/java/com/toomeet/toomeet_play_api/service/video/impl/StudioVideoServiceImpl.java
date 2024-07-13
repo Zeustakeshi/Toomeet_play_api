@@ -247,7 +247,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
             return videoResponse;
         });
 
-        return (PageableResponse<StudioVideoSummaryResponse>) pageMapper.toPageableResponse(pageResponse);
+        return pageMapper.toPageableResponse(pageResponse);
     }
 
     @Override
