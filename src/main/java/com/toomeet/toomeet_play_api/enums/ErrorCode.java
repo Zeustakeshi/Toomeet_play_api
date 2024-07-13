@@ -36,7 +36,13 @@ public enum ErrorCode {
     USER_ALREADY_DISLIKED_VIDEO(1028, "User already disliked video", HttpStatus.CONFLICT),
     VIDEO_NOT_LIKED_YET(1029, "This video has not been liked by the user.", HttpStatus.BAD_REQUEST),
     VIDEO_NOT_DISLIKED_YET(1030, "This video has not been disliked by the user.", HttpStatus.BAD_REQUEST),
-    ;
+    COMMENT_NOT_FOUND(1031, "Comment not found", HttpStatus.NOT_FOUND),
+    PARENT_COMMENT_NOT_FOUND(1032, "Parent comment not found", HttpStatus.NOT_FOUND),
+    COMMENT_NOT_LIKED_YET(1033, "This comment has not been liked by the user.", HttpStatus.BAD_REQUEST),
+    COMMENT_NOT_DISLIKED_YET(1034, "This comment has not been disliked by the user.", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_LIKED_COMMENT(1035, "User already liked comment", HttpStatus.CONFLICT),
+    USER_ALREADY_DISLIKED_COMMENT(1036, "User already disliked comment", HttpStatus.CONFLICT),
+    VIDEO_COMMENT_UNAVAILABLE(1037, "Video comment unavailable", HttpStatus.FORBIDDEN);;
 
     private final String message;
     private final HttpStatus status;

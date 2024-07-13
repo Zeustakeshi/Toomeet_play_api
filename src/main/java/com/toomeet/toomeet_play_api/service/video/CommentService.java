@@ -1,0 +1,24 @@
+package com.toomeet.toomeet_play_api.service.video;
+
+import com.toomeet.toomeet_play_api.dto.request.video.comment.NewCommentRequest;
+import com.toomeet.toomeet_play_api.dto.request.video.comment.UpdateCommentRequest;
+import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.comment.CommentReactionResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.comment.CommentResponse;
+import com.toomeet.toomeet_play_api.entity.Account;
+import com.toomeet.toomeet_play_api.enums.ReactionType;
+
+public interface CommentService {
+    CommentResponse createComment(NewCommentRequest request, String videoId, Account account);
+
+    CommentReactionResponse reactionComment(ReactionType reactionType, String commentId, String videoId, Account account);
+
+    CommentReactionResponse unReactionComment(ReactionType reactionType, String commentId, String videoId, Account account);
+
+    PageableResponse<CommentResponse> getAllCommentByVideoId(String videoId, int page, int limit, Account account);
+
+    String deleteComment(String videoId, String commentId, Account account);
+
+    CommentResponse updateComment(UpdateCommentRequest request, String commentId, String videoId, Account account);
+
+}

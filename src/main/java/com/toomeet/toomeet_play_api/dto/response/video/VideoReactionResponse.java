@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class VideoReactionResponse {
-    private Integer like;
-    private Integer dislike;
+    private int like;
+    private int dislike;
 }

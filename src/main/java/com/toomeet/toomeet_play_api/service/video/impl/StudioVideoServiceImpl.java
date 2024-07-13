@@ -36,7 +36,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.FAIL;
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.PROCESSING;
@@ -237,20 +240,14 @@ public class StudioVideoServiceImpl implements StudioVideoService {
             var videoResponse = videoMapper.toStudioVideoSummaryResponse(video);
 
             videoResponse.setViewCount(videoRepository.countVideoView(video.getId()));
-
-            // TODO: implement count video like, dislike, comment, ....
-
-            Random rand = new Random();
-
-            // fake video data
-            videoResponse.setCommendCount(rand.nextInt(10, 2000));
-            videoResponse.setDislikeCount(rand.nextInt(0, 50));
-            videoResponse.setLikeCount(rand.nextInt(0, 3000));
+            videoResponse.setCommendCount(videoRepository.countVideoComment(video.getId()));
+            videoResponse.setDislikeCount(videoRepository.countVideoDislike(video.getId()));
+            videoResponse.setLikeCount(videoRepository.countVideoLike(video.getId()));
 
             return videoResponse;
         });
 
-        return (PageableResponse<StudioVideoSummaryResponse>) pageMapper.toPageableResponse(pageResponse);
+        return pageMapper.toPageableResponse(pageResponse);
     }
 
     @Override
@@ -258,7 +255,6 @@ public class StudioVideoServiceImpl implements StudioVideoService {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         return tagRepository.getAllByVideoId(videoId).stream().map(tag -> tag.getName()).toList();
     }
-
 
     private void updateVideoCategory(Video video, String categoryId) {
         Category category = categoryRepository.findById(categoryId)
