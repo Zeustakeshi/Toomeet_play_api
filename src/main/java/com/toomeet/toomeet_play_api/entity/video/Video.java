@@ -77,4 +77,6 @@ public class Video extends Auditable {
     )
     private Set<User> viewers;
 
+    @OneToMany(mappedBy = "video")
+    private Set<VideoReaction> reactions;
 }

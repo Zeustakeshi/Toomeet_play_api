@@ -121,6 +121,8 @@ cloudinary:
   api_key: ${CLOUDINARY_API_KEY}
   api_secret: ${CLOUDINARY_API_SECRET}
   dir_prefix: ${CLOUDINARY_DIR_PREFIX}
+  secure_url_expire_in: 2 #hour
+
 
 
 frontend:

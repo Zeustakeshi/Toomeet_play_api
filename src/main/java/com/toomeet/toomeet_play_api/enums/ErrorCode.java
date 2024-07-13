@@ -30,7 +30,10 @@ public enum ErrorCode {
     CATEGORY_NAME_ALREADY_EXISTS(1022, "Category name already exists", HttpStatus.CONFLICT),
     CATEGORY_NOT_FOUND(1023, "Category not found", HttpStatus.NOT_FOUND),
     PUBLIC_VIDEO_ERROR(1024, "Something went wrong!. Can't public this video, please check video information again.", HttpStatus.BAD_REQUEST),
-    INVALID_TOKEN_ERROR(1025, "Invalid token", HttpStatus.FORBIDDEN);
+    INVALID_TOKEN_ERROR(1025, "Invalid token", HttpStatus.FORBIDDEN),
+    VIDEO_ALREADY_SAVED_IN_HISTORY(1026, "", HttpStatus.CONFLICT),
+
+    ;
 
 
     private final String message;

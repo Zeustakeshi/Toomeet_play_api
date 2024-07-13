@@ -1,19 +1,21 @@
 package com.toomeet.toomeet_play_api.controller.anonymous;
 
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
+import com.toomeet.toomeet_play_api.service.util.ResourceService;
 import com.toomeet.toomeet_play_api.service.video.AnonymousVideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController()
 @RequestMapping("anonymous/video")
 @RequiredArgsConstructor
 public class AnonymousVideoController {
     private final AnonymousVideoService videoService;
+    private final ResourceService resourceService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<?>> getAllVideo() {
@@ -26,5 +28,25 @@ public class AnonymousVideoController {
         ApiResponse<?> response = ApiResponse.success(videoService.getAllCategory());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/test")
+    public String test(
+//            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+//        ResourceUploaderResponse response = resourceService.uploadImage(
+//                file.getInputStream().readAllBytes(),
+//                "hello-world",
+//                "/test"
+//        );
+//        return response.getUrl();
+        return resourceService.generateSignedUrl("hello-world");
+    }
+
+    @PostMapping("/test/test")
+    public String hello(@RequestBody Object body) {
+        System.out.println("body = " + body);
+        return "OK";
+    }
+
 
 }

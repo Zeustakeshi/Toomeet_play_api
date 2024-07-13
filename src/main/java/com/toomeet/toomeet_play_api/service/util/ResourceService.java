@@ -8,4 +8,6 @@ public interface ResourceService {
     ResourceUploaderResponse uploadVideo(byte[] video, String publicId, String path) throws IOException;
 
     ResourceUploaderResponse uploadImage(byte[] image, String publicId, String path) throws IOException;
+
+    String generateSignedUrl(String publicId);
 }

@@ -7,6 +7,7 @@ import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.mapper.ChannelMapper;
 import com.toomeet.toomeet_play_api.mapper.VideoCategoryMapper;
 import com.toomeet.toomeet_play_api.mapper.VideoMapper;
+import com.toomeet.toomeet_play_api.repository.video.AnonymousVideoRepository;
 import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
 import com.toomeet.toomeet_play_api.service.video.AnonymousVideoService;
@@ -22,16 +23,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AnonymousVideoServiceImpl implements AnonymousVideoService {
 
-    private final VideoRepository videoRepository;
     private final VideoMapper videoMapper;
     private final ChannelMapper channelMapper;
     private final CategoryRepository categoryRepository;
     private final VideoCategoryMapper videoCategoryMapper;
+    private final AnonymousVideoRepository anonymousVideoRepository;
+    private final VideoRepository videoRepository;
 
     @Override
     @Transactional
     public List<VideoPreviewResponse> getAllVideo() {
-        List<Video> videos = videoRepository.getAllAnonymous();
+        List<Video> videos = anonymousVideoRepository.getAllAnonymous();
 
         return videos.stream().map(video -> {
             VideoPreviewResponse videoResponse = videoMapper.toVideoPreviewResponse(video);

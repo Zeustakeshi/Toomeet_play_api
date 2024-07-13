@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 @Component
@@ -18,6 +20,54 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Value("${cloudinary.dir_prefix}")
     private String dirPrefix;
+
+    @Value("${cloudinary.secure_url_expire_in}")
+    private Long secureUrlExpireIn;
+
+    @Override
+    public ResourceUploaderResponse uploadImage(byte[] file, String publicId, String path) throws IOException {
+
+        Map<?, ?> configs = ObjectUtils.asMap(
+                "resource_type", "image",
+                "folder", getCloudPath(path),
+                "public_id", publicId,
+                "overwrite", true,
+                "type", "authenticated",
+                "allowed_formats", "jpg,png,gif",
+                "notification_url", "https://f978-2001-ee0-520a-b0c0-e01f-26a5-c85e-a895.ngrok-free.app/api/v1/anonymous/video/test/test"
+        );
+
+        return upload(file, configs);
+    }
+
+    @Override
+    public ResourceUploaderResponse uploadVideo(byte[] video, String publicId, String path) throws IOException {
+
+        Map<?, ?> configs = ObjectUtils.asMap(
+                "resource_type", "video",
+                "folder", getCloudPath(path),
+                "public_id", publicId,
+                "overwrite", true,
+                "type", "authenticated",
+                "allowed_formats", "mp4"
+        );
+
+        return upload(video, configs);
+    }
+
+    @Override
+    public String generateSignedUrl(String publicId) {
+
+        Instant now = Instant.now();
+
+        Map options = ObjectUtils.asMap(
+                "resource_type", "image",
+                "type", "authenticated",
+                "expires_at", now.plus(secureUrlExpireIn, ChronoUnit.HOURS).toEpochMilli()
+        );
+
+        return cloudinary.apiSignRequest(options, "EB0sjDs0N22e-7gECIM3YpE_Kuo");
+    }
 
     private ResourceUploaderResponse upload(byte[] file, Map<?, ?> configs) throws IOException {
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file, configs);
@@ -39,27 +89,5 @@ public class ResourceServiceImpl implements ResourceService {
         return dirPrefix + (path.startsWith("/") ? path : "/" + path);
     }
 
-    public ResourceUploaderResponse uploadImage(byte[] file, String publicId, String path) throws IOException {
 
-        Map<?, ?> configs = ObjectUtils.asMap(
-                "resource_type", "image",
-                "folder", getCloudPath(path),
-                "public_id", publicId,
-                "allowed_formats", "jpg,png,gif"
-        );
-
-        return upload(file, configs);
-    }
-
-    public ResourceUploaderResponse uploadVideo(byte[] video, String publicId, String path) throws IOException {
-
-        Map<?, ?> configs = ObjectUtils.asMap(
-                "resource_type", "video",
-                "folder", getCloudPath(path),
-                "public_id", publicId,
-                "allowed_formats", "mp4"
-        );
-
-        return upload(video, configs);
-    }
 }
