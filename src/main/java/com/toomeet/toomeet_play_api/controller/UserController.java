@@ -28,7 +28,6 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PostMapping("/history")
     public ResponseEntity<ApiResponse<?>> addHistory(
             @RequestBody @Valid AddVideoHistoryRequest request,
@@ -37,6 +36,5 @@ public class UserController {
         ApiResponse<?> response = ApiResponse.success(userService.addVideoHistory(request, account));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 
 }

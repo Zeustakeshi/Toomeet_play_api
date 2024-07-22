@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.repository.video;
 
+import com.toomeet.toomeet_play_api.dto.response.video.VideoInteractionResponse;
 import com.toomeet.toomeet_play_api.dto.video.VideoDetailPublicDto;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,17 +13,16 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     @Query("select case when v.visibility = 'PUBLIC' then true else false end from Video v where v.id = :videoId")
     boolean isPublicVideo(String videoId);
 
-    @Query(value = "select count(u) from Video v join v.viewers u where v.id = :videoId")
-    Integer countVideoView(String videoId);
 
-    @Query(value = "select count(u) from Video v join v.comments u where v.id = :videoId")
-    Integer countVideoComment(String videoId);
-
-    @Query(value = "select count(u) from Video v join v.likes u where v.id = :videoId")
-    Integer countVideoLike(String videoId);
-
-    @Query(value = "select count(u) from Video v join v.dislikes u where v.id = :videoId")
-    Integer countVideoDislike(String videoId);
+    @Query("select new com.toomeet.toomeet_play_api.dto.response.video.VideoInteractionResponse(" +
+            "case when (count(distinct vl.id) > 0) then true else false end, " +
+            "case when (count(distinct vd.id) > 0) then true else false end, " +
+            "false) " +
+            "from Video v " +
+            "left join v.likes vl on vl.id = :userId " +
+            "left join v.dislikes vd on vd.id = :userId " +
+            "where v.id = :videoId")
+    VideoInteractionResponse getVideoInteraction(String videoId, String userId);
 
 
     @Query("select " +

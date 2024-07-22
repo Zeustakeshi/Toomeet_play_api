@@ -64,17 +64,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     @Transactional
     public VideoInteractionResponse getVideoInteraction(String videoId, Account account) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-
-        User user = userRepository.findById(account.getUserId())
-                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
-
-        return VideoInteractionResponse.builder()
-                .liked(video.getLikes().contains(user))
-                .disliked(video.getDislikes().contains(user))
-                .shared(false) // TODO: change shared
-                .build();
+        return videoRepository.getVideoInteraction(videoId, account.getUserId());
     }
 
     private VideoReactionResponse likeVideo(Video video, User user) {

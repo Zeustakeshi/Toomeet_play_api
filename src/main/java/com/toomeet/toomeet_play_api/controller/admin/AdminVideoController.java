@@ -26,5 +26,4 @@ public class AdminVideoController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
 }
