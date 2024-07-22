@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.repository.video;
 
+import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,5 +17,27 @@ public interface StudioVideoRepository extends JpaRepository<Video, String> {
     Page<Video> getTopVideoByChannelId(String channelId, Pageable pageable);
 
     Page<Video> getAllByChannelId(String channelId, Pageable pageable);
+
+    @Query("select new com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse(" +
+            "v.id, " +
+            "v.title, " +
+            "v.description, " +
+            "v.thumbnail, " +
+            "count(distinct viewer.id), " +
+            "count (distinct comment.id), " +
+            "count(distinct video_like.id), " +
+            "count(distinct video_dislike.id), " +
+            "v.visibility, " +
+            "v.createdAt, " +
+            "v.updatedAt)" +
+            "from Video v " +
+            "left join v.viewers viewer " +
+            "left join v.comments comment " +
+            "left join v.likes video_like " +
+            "left join v.dislikes video_dislike " +
+            "where v.channel.id = :channelId " +
+            "group by v"
+    )
+    Page<StudioVideoSummaryResponse> getAllSummaryByChannelId(String channelId, Pageable pageable);
 
 }

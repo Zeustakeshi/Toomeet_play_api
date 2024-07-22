@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.service.channel.impl;
 
+import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelDescriptionRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelNameRequest;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelAnalyticsResponse;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
@@ -40,6 +41,16 @@ public class ChannelServiceImpl implements ChannelService {
         return "Update channel name to \"" + request.getName() + "\" success.";
     }
 
+    @Override
+    @Transactional
+    public String updateChannelDescription(UpdateChannelDescriptionRequest request, Account account) {
+        Channel channel = channelRepository.findAllByAccountId(account.getId());
+        channel.setDescription(request.getDescription());
+
+        channelRepository.save(channel);
+
+        return "Update channel description to \"" + request.getDescription() + "\" success.";
+    }
 
     @Override
     public String updateChannelAvatar(MultipartFile avatar, Account account) {
@@ -104,12 +115,6 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public ChannelAnalyticsResponse getChannelAnalytics(Account account) {
         String channelId = account.getChannelId();
-
-        return ChannelAnalyticsResponse.builder()
-                .members(channelRepository.countMember(channelId))
-                .subscribers(channelRepository.countSubscriber(channelId))
-                .videos(channelRepository.countVideo(channelId))
-                .build();
-
+        return channelRepository.getChannelAnalytics(channelId);
     }
 }

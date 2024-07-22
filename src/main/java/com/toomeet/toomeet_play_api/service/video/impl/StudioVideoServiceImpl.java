@@ -232,22 +232,9 @@ public class StudioVideoServiceImpl implements StudioVideoService {
 
     @Override
     public PageableResponse<StudioVideoSummaryResponse> getAllVideo(int page, int limit, Account account) {
-
         PageRequest pageRequest = PageRequest.of(page, limit);
-        Page<Video> videos = studioVideoRepository.getAllByChannelId(account.getChannelId(), pageRequest);
-
-        Page<StudioVideoSummaryResponse> pageResponse = videos.map(video -> {
-            var videoResponse = videoMapper.toStudioVideoSummaryResponse(video);
-
-            videoResponse.setViewCount(videoRepository.countVideoView(video.getId()));
-            videoResponse.setCommendCount(videoRepository.countVideoComment(video.getId()));
-            videoResponse.setDislikeCount(videoRepository.countVideoDislike(video.getId()));
-            videoResponse.setLikeCount(videoRepository.countVideoLike(video.getId()));
-
-            return videoResponse;
-        });
-
-        return pageMapper.toPageableResponse(pageResponse);
+        Page<StudioVideoSummaryResponse> videos = studioVideoRepository.getAllSummaryByChannelId(account.getChannelId(), pageRequest);
+        return pageMapper.toPageableResponse(videos);
     }
 
     @Override

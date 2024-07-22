@@ -28,6 +28,7 @@ public class StudioVideoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     @GetMapping("{videoId}")
     public ResponseEntity<ApiResponse<?>> getVideoInfo(
             @PathVariable("videoId") String videoId,

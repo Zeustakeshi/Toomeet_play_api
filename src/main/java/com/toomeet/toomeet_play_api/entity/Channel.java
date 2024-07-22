@@ -32,6 +32,9 @@ public class Channel extends BaseEntity {
     @Column(unique = true)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     private String avatar;
 
     @ManyToMany

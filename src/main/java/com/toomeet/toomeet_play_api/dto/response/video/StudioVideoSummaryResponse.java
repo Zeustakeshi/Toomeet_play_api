@@ -13,10 +13,10 @@ public class StudioVideoSummaryResponse {
     private String title;
     private String description;
     private String thumbnail;
-    private Integer viewCount;
-    private Integer commendCount;
-    private Integer likeCount;
-    private Integer dislikeCount;
+    private long viewCount;
+    private long commendCount;
+    private long likeCount;
+    private long dislikeCount;
     private Visibility visibility;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

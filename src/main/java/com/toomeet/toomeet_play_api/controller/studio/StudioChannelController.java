@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.controller.studio;
 
+import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelDescriptionRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelNameRequest;
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
@@ -34,6 +35,7 @@ public class StudioChannelController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     @PatchMapping("/name")
     public ResponseEntity<ApiResponse<?>> updateChannelName(
             @RequestBody @Valid UpdateChannelNameRequest request,
@@ -41,6 +43,17 @@ public class StudioChannelController {
     ) {
         ApiResponse<?> response = ApiResponse.success(
                 channelService.updateChannelName(request, account)
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/description")
+    public ResponseEntity<ApiResponse<?>> updateChannelDescription(
+            @RequestBody @Valid UpdateChannelDescriptionRequest request,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(
+                channelService.updateChannelDescription(request, account)
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
