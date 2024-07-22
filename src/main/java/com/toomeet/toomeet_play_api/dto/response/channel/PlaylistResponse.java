@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class PlaylistResponse {
     private String id;
     private String name;
+    private String thumbnail;
     private String description;
     private ChannelGeneralResponse owner;
     private long totalVideo;

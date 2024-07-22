@@ -52,10 +52,7 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .videos(new HashSet<>())
                 .build();
 
-
-        Playlist newPlaylist = playlistRepository.save(playlist);
-
-        return toPlaylistResponse(newPlaylist);
+        return playlistMapper.toPlaylistResponse(playlistRepository.save(playlist));
     }
 
     @Override
@@ -74,25 +71,17 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     @Transactional
     public PlaylistResponse updatePlaylist(UpdatePlaylistRequest request, String playlistId, Account account) {
-
         Playlist playlist = getPlaylistAnhCheckOwnership(playlistId, account);
-
         playlist.setName(request.getName());
         playlist.setDescription(request.getDescription());
-
-
         Playlist updatedPlaylist = playlistRepository.save(playlist);
-
         return toPlaylistResponse(updatedPlaylist);
     }
-
 
     @Override
     public String deletePlaylist(String playlistId, Account account) {
         Playlist playlist = getPlaylistAnhCheckOwnership(playlistId, account);
-
         playlistRepository.delete(playlist);
-
         return "Playlist has been deleted";
     }
 
@@ -137,13 +126,8 @@ public class PlaylistServiceImpl implements PlaylistService {
         return "Video has been deleted form the playlist";
     }
 
-
     private Playlist getPlaylistAnhCheckOwnership(String playlistId, Account account) {
-        if (!playlistRepository.isPlaylistOwner(playlistId, account.getChannelId())) {
-            throw new ApiException(ErrorCode.ACCESS_DENIED);
-        }
-
-        return playlistRepository.findById(playlistId)
+        return playlistRepository.getPlaylistByIdAndChannelId(playlistId, account.getChannelId())
                 .orElseThrow(() -> new ApiException(ErrorCode.PLAYLIST_NOT_FOUND));
     }
 

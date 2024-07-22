@@ -35,7 +35,6 @@ public class StudioChannelController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PatchMapping("/name")
     public ResponseEntity<ApiResponse<?>> updateChannelName(
             @RequestBody @Valid UpdateChannelNameRequest request,

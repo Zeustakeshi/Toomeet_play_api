@@ -8,12 +8,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface PlaylistRepository extends JpaRepository<Playlist, String> {
     boolean existsByName(String name);
 
     @Query("select (count(p) > 0) from Playlist p where p.id = :playlistId and p.channel.id = :channelId")
     boolean isPlaylistOwner(String playlistId, String channelId);
+
+    @Query("select p from Playlist p where p.id = :playlistId and p.channel.id = :channelId")
+    Optional<Playlist> getPlaylistByIdAndChannelId(String playlistId, String channelId);
 
     @Query("select count(v) from Playlist l join l.videos v")
     Integer countVideoByPlaylistId(String playlistId);

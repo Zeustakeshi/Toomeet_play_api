@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class StudioVideoSummaryResponse {
+public class VideoSummaryResponse {
     private String id;
     private String title;
     private String description;

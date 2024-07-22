@@ -1,19 +1,20 @@
-package com.toomeet.toomeet_play_api.dto.response.video;
+package com.toomeet.toomeet_play_api.dto.video;
 
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
+import com.toomeet.toomeet_play_api.entity.Channel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class VideoPreviewResponse {
+@AllArgsConstructor
+public class VideoPreviewDto {
     private String id;
     private String title;
-    private ChannelGeneralResponse channel;
+    private Channel channel;
     private String thumbnail;
     private long viewCount;
     private long likeCount;
     private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
 }
-

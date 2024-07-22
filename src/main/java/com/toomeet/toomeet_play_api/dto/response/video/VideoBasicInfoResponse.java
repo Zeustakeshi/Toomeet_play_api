@@ -1,12 +1,10 @@
 package com.toomeet.toomeet_play_api.dto.response.video;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-public class VideoSmallResponse {
+public class VideoBasicInfoResponse {
     private String id;
-    private String thumbnail;
     private String title;
+    private String thumbnail;
 }

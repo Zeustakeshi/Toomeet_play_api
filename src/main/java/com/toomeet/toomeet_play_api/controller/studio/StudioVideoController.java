@@ -127,7 +127,6 @@ public class StudioVideoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @PatchMapping("{videoId}/category")
     public ResponseEntity<ApiResponse<?>> updateVideoCategory(
             @PathVariable("videoId") String videoId,

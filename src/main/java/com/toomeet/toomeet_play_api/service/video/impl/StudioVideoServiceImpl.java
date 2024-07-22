@@ -2,9 +2,9 @@ package com.toomeet.toomeet_play_api.service.video.impl;
 
 import com.toomeet.toomeet_play_api.dto.request.video.*;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoBasicInfoResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoSmallResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoSummaryResponse;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
@@ -38,7 +38,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.FAIL;
@@ -132,15 +131,10 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     }
 
     private Video getVideoByIdWithOwnershipCheck(String videoId, Account account) {
-        Optional<Video> optionalVideo = videoRepository.findById(videoId);
-
-        Video video = optionalVideo.orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-        if (!studioVideoRepository.isOwner(account.getChannelId(), videoId)) {
-            throw new ApiException(ErrorCode.ACCESS_DENIED);
-        }
-        return video;
+        return studioVideoRepository.getVideoByIdAndChannelId(videoId, account.getChannelId())
+                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
     }
-
+    
     @Override
     public String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
@@ -223,24 +217,26 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     }
 
     @Override
-    public List<VideoSmallResponse> getTopVideo(int count, Account account) {
+    public List<VideoBasicInfoResponse> getTopVideo(int count, Account account) {
         System.out.println(count);
         PageRequest pageRequest = PageRequest.of(0, count);
         Page<Video> topVideos = studioVideoRepository.getTopVideoByChannelId(account.getChannelId(), pageRequest);
-        return topVideos.map(videoMapper::toVideoSmallResponse).stream().toList();
+        return topVideos.map(videoMapper::toVideoBasicInfoResponse).stream().toList();
     }
 
     @Override
-    public PageableResponse<StudioVideoSummaryResponse> getAllVideo(int page, int limit, Account account) {
+    public PageableResponse<VideoSummaryResponse> getAllVideo(int page, int limit, Account account) {
         PageRequest pageRequest = PageRequest.of(page, limit);
-        Page<StudioVideoSummaryResponse> videos = studioVideoRepository.getAllSummaryByChannelId(account.getChannelId(), pageRequest);
+        Page<VideoSummaryResponse> videos = studioVideoRepository.getAllSummaryByChannelId(account.getChannelId(), pageRequest);
         return pageMapper.toPageableResponse(videos);
     }
 
     @Override
     public List<String> getVideoTags(String videoId, Account account) {
-        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
-        return tagRepository.getAllByVideoId(videoId).stream().map(tag -> tag.getName()).toList();
+        if (!studioVideoRepository.isOwner(account.getChannelId(), videoId)) {
+            throw new ApiException(ErrorCode.ACCESS_DENIED);
+        }
+        return tagRepository.getAllByVideoId(videoId).stream().map(Tag::getName).toList();
     }
 
     private void updateVideoCategory(Video video, String categoryId) {

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class VideoWatchResponse {
+public class VideoDetailPublicResponse {
     private String id;
     private String title;
     private String description;
@@ -19,6 +19,10 @@ public class VideoWatchResponse {
     private Integer dislikeCount;
     private Integer commentCount;
     private Integer viewCount;
+
+    private boolean liked;
+    private boolean shared;
+    private boolean disliked;
 
     private String url;
 

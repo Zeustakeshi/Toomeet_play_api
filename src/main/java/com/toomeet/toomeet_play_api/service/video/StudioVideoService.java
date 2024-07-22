@@ -2,9 +2,9 @@ package com.toomeet.toomeet_play_api.service.video;
 
 import com.toomeet.toomeet_play_api.dto.request.video.*;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoBasicInfoResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoSmallResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoSummaryResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,8 +34,8 @@ public interface StudioVideoService {
 
     VideoResponse updateVideoDetails(UpdateVideoDetails request, String videoId, Account account);
 
-    List<VideoSmallResponse> getTopVideo(int count, Account account);
+    List<VideoBasicInfoResponse> getTopVideo(int count, Account account);
 
-    PageableResponse<StudioVideoSummaryResponse> getAllVideo(int page, int limit, Account account);
+    PageableResponse<VideoSummaryResponse> getAllVideo(int page, int limit, Account account);
 
 }

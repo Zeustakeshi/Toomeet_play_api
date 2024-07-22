@@ -20,6 +20,7 @@ public class ChannelController {
             @PathVariable("channelId") String channelId,
             @AuthenticationPrincipal Account account
     ) {
+        // TODO: handle subscribe channel
         ApiResponse<?> response = ApiResponse.success(null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -30,6 +31,7 @@ public class ChannelController {
             @PathVariable("channelId") String channelId,
             @AuthenticationPrincipal Account account
     ) {
+        // TODO: handle unsubscribe channel
         ApiResponse<?> response = ApiResponse.success(null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

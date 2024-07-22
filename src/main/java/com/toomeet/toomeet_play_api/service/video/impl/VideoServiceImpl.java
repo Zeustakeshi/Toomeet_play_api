@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
+import com.toomeet.toomeet_play_api.dto.response.video.VideoDetailPublicResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoInteractionResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoReactionResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
@@ -21,6 +22,12 @@ import org.springframework.stereotype.Service;
 public class VideoServiceImpl implements VideoService {
     private final VideoRepository videoRepository;
     private final UserRepository userRepository;
+
+
+    @Override
+    public VideoDetailPublicResponse getVideoDetail(String videoId) {
+        return null;
+    }
 
     @Override
     @Transactional

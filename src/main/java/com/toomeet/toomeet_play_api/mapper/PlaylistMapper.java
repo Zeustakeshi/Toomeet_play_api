@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", imports = {ChannelMapper.class})
 public interface PlaylistMapper {
 
-
     PlaylistResponse toPlaylistResponse(Playlist playlist);
 
     @Mapping(source = "channel", target = "owner")
