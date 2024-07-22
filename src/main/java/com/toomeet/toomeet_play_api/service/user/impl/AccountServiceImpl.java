@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
         Channel channel = Channel.builder()
                 .account(account)
                 .avatar(account.getImage())
-                .name(account.getUsername() + nanoIdService.generateCustomNanoId(8))
+                .name("channel-" + nanoIdService.generateCustomNanoId(5))
                 .build();
 
         account.addAllAuthority(Set.of(Role.NORMAL_USER));

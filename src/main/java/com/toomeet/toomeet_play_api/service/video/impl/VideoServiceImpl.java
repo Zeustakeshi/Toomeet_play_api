@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
+import com.toomeet.toomeet_play_api.dto.response.video.VideoInteractionResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoReactionResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.User;
@@ -53,6 +54,21 @@ public class VideoServiceImpl implements VideoService {
         else return unDislikeVideo(video, user);
     }
 
+    @Override
+    @Transactional
+    public VideoInteractionResponse getVideoInteraction(String videoId, Account account) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+
+        User user = userRepository.findById(account.getUserId())
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+        return VideoInteractionResponse.builder()
+                .liked(video.getLikes().contains(user))
+                .disliked(video.getDislikes().contains(user))
+                .shared(false) // TODO: change shared
+                .build();
+    }
 
     private VideoReactionResponse likeVideo(Video video, User user) {
         if (video.getLikes().contains(user)) {

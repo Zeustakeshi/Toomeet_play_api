@@ -20,13 +20,15 @@ import org.springframework.web.bind.annotation.*;
 public class PlaylistController {
     private final PlaylistService playlistService;
 
-    @PostMapping()
-    public ResponseEntity<ApiResponse<?>> createPlaylist(
-            @RequestBody @Valid NewPlaylistRequest request,
-            @AuthenticationPrincipal Account account
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponse<?>> getAllPlaylist(
+            @AuthenticationPrincipal Account account,
+            @RequestParam(value = "p", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "l", required = false, defaultValue = "20") int limit
     ) {
         ApiResponse<?> response = ApiResponse.success(
-                playlistService.createPlaylist(request, account)
+                playlistService.getAllPlayList(page, limit, account)
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
@@ -39,6 +41,19 @@ public class PlaylistController {
     ) {
         ApiResponse<?> response = ApiResponse.success(
                 playlistService.getPlayListById(playlistId, account)
+        );
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+    }
+
+
+    @PostMapping()
+    public ResponseEntity<ApiResponse<?>> createPlaylist(
+            @RequestBody @Valid NewPlaylistRequest request,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(
+                playlistService.createPlaylist(request, account)
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 

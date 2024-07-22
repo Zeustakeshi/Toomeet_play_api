@@ -29,6 +29,11 @@ public class Channel extends BaseEntity {
     @JsonIdentityReference(alwaysAsId = true)
     private Account account;
 
+    @Column(unique = true)
+    private String name;
+
+    private String avatar;
+
     @ManyToMany
     @JoinTable(
             name = "channel_subscriber",
@@ -50,8 +55,4 @@ public class Channel extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, mappedBy = "channel")
     private Set<Video> videos;
 
-    @Column(unique = true)
-    private String name;
-
-    private String avatar;
 }

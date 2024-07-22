@@ -29,6 +29,7 @@ public class VideoController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
     @PostMapping("{videoId}/un-reaction")
     public ResponseEntity<ApiResponse<?>> unLikeVideo(
             @PathVariable("videoId") String videoId,
@@ -40,5 +41,15 @@ public class VideoController {
         );
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{videoId}/interaction")
+    public ResponseEntity<ApiResponse<?>> getUserInteraction(
+            @PathVariable("videoId") String videoId,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(videoService.getVideoInteraction(videoId, account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }

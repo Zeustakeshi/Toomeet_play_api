@@ -29,7 +29,7 @@ public class VideoResponse {
     private LocalDateTime recordDate;
     private boolean allowedComment;
     private boolean forKid;
-    
+
     @JsonProperty("category")
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)

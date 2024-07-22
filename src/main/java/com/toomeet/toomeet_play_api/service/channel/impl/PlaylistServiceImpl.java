@@ -1,15 +1,18 @@
 package com.toomeet.toomeet_play_api.service.channel.impl;
 
+import com.toomeet.toomeet_play_api.dto.playlist.PlaylistTotalVideoDto;
 import com.toomeet.toomeet_play_api.dto.request.channel.AddVideoPlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.DeleteVideoPlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.NewPlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdatePlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.response.channel.PlaylistResponse;
+import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Playlist;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
+import com.toomeet.toomeet_play_api.mapper.PageMapper;
 import com.toomeet.toomeet_play_api.mapper.PlaylistMapper;
 import com.toomeet.toomeet_play_api.repository.ChannelRepository;
 import com.toomeet.toomeet_play_api.repository.PlaylistRepository;
@@ -18,6 +21,9 @@ import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
 import com.toomeet.toomeet_play_api.service.channel.PlaylistService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -30,7 +36,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     private final UserRepository userRepository;
     private final PlaylistMapper playlistMapper;
     private final VideoRepository videoRepository;
-
+    private final PageMapper pageMapper;
 
     @Override
     public PlaylistResponse createPlaylist(NewPlaylistRequest request, Account account) {
@@ -39,23 +45,30 @@ public class PlaylistServiceImpl implements PlaylistService {
             throw new ApiException(ErrorCode.PLAYLIST_ALREADY_EXIST);
         }
 
-
         Playlist playlist = Playlist.builder()
                 .description(request.getDescription())
                 .name(request.getName())
                 .channel(account.getChannel())
                 .videos(new HashSet<>())
                 .build();
+
+
         Playlist newPlaylist = playlistRepository.save(playlist);
 
+        return toPlaylistResponse(newPlaylist);
+    }
 
-        return playlistMapper.toPlaylistResponse(newPlaylist);
+    @Override
+    public PageableResponse<PlaylistResponse> getAllPlayList(int page, int limit, Account account) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt");
+        Page<PlaylistTotalVideoDto> playlistPage = playlistRepository.findAllByChannelId(account.getChannelId(), PageRequest.of(page, limit, sort));
+        return pageMapper.toPageableResponse(playlistPage.map(playlistMapper::toPlaylistResponse));
     }
 
     @Override
     public PlaylistResponse getPlayListById(String playlistId, Account account) {
         Playlist playlist = getPlaylistAnhCheckOwnership(playlistId, account);
-        return playlistMapper.toPlaylistResponse(playlist);
+        return toPlaylistResponse(playlist);
     }
 
     @Override
@@ -70,7 +83,7 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         Playlist updatedPlaylist = playlistRepository.save(playlist);
 
-        return playlistMapper.toPlaylistResponse(updatedPlaylist);
+        return toPlaylistResponse(updatedPlaylist);
     }
 
 
@@ -96,6 +109,7 @@ public class PlaylistServiceImpl implements PlaylistService {
             throw new ApiException(ErrorCode.VIDEO_ALREADY_EXISTED_IN_PLAYLIST);
         }
 
+        playlist.setThumbnail(video.getThumbnail());
         playlist.getVideos().add(video);
 
         playlistRepository.save(playlist);
@@ -133,5 +147,10 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .orElseThrow(() -> new ApiException(ErrorCode.PLAYLIST_NOT_FOUND));
     }
 
+    private PlaylistResponse toPlaylistResponse(Playlist playlist) {
+        PlaylistResponse playlistResponse = playlistMapper.toPlaylistResponse(playlist);
+        playlistResponse.setTotalVideo(playlistRepository.countVideoByPlaylistId(playlist.getId()));
+        return playlistResponse;
+    }
 
 }

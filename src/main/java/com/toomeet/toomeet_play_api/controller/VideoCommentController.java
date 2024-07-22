@@ -33,7 +33,7 @@ public class VideoCommentController {
     public ResponseEntity<ApiResponse<?>> getAllComment(
             @PathVariable("videoId") String videoId,
             @RequestParam(value = "p", required = false, defaultValue = "0") int page,
-            @RequestParam(value = "l", required = false, defaultValue = "5") int limit,
+            @RequestParam(value = "l", required = false, defaultValue = "20") int limit,
             @AuthenticationPrincipal Account account
     ) {
         ApiResponse<?> response = ApiResponse.success(
@@ -42,6 +42,19 @@ public class VideoCommentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/replies")
+    public ResponseEntity<ApiResponse<?>> getAllCommentReplies(
+            @PathVariable("videoId") String videoId,
+            @RequestParam(value = "p", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "l", required = false, defaultValue = "20") int limit,
+            @RequestParam(value = "parentId") String parentId,
+            @AuthenticationPrincipal Account account
+    ) {
+        ApiResponse<?> response = ApiResponse.success(
+                commentService.getAllCommentCommentReplies(videoId, parentId, page, limit, account)
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PatchMapping("{commentId}")
     public ResponseEntity<ApiResponse<?>> updateComment(

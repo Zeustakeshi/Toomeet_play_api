@@ -29,6 +29,10 @@ public class Playlist extends Auditable {
     @ManyToOne
     private Channel channel;
 
+    private String thumbnail;
+
+    private int videoCount;
+
     @ManyToMany
     @JoinTable(
             name = "video_playlist",
@@ -36,4 +40,5 @@ public class Playlist extends Auditable {
             inverseJoinColumns = @JoinColumn(name = "playlist_id")
     )
     private Set<Video> videos;
+
 }

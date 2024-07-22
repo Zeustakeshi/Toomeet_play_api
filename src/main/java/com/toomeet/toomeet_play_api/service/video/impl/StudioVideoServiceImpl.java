@@ -310,7 +310,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     private boolean canNotPublicVideo(Video video) {
         if (video.getThumbnail() == null) return true;
         if (video.getCategory() == null) return true;
-        if (tagRepository.countByVideoId(video.getId()) < 5) return true;
+        if (tagRepository.countByVideoId(video.getId()) < 4) return true;
         return video.getUploadStatus() == FAIL || video.getUploadStatus() == PROCESSING;
     }
 

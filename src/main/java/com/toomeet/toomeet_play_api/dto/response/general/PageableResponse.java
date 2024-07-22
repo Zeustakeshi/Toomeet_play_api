@@ -14,6 +14,4 @@ public class PageableResponse<T> {
     private boolean last;
     private int pageNumber;
     private boolean empty;
-
-
 }

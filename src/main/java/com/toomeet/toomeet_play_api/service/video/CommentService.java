@@ -17,8 +17,11 @@ public interface CommentService {
 
     PageableResponse<CommentResponse> getAllCommentByVideoId(String videoId, int page, int limit, Account account);
 
+    PageableResponse<CommentResponse> getAllCommentCommentReplies(String videoId, String parentId, int page, int limit, Account account);
+
     String deleteComment(String videoId, String commentId, Account account);
 
     CommentResponse updateComment(UpdateCommentRequest request, String commentId, String videoId, Account account);
+
 
 }

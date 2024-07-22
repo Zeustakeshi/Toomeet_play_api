@@ -11,7 +11,6 @@ import com.toomeet.toomeet_play_api.entity.video.Comment;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.enums.ReactionType;
-import com.toomeet.toomeet_play_api.enums.Visibility;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.PageMapper;
 import com.toomeet.toomeet_play_api.mapper.VideoCommentMapper;
@@ -25,8 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
-        checkVideoPermission(video, account);
+        checkVideoPermission(video.getId(), account);
 
         Comment comment = Comment.builder()
                 .content(request.getContent())
@@ -54,7 +51,8 @@ public class CommentServiceImpl implements CommentService {
         if (request.getParentId() != null) {
             Comment parent = commentRepository.findById(request.getParentId())
                     .orElseThrow(() -> new ApiException(ErrorCode.PARENT_COMMENT_NOT_FOUND));
-            comment.setParent(parent);
+            if (parent.isReply()) comment.setParent(parent.getParent());
+            else comment.setParent(parent);
         }
 
         return commentMapper.toCommentResponse(commentRepository.save(comment), account.getUserId());
@@ -69,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
-        checkCommentOwner(comment, account);
+        checkCommentOwner(commentId, account.getUserId());
 
         comment.setContent(request.getContent());
 
@@ -80,12 +78,30 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    public String deleteComment(String videoId, String commentId, Account account) {
+        checkVideoPermission(videoId, account);
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+
+        checkCommentOwner(commentId, account.getUserId());
+
+        commentRepository.deleteComment(commentId);
+
+        if (comment.isReply()) {
+            commentRepository.updateReplyCount(comment.getParent().getId());
+        }
+        return "Your comment has been deleted!";
+    }
+
+    @Override
+    @Transactional
     public PageableResponse<CommentResponse> getAllCommentByVideoId(String videoId, int page, int limit, Account account) {
 
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
-        checkVideoPermission(video, account);
+        checkVideoPermission(video.getId(), account);
 
         if (!video.isAllowedComment()) {
             throw new ApiException(ErrorCode.VIDEO_COMMENT_UNAVAILABLE);
@@ -93,19 +109,27 @@ public class CommentServiceImpl implements CommentService {
 
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Page<Comment> comments = commentRepository.getAllByVideoId(videoId, PageRequest.of(page, limit, sort));
+        Page<Comment> comments = commentRepository.getAllByVideoIdAndParentId(videoId, null, PageRequest.of(page, limit, sort));
 
-        Page<CommentResponse> commentResponsePage = comments.map(comment -> {
-            var commentResponse = commentMapper.toCommentResponse(comment, account.getUserId());
+        return convertPageableCommentResponse(account, comments);
+    }
 
-            commentResponse.setTotalDislikes(commentRepository.countCommentDislike(comment.getId()));
-            commentResponse.setTotalLikes(commentRepository.countCommentLike(comment.getId()));
-            commentResponse.setTotalReplies(commentRepository.countCommentReplies(comment.getId()));
+    @Override
+    public PageableResponse<CommentResponse> getAllCommentCommentReplies(String videoId, String parentId, int page, int limit, Account account) {
 
-            return commentResponse;
-        });
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
-        return pageMapper.toPageableResponse(commentResponsePage);
+        checkVideoPermission(video.getId(), account);
+
+        if (!video.isAllowedComment()) {
+            throw new ApiException(ErrorCode.VIDEO_COMMENT_UNAVAILABLE);
+        }
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
+        Page<Comment> comments = commentRepository.getAllByVideoIdAndParentId(videoId, parentId, PageRequest.of(page, limit, sort));
+
+        return convertPageableCommentResponse(account, comments);
     }
 
     @Override
@@ -140,30 +164,13 @@ public class CommentServiceImpl implements CommentService {
         else return unDislikeComment(comment, user);
     }
 
-    @Override
-    @Transactional
-    public String deleteComment(String videoId, String commentId, Account account) {
-        checkVideoPermission(videoId, account);
-
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
-
-        checkCommentOwner(comment, account);
-
-        commentRepository.delete(comment);
-
-        return "Your comment has been deleted!";
-    }
-
     private CommentReactionResponse likeComment(Comment comment, User user) {
         if (comment.getLikes().contains(user)) {
             throw new ApiException(ErrorCode.USER_ALREADY_LIKED_COMMENT);
         }
-        comment.getLikes().add(user);
-        comment.getDislikes().remove(user);
-
+        comment.addLike(user);
+        if (comment.getDislikes().contains(user)) comment.removeDislike(user);
         commentRepository.save(comment);
-
         return commentMapper.toCommentReactionResponse(comment);
     }
 
@@ -171,7 +178,7 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getLikes().contains(user)) {
             throw new ApiException(ErrorCode.COMMENT_NOT_LIKED_YET);
         }
-        comment.getLikes().remove(user);
+        comment.removeLike(user);
         commentRepository.save(comment);
         return commentMapper.toCommentReactionResponse(comment);
     }
@@ -180,11 +187,9 @@ public class CommentServiceImpl implements CommentService {
         if (comment.getDislikes().contains(user)) {
             throw new ApiException(ErrorCode.USER_ALREADY_DISLIKED_COMMENT);
         }
-        comment.getDislikes().add(user);
-        comment.getLikes().remove(user);
-
+        comment.addDislike(user);
+        if (comment.getLikes().contains(user)) comment.removeLike(user);
         commentRepository.save(comment);
-
         return commentMapper.toCommentReactionResponse(comment);
     }
 
@@ -192,27 +197,35 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getDislikes().contains(user)) {
             throw new ApiException(ErrorCode.COMMENT_NOT_DISLIKED_YET);
         }
-        comment.getDislikes().remove(user);
+        comment.removeDislike(user);
         commentRepository.save(comment);
         return commentMapper.toCommentReactionResponse(comment);
     }
 
-    private void checkCommentOwner(Comment comment, Account account) {
-        if (!Objects.equals(comment.getUser().getId(), account.getUserId())) {
+    private void checkCommentOwner(String commentId, String userId) {
+        if (!commentRepository.isCommentOwner(commentId, userId)) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
-
-
     }
 
     private void checkVideoPermission(String videoId, Account account) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+        if (!videoRepository.isPublicVideo(videoId)) {
+            throw new ApiException(ErrorCode.ACCESS_DENIED);
+        }
 
-        checkVideoPermission(video, account);
     }
 
-    private void checkVideoPermission(Video video, Account account) {
-        if (video.getVisibility() != Visibility.PUBLIC) throw new ApiException(ErrorCode.ACCESS_DENIED);
+    private PageableResponse<CommentResponse> convertPageableCommentResponse(Account account, Page<Comment> comments) {
+        return pageMapper.toPageableResponse(
+                comments.map(comment -> {
+                    String userId = account.getUserId();
+                    String commentId = comment.getId();
+                    CommentResponse commentResponse = commentMapper.toCommentResponse(comment, userId);
+                    commentResponse.setLiked(commentRepository.isUserLikedComment(userId, commentId));
+                    commentResponse.setDisliked(commentRepository.isUserDislikedComment(userId, commentId));
+                    return commentResponse;
+                })
+        );
     }
+
 }
