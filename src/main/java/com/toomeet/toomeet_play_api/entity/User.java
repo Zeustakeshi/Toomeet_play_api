@@ -43,4 +43,5 @@ public class User extends BaseEntity {
     )
     private Set<Video> watchedVideos;
 
+
 }

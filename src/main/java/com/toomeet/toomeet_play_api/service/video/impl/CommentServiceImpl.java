@@ -3,8 +3,9 @@ package com.toomeet.toomeet_play_api.service.video.impl;
 import com.toomeet.toomeet_play_api.dto.request.video.comment.NewCommentRequest;
 import com.toomeet.toomeet_play_api.dto.request.video.comment.UpdateCommentRequest;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.comment.CommentReactionResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.comment.CommentReactionCountResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.comment.CommentResponse;
+import com.toomeet.toomeet_play_api.dto.video.comment.CommentDetailDto;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.User;
 import com.toomeet.toomeet_play_api.entity.video.Comment;
@@ -55,12 +56,13 @@ public class CommentServiceImpl implements CommentService {
             else comment.setParent(parent);
         }
 
-        return commentMapper.toCommentResponse(commentRepository.save(comment), account.getUserId());
+        Comment newComment = commentRepository.save(comment);
+
+        return commentMapper.toCommentResponse(newComment);
     }
 
     @Override
-    @Transactional
-    public CommentResponse updateComment(UpdateCommentRequest request, String commentId, String videoId, Account account) {
+    public String updateComment(UpdateCommentRequest request, String commentId, String videoId, Account account) {
 
         checkVideoPermission(videoId, account);
 
@@ -73,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.save(comment);
 
-        return commentMapper.toCommentResponse(comment, account.getUserId());
+        return "comment has been updated";
     }
 
     @Override
@@ -81,16 +83,13 @@ public class CommentServiceImpl implements CommentService {
     public String deleteComment(String videoId, String commentId, Account account) {
         checkVideoPermission(videoId, account);
 
-        Comment comment = commentRepository.findById(commentId)
+        commentRepository.findById(commentId)
                 .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
         checkCommentOwner(commentId, account.getUserId());
 
         commentRepository.deleteComment(commentId);
 
-        if (comment.isReply()) {
-            commentRepository.updateReplyCount(comment.getParent().getId());
-        }
         return "Your comment has been deleted!";
     }
 
@@ -107,11 +106,17 @@ public class CommentServiceImpl implements CommentService {
             throw new ApiException(ErrorCode.VIDEO_COMMENT_UNAVAILABLE);
         }
 
-
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Page<Comment> comments = commentRepository.getAllByVideoIdAndParentId(videoId, null, PageRequest.of(page, limit, sort));
+        Page<CommentDetailDto> comments = commentRepository.getAllByVideoIdAndParentId(
+                videoId,
+                null,
+                account.getUserId(),
+                PageRequest.of(page, limit, sort)
+        );
 
-        return convertPageableCommentResponse(account, comments);
+        return pageMapper.toPageableResponse(
+                comments.map(commentMapper::toCommentResponse)
+        );
     }
 
     @Override
@@ -127,14 +132,21 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
-        Page<Comment> comments = commentRepository.getAllByVideoIdAndParentId(videoId, parentId, PageRequest.of(page, limit, sort));
+        Page<CommentDetailDto> comments = commentRepository.getAllByVideoIdAndParentId(
+                videoId,
+                parentId,
+                account.getUserId(),
+                PageRequest.of(page, limit, sort)
+        );
 
-        return convertPageableCommentResponse(account, comments);
+        return pageMapper.toPageableResponse(
+                comments.map(commentMapper::toCommentResponse)
+        );
     }
 
     @Override
     @Transactional
-    public CommentReactionResponse reactionComment(ReactionType reactionType, String commentId, String videoId, Account account) {
+    public CommentReactionCountResponse reactionComment(ReactionType reactionType, String commentId, String videoId, Account account) {
 
         checkVideoPermission(videoId, account);
 
@@ -150,7 +162,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentReactionResponse unReactionComment(ReactionType reactionType, String commentId, String videoId, Account account) {
+    public CommentReactionCountResponse unReactionComment(ReactionType reactionType, String commentId, String videoId, Account account) {
 
         checkVideoPermission(videoId, account);
 
@@ -164,40 +176,41 @@ public class CommentServiceImpl implements CommentService {
         else return unDislikeComment(comment, user);
     }
 
-    private CommentReactionResponse likeComment(Comment comment, User user) {
-        if (comment.getLikes().contains(user)) {
+    private CommentReactionCountResponse likeComment(Comment comment, User user) {
+        // TODO: fix lazy load user (don't query user watched list in this case)
+        if (commentRepository.isUserLikedComment(user.getId(), comment.getId())) {
             throw new ApiException(ErrorCode.USER_ALREADY_LIKED_COMMENT);
         }
-        comment.addLike(user);
-        if (comment.getDislikes().contains(user)) comment.removeDislike(user);
+        comment.getLikes().add(user);
+        comment.getDislikes().remove(user);
         commentRepository.save(comment);
         return commentMapper.toCommentReactionResponse(comment);
     }
 
-    private CommentReactionResponse unLikeComment(Comment comment, User user) {
+    private CommentReactionCountResponse unLikeComment(Comment comment, User user) {
         if (!comment.getLikes().contains(user)) {
             throw new ApiException(ErrorCode.COMMENT_NOT_LIKED_YET);
         }
-        comment.removeLike(user);
+        comment.getLikes().remove(user);
         commentRepository.save(comment);
         return commentMapper.toCommentReactionResponse(comment);
     }
 
-    private CommentReactionResponse dislikeComment(Comment comment, User user) {
+    private CommentReactionCountResponse dislikeComment(Comment comment, User user) {
         if (comment.getDislikes().contains(user)) {
             throw new ApiException(ErrorCode.USER_ALREADY_DISLIKED_COMMENT);
         }
-        comment.addDislike(user);
-        if (comment.getLikes().contains(user)) comment.removeLike(user);
+        comment.getDislikes().add(user);
+        comment.getLikes().remove(user);
         commentRepository.save(comment);
         return commentMapper.toCommentReactionResponse(comment);
     }
 
-    private CommentReactionResponse unDislikeComment(Comment comment, User user) {
+    private CommentReactionCountResponse unDislikeComment(Comment comment, User user) {
         if (!comment.getDislikes().contains(user)) {
             throw new ApiException(ErrorCode.COMMENT_NOT_DISLIKED_YET);
         }
-        comment.removeDislike(user);
+        comment.getDislikes().remove(user);
         commentRepository.save(comment);
         return commentMapper.toCommentReactionResponse(comment);
     }
@@ -209,23 +222,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void checkVideoPermission(String videoId, Account account) {
-        if (!videoRepository.isPublicVideo(videoId)) {
+        if (!videoRepository.canCommentVideo(videoId)) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
-
+        // check something here
     }
 
-    private PageableResponse<CommentResponse> convertPageableCommentResponse(Account account, Page<Comment> comments) {
-        return pageMapper.toPageableResponse(
-                comments.map(comment -> {
-                    String userId = account.getUserId();
-                    String commentId = comment.getId();
-                    CommentResponse commentResponse = commentMapper.toCommentResponse(comment, userId);
-                    commentResponse.setLiked(commentRepository.isUserLikedComment(userId, commentId));
-                    commentResponse.setDisliked(commentRepository.isUserDislikedComment(userId, commentId));
-                    return commentResponse;
-                })
-        );
-    }
 
 }

@@ -6,7 +6,7 @@ import com.toomeet.toomeet_play_api.entity.Playlist;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", imports = {ChannelMapper.class})
+@Mapper(componentModel = "spring", uses = {ChannelMapper.class})
 public interface PlaylistMapper {
 
     PlaylistResponse toPlaylistResponse(Playlist playlist);

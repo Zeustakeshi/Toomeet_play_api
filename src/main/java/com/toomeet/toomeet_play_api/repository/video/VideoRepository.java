@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, String> {
 
-    @Query("select case when v.visibility = 'PUBLIC' then true else false end from Video v where v.id = :videoId")
-    boolean isPublicVideo(String videoId);
+    @Query("select case when (v.visibility = 'PUBLIC' and  v.allowedComment = true) then true else false end from Video v where v.id = :videoId")
+    boolean canCommentVideo(String videoId);
 
 
     @Query("select new com.toomeet.toomeet_play_api.dto.response.video.VideoInteractionResponse(" +
@@ -44,5 +44,6 @@ public interface VideoRepository extends JpaRepository<Video, String> {
             "left join  v.viewers view " +
             "left join v.comments comment where v.id = :videoId group by v, c")
     VideoDetailPublicDto getVideoDetailPublic(String videoId);
+
 
 }

@@ -3,7 +3,6 @@ package com.toomeet.toomeet_play_api.entity.video;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.toomeet.toomeet_play_api.entity.Auditable;
 import com.toomeet.toomeet_play_api.entity.User;
-import com.toomeet.toomeet_play_api.entity.auditing.CommentEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,8 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Table(indexes = @Index(columnList = "video_id"))
-@EntityListeners(CommentEntityListener.class)
+@Table(name = "comments", indexes = @Index(columnList = "video_id"))
 public class Comment extends Auditable {
 
     @ManyToOne()
@@ -56,39 +54,10 @@ public class Comment extends Auditable {
     )
     private Set<User> dislikes = new HashSet<>();
 
-    private int likeCount;
-    private int dislikeCount;
-    private int replyCount;
-
 
     public void setParent(Comment parent) {
         this.parent = parent;
         this.isReply = true;
-    }
-
-
-    public void addLike(User user) {
-        this.likes.add(user);
-        this.likeCount += 1;
-    }
-
-    public void removeLike(User user) {
-        this.likes.remove(user);
-        if (this.likeCount > 0) this.likeCount -= 1;
-    }
-
-    public void addDislike(User user) {
-        this.dislikes.add(user);
-        this.dislikeCount += 1;
-    }
-
-    public void removeDislike(User user) {
-        this.dislikes.remove(user);
-        if (this.dislikeCount > 0) this.dislikeCount -= 1;
-    }
-
-    public void incrementReplyCount() {
-        this.replyCount++;
     }
 
 }

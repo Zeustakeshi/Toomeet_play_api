@@ -62,12 +62,12 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    @Transactional
     public VideoInteractionResponse getVideoInteraction(String videoId, Account account) {
         return videoRepository.getVideoInteraction(videoId, account.getUserId());
     }
 
     private VideoReactionResponse likeVideo(Video video, User user) {
+        // TODO: fix lazy load user (don't query user watched list in this case)
         if (video.getLikes().contains(user)) {
             throw new ApiException(ErrorCode.USER_ALREADY_LIKED_VIDEO);
         }
@@ -111,6 +111,5 @@ public class VideoServiceImpl implements VideoService {
                 .dislike(video.getDislikes().size())
                 .build();
     }
-
 
 }

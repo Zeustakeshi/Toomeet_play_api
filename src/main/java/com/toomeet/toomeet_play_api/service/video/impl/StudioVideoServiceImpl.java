@@ -64,7 +64,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
         Channel channel = account.getChannel();
 
         Video video = Video.builder()
-                .allowedComment(true)
+                .allowedComment(false)
                 .title("Untitled Videos-" + nanoIdService.generateCustomNanoId(12))
                 .channel(channel)
                 .description("No description")
@@ -95,6 +95,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
             video.setUploadStatus(ResourceUploadStatus.SUCCESS);
             video.setUrl(uploadResponse.getUrl());
             video.setWidth(uploadResponse.getWidth());
+            video.setAllowedComment(true);
             video.setHeight(uploadResponse.getHeight());
             //TODO: send notify video upload success to user (userId)
         } catch (Exception ex) {
@@ -134,7 +135,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
         return studioVideoRepository.getVideoByIdAndChannelId(videoId, account.getChannelId())
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
     }
-    
+
     @Override
     public String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);

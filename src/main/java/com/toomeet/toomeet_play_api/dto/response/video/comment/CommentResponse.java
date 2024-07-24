@@ -11,16 +11,16 @@ import java.time.LocalDateTime;
 public class CommentResponse {
     private String id;
     private String content;
-    private int totalReplies;
-    private int totalLikes;
-    private int totalDislikes;
+    private long totalReplies;
+    private long totalLikes;
+    private long totalDislikes;
     private UserOverviewResponse owner;
 
     @Builder.Default
     private boolean liked = false;
-
     @Builder.Default
     private boolean disliked = false;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

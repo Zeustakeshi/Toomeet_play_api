@@ -9,7 +9,7 @@ import com.toomeet.toomeet_play_api.dto.video.VideoPreviewDto;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", imports = {ChannelMapper.class})
+@Mapper(componentModel = "spring", uses = {ChannelMapper.class})
 public interface VideoMapper {
 
     VideoBasicInfoResponse toVideoBasicInfoResponse(Video video);

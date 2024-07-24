@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.repository.video;
 
+import com.toomeet.toomeet_play_api.dto.video.comment.CommentDetailDto;
 import com.toomeet.toomeet_play_api.entity.video.Comment;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -12,16 +13,51 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, String> {
 
-    @Query("select  c from Comment c " +
-            "where c.video.id = :videoId and (:parentId is null  and c.parent.id is null or " +
-            "c.parent.id = :parentId" +
-            ")")
-    Page<Comment> getAllByVideoIdAndParentId(String videoId, String parentId, Pageable pageable);
+    @Query("select new com.toomeet.toomeet_play_api.dto.video.comment.CommentDetailDto(" +
+            "c.id, " +
+            "c.content, " +
+            "count (distinct reply.id), " +
+            "count(distinct comment_like.id), " +
+            "count(distinct comment_dislike.id), " +
+            "c.user, " +
+            "case when count (distinct user_liked.id) > 0 then true else false end, " +
+            "case when count (distinct user_disliked.id) > 0 then true else false end, " +
+            "c.createdAt, " +
+            "c.updatedAt " +
+            ")" +
+            " from Comment c " +
+            "left join c.replies reply " +
+            "left join c.likes comment_like " +
+            "left join c.dislikes comment_dislike " +
+            "left join c.likes user_liked on user_liked.id = :userId " +
+            "left join c.dislikes user_disliked on user_disliked.id = :userId " +
+            "where c.video.id = :videoId and (:parentId is null and c.parent.id is null or c.parent.id = :parentId)" +
+            "group by c, c.user")
+    Page<CommentDetailDto> getAllByVideoIdAndParentId(String videoId, String parentId, String userId, Pageable pageable);
 
-    @Modifying
-    @Transactional
-    @Query("update Comment c set c.replyCount = (select count(r) from c.replies r) where c.id = :commentId")
-    void updateReplyCount(String commentId);
+
+//    @Query("select new com.toomeet.toomeet_play_api.dto.video.comment.CommentDetailDto(" +
+//            "c.id, " +
+//            "c.content, " +
+//            "count (distinct reply.id), " +
+//            "count(distinct comment_like.id), " +
+//            "count(distinct comment_dislike.id), " +
+//            "c.user, " +
+//            "case when count (distinct user_liked.id) > 0 then true else false end, " +
+//            "case when count (distinct user_disliked.id) > 0 then true else false end, " +
+//            "c.createdAt, " +
+//            "c.updatedAt " +
+//            ")" +
+//            " from Comment c " +
+//            "left join c.replies reply " +
+//            "left join c.likes comment_like " +
+//            "left join c.dislikes comment_dislike " +
+//            "left join c.likes user_liked on user_liked.id = :userId " +
+//            "left join c.dislikes user_disliked on user_disliked.id = :userId " +
+//            "where c.id = :commentId " +
+//            "group by c")
+//    CommentDetailDto getCommentDetailWidthInteraction(String commentId, String userId);
+
 
     @Transactional
     @Modifying
@@ -30,6 +66,7 @@ public interface CommentRepository extends JpaRepository<Comment, String> {
 
     @Query("select case when count (c) > 0 then true else false end from Comment c where c.id = :commentId and c.user.id = :userId ")
     boolean isCommentOwner(String commentId, String userId);
+
 
     @Query("select " +
             "case " +
