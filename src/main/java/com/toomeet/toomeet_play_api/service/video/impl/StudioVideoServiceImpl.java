@@ -19,10 +19,10 @@ import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.PageMapper;
 import com.toomeet.toomeet_play_api.mapper.VideoMapper;
-import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
 import com.toomeet.toomeet_play_api.repository.video.StudioVideoRepository;
-import com.toomeet.toomeet_play_api.repository.video.TagRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
+import com.toomeet.toomeet_play_api.repository.video.category.CategoryRepository;
+import com.toomeet.toomeet_play_api.repository.video.tag.TagRepository;
 import com.toomeet.toomeet_play_api.service.util.NanoIdService;
 import com.toomeet.toomeet_play_api.service.util.ResourceService;
 import com.toomeet.toomeet_play_api.service.video.StudioVideoService;
@@ -134,7 +134,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     }
 
     private Video getVideoByIdWithOwnershipCheck(String videoId, Account account) {
-        return studioVideoRepository.getVideoByIdAndChannelId(videoId, account.getChannelId())
+        return studioVideoRepository.findVideoByIdAndChannelId(videoId, account.getChannelId())
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
     }
 
@@ -223,7 +223,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     public List<VideoBasicInfoResponse> getTopVideo(int count, Account account) {
         System.out.println(count);
         PageRequest pageRequest = PageRequest.of(0, count);
-        Page<Video> topVideos = studioVideoRepository.getTopVideoByChannelId(account.getChannelId(), pageRequest);
+        Page<Video> topVideos = studioVideoRepository.findTopVideoByChannelId(account.getChannelId(), pageRequest);
         return topVideos.map(videoMapper::toVideoBasicInfoResponse).stream().toList();
     }
 

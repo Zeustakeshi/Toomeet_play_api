@@ -7,7 +7,7 @@ import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.repository.UserRepository;
+import com.toomeet.toomeet_play_api.repository.user.UserRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
 import com.toomeet.toomeet_play_api.service.user.UserService;
 import jakarta.transaction.Transactional;

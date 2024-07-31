@@ -5,7 +5,6 @@ import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
 import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.response.account.CreateAccountResponse;
 import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
@@ -39,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final AccountService accountService;
 
     @Override
-    public CreateAccountResponse createAccountWithEmailAndPassword(CreateAccountRequest request) {
+    public String createAccountWithEmailAndPassword(CreateAccountRequest request) {
 
         if (accountService.existsByEmail(request.getEmail())) {
             throw new ApiException(ErrorCode.EMAIL_ALREADY_EXISTS);
@@ -77,12 +76,8 @@ public class AuthServiceImpl implements AuthService {
                 .email(account.getEmail())
                 .name(username)
                 .build());
-
-
-        return CreateAccountResponse.builder()
-                .message("Your account has been created. Please check your email to verify your new account.")
-                .build();
-
+        
+        return "Your account has been created. Please check your email to verify your new account.";
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.dto.response.video.comment;
 
-import com.toomeet.toomeet_play_api.dto.response.user.UserOverviewResponse;
+import com.toomeet.toomeet_play_api.dto.response.user.UserBasicInfoResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ public class CommentResponse {
     private long totalReplies;
     private long totalLikes;
     private long totalDislikes;
-    private UserOverviewResponse owner;
+    private UserBasicInfoResponse owner;
 
     @Builder.Default
     private boolean liked = false;

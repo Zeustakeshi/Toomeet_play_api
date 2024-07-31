@@ -20,7 +20,6 @@ public class ApiResponse<T> {
     private LocalDateTime timestamp;
     private String path;
 
-
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
                 .code(DEFAULT_SUCCESS_CODE)

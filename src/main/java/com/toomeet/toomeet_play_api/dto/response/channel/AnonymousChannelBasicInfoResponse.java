@@ -7,12 +7,18 @@
 
 package com.toomeet.toomeet_play_api.dto.response.channel;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 
-@Data
 @EqualsAndHashCode(callSuper = true)
+@Getter
 public class AnonymousChannelBasicInfoResponse extends ChannelBasicInfoResponse {
+    private final Long subscribeCount;
 
+    public AnonymousChannelBasicInfoResponse(String id, String name, String avatar, Long subscribeCount) {
+        super(id, name, avatar);
+        this.subscribeCount = subscribeCount;
+    }
 }
+

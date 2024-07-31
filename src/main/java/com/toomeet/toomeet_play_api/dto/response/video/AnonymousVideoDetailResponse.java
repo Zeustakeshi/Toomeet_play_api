@@ -7,7 +7,6 @@
 
 package com.toomeet.toomeet_play_api.dto.response.video;
 
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,9 +16,9 @@ public class AnonymousVideoDetailResponse {
     private String id;
     private String title;
     private String description;
+    private String channelId;
     private boolean allowedComment;
     private boolean forKid;
-    private ChannelBasicInfoResponse channel;
     private Integer likeCount;
     private Integer dislikeCount;
     private Integer commentCount;

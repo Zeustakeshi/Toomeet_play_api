@@ -1,11 +1,8 @@
 package com.toomeet.toomeet_play_api.mapper;
 
-import com.toomeet.toomeet_play_api.dto.response.video.VideoBasicInfoResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoDetailPublicResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoPreviewResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
-import com.toomeet.toomeet_play_api.dto.video.VideoDetailPublicDto;
-import com.toomeet.toomeet_play_api.dto.video.VideoPreviewDto;
+import com.toomeet.toomeet_play_api.dto.response.video.*;
+import com.toomeet.toomeet_play_api.dto.video.VideoDetailDto;
+import com.toomeet.toomeet_play_api.dto.video.VideoNewsfeedDto;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import org.mapstruct.Mapper;
 
@@ -16,7 +13,9 @@ public interface VideoMapper {
 
     VideoResponse toVideoResponse(Video video);
 
-    VideoPreviewResponse toVideoPreviewResponse(VideoPreviewDto video);
+    VideoNewsfeedResponse toVideoPreviewResponse(VideoNewsfeedDto video);
 
-    VideoDetailPublicResponse toVideoDetailPublicResponse(VideoDetailPublicDto video);
+    UserVideoDetailResponse toUserVideoDetailResponse(VideoDetailDto video);
+
+    AnonymousVideoDetailResponse toAnonymousVideoDetailResponse(VideoDetailDto video);
 }

@@ -8,7 +8,7 @@ import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.enums.Role;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.AccountMapper;
-import com.toomeet.toomeet_play_api.repository.AccountRepository;
+import com.toomeet.toomeet_play_api.repository.user.AccountRepository;
 import com.toomeet.toomeet_play_api.service.user.AccountService;
 import com.toomeet.toomeet_play_api.service.util.NanoIdService;
 import jakarta.transaction.Transactional;

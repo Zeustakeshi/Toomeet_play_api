@@ -6,7 +6,7 @@ import com.toomeet.toomeet_play_api.entity.video.Category;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.VideoCategoryMapper;
-import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
+import com.toomeet.toomeet_play_api.repository.video.category.CategoryRepository;
 import com.toomeet.toomeet_play_api.service.video.AdminVideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
