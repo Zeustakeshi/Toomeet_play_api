@@ -18,7 +18,7 @@ public interface StudioVideoRepository extends JpaRepository<Video, String> {
     @Query("select v from Video v where v.id = :videoId and v.channel.id = :channelId")
     Optional<Video> getVideoByIdAndChannelId(String videoId, String channelId);
 
-    @Query("select v from Video v left join v.viewers viewer where v.channel.id = :channelId group by v order by count(viewer) desc")
+    @Query("select v from Video v left join v.viewers viewer where v.channel.id = :channelId and v.visibility = 'PUBLIC' group by v order by count(viewer) desc")
     Page<Video> getTopVideoByChannelId(String channelId, Pageable pageable);
 
 

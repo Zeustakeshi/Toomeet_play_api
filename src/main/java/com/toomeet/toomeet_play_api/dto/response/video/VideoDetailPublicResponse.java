@@ -1,31 +1,14 @@
 package com.toomeet.toomeet_play_api.dto.response.video;
 
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class VideoDetailPublicResponse {
-    private String id;
-    private String title;
-    private String description;
-    private boolean allowedComment;
-    private boolean forKid;
-
-    private ChannelGeneralResponse channel;
-
-    private Integer likeCount;
-    private Integer dislikeCount;
-    private Integer commentCount;
-    private Integer viewCount;
-
+@EqualsAndHashCode(callSuper = true)
+public class VideoDetailPublicResponse extends AnonymousVideoDetailResponse {
+    private ChannelBasicInfoResponse channel;
     private boolean liked;
-    private boolean shared;
     private boolean disliked;
-
-    private String url;
-
-    private LocalDateTime updatedAt;
-    private LocalDateTime createdAt;
+    private boolean shared;
 }

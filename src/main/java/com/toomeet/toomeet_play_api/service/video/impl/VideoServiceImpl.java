@@ -26,6 +26,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public VideoDetailPublicResponse getVideoDetail(String videoId) {
+        // get video and channel
         return null;
     }
 

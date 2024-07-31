@@ -1,6 +1,6 @@
 package com.toomeet.toomeet_play_api.dto.response.video;
 
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class VideoPreviewResponse {
     private String id;
     private String title;
-    private ChannelGeneralResponse channel;
+    private ChannelBasicInfoResponse channel;
     private String thumbnail;
     private long viewCount;
     private long likeCount;

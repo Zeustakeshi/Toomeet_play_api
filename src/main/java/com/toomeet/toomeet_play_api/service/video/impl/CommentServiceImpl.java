@@ -97,14 +97,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public PageableResponse<CommentResponse> getAllCommentByVideoId(String videoId, int page, int limit, Account account) {
 
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-
-        checkVideoPermission(video.getId(), account);
-
-        if (!video.isAllowedComment()) {
-            throw new ApiException(ErrorCode.VIDEO_COMMENT_UNAVAILABLE);
-        }
+        checkVideoPermission(videoId, account);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Page<CommentDetailDto> comments = commentRepository.getAllByVideoIdAndParentId(
@@ -121,16 +114,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public PageableResponse<CommentResponse> getAllCommentCommentReplies(String videoId, String parentId, int page, int limit, Account account) {
-
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
-
-        checkVideoPermission(video.getId(), account);
-
-        if (!video.isAllowedComment()) {
-            throw new ApiException(ErrorCode.VIDEO_COMMENT_UNAVAILABLE);
-        }
-
+        checkVideoPermission(videoId, account);
         Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
         Page<CommentDetailDto> comments = commentRepository.getAllByVideoIdAndParentId(
                 videoId,
@@ -138,7 +122,6 @@ public class CommentServiceImpl implements CommentService {
                 account.getUserId(),
                 PageRequest.of(page, limit, sort)
         );
-
         return pageMapper.toPageableResponse(
                 comments.map(commentMapper::toCommentResponse)
         );
@@ -222,9 +205,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void checkVideoPermission(String videoId, Account account) {
-        if (!videoRepository.canCommentVideo(videoId)) {
-            throw new ApiException(ErrorCode.ACCESS_DENIED);
+        if (!videoRepository.existsById(videoId)) {
+            throw new ApiException(ErrorCode.VIDEO_NOT_FOUND);
         }
+        if (!videoRepository.canCommentVideo(videoId)) {
+            throw new ApiException(ErrorCode.VIDEO_COMMENT_UNAVAILABLE);
+        }
+
         // check something here
     }
 

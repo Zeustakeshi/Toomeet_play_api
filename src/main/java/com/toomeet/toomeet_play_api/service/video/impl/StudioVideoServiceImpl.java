@@ -36,6 +36,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,8 @@ import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.PROCESSING
 @Service
 @RequiredArgsConstructor
 public class StudioVideoServiceImpl implements StudioVideoService {
+    private static final String VIDEO_PATH = "/videos";
+    private static final String VIDEO_THUMBNAIL_PATH = "/video_thumbnails";
     private final ResourceService resourceService;
     private final NanoIdService nanoIdService;
     private final VideoRepository videoRepository;
@@ -55,7 +58,6 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     private final CategoryRepository categoryRepository;
     private final PageMapper pageMapper;
     private final StudioVideoRepository studioVideoRepository;
-
 
     @Override
     @SneakyThrows
@@ -91,7 +93,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         try {
-            ResourceUploaderResponse uploadResponse = resourceService.uploadVideo(file, videoId, "/videos");
+            ResourceUploaderResponse uploadResponse = resourceService.uploadVideo(file, videoId, VIDEO_PATH);
             video.setUploadStatus(ResourceUploadStatus.SUCCESS);
             video.setUrl(uploadResponse.getUrl());
             video.setWidth(uploadResponse.getWidth());
@@ -163,7 +165,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
         try {
-            ResourceUploaderResponse uploadResponse = resourceService.uploadImage(thumbnail, videoId, "video_thumbnails");
+            ResourceUploaderResponse uploadResponse = resourceService.uploadImage(thumbnail, videoId, VIDEO_THUMBNAIL_PATH);
             String thumbnailUrl = uploadResponse.getUrl();
             video.setThumbnail(thumbnailUrl);
             videoRepository.save(video);
@@ -238,6 +240,29 @@ public class StudioVideoServiceImpl implements StudioVideoService {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
         return tagRepository.getAllByVideoId(videoId).stream().map(Tag::getName).toList();
+    }
+
+    @Override
+    @Transactional
+    public String deleteVideo(String videoId, Account account) {
+//        Video video = getVideoByIdWithOwnershipCheck(videoId, account);
+//        videoRepository.delete(video);
+//        publisher.publishEvent(DeleteVideoResourceEvent.builder().publicId(videoId).build());
+
+        // TODO: change implement delete video here
+        return "Video has been deleted";
+    }
+
+    @Async
+    @Override
+    public void deleteVideoResourceAsync(String videoId) {
+        try {
+            resourceService.deleteVideo(videoId, VIDEO_PATH);
+            resourceService.deleteImage(videoId, VIDEO_THUMBNAIL_PATH);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void updateVideoCategory(Video video, String categoryId) {

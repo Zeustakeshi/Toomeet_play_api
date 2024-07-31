@@ -26,7 +26,6 @@ public class ResourceUploadListener {
         channelService.updateChannelAvatarAsync(event.getAvatar(), event.getChannelId(), event.getUserId());
     }
 
-
     @EventListener
     public void handleVideoThumbnailUploadEvent(UploadVideoThumbnailEvent event) {
         studioVideoService.uploadThumbnailAsync(event.getThumbnail(), event.getVideoId(), event.getUserId());

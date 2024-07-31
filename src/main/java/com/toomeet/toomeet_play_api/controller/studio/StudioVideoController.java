@@ -137,4 +137,13 @@ public class StudioVideoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    @DeleteMapping("{videoId}")
+//    public ResponseEntity<ApiResponse<?>> deleteVideo(
+//            @PathVariable("videoId") String videoId,
+//            @AuthenticationPrincipal Account account
+//    ) {
+//        ApiResponse<?> response = ApiResponse.success(studioVideoService.deleteVideo(videoId, account));
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+
 }

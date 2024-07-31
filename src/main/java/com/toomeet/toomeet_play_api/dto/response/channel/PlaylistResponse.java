@@ -15,7 +15,7 @@ public class PlaylistResponse {
     private String name;
     private String thumbnail;
     private String description;
-    private ChannelGeneralResponse owner;
+    private ChannelBasicInfoResponse owner;
     private long totalVideo;
     private Visibility visibility;
     private LocalDateTime createdAt;

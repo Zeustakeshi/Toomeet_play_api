@@ -14,7 +14,7 @@ public class VideoSummaryResponse {
     private String description;
     private String thumbnail;
     private long viewCount;
-    private long commendCount;
+    private long commentCount;
     private long likeCount;
     private long dislikeCount;
     private Visibility visibility;

@@ -3,7 +3,7 @@ package com.toomeet.toomeet_play_api.service.channel.impl;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelDescriptionRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelNameRequest;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelAnalyticsResponse;
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
+import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
@@ -29,6 +29,12 @@ public class ChannelServiceImpl implements ChannelService {
     private final ResourceService resourceService;
     private final ApplicationEventPublisher publisher;
     private final ChannelMapper channelMapper;
+
+
+    @Override
+    public Long getChannelSubscriberCount(String channelId) {
+        return channelRepository.countSubscriber(channelId);
+    }
 
     @Override
     @Transactional
@@ -105,10 +111,9 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ChannelGeneralResponse getChannelGeneral(Account account) {
+    public ChannelBasicInfoResponse getChannelGeneral(Account account) {
         Channel channel = channelRepository.findById(account.getChannelId())
                 .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
-
         return channelMapper.toChannelGeneralResponse(channel);
     }
 

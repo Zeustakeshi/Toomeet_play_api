@@ -38,4 +38,7 @@ public interface StudioVideoService {
 
     PageableResponse<VideoSummaryResponse> getAllVideo(int page, int limit, Account account);
 
+    String deleteVideo(String videoId, Account account);
+
+    void deleteVideoResourceAsync(String videoId);
 }

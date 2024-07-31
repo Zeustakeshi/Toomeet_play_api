@@ -9,5 +9,9 @@ public interface ResourceService {
 
     ResourceUploaderResponse uploadImage(byte[] image, String publicId, String path) throws IOException;
 
+    void deleteVideo(String publicId, String path) throws IOException;
+
+    void deleteImage(String publicId, String path) throws IOException;
+
     String generateSignedUrl(String publicId);
 }

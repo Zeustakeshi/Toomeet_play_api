@@ -33,8 +33,7 @@ public class ResourceServiceImpl implements ResourceService {
                 "public_id", publicId,
                 "overwrite", true,
                 "type", "authenticated",
-                "allowed_formats", "jpg,png,gif",
-                "notification_url", "https://f978-2001-ee0-520a-b0c0-e01f-26a5-c85e-a895.ngrok-free.app/api/v1/anonymous/video/test/test"
+                "allowed_formats", "jpg,png,gif"
         );
 
         return upload(file, configs);
@@ -67,6 +66,19 @@ public class ResourceServiceImpl implements ResourceService {
         );
 
         return cloudinary.apiSignRequest(options, "EB0sjDs0N22e-7gECIM3YpE_Kuo");
+    }
+
+
+    @Override
+    public void deleteVideo(String publicId, String path) throws IOException {
+        cloudinary.uploader().destroy(getCloudPath(path) + "/" + publicId, ObjectUtils.asMap("resource_type", "video"));
+    }
+
+    @Override
+    public void deleteImage(String publicId, String path) throws IOException {
+
+
+        cloudinary.uploader().destroy(getCloudPath(path) + "/" + publicId, ObjectUtils.asMap("resource_type", "image"));
     }
 
     private ResourceUploaderResponse upload(byte[] file, Map<?, ?> configs) throws IOException {
