@@ -23,5 +23,4 @@ public interface PlaylistService {
     String deletePlaylist(String playlistId, Account account);
 
     String deleteVideo(DeleteVideoPlaylistRequest request, String playlistId, Account account);
-
 }

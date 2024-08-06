@@ -11,6 +11,4 @@ import org.springframework.stereotype.Service;
 public class VideoServiceImpl implements VideoService {
     private final VideoRepository videoRepository;
     private final UserRepository userRepository;
-
-
 }

@@ -1,10 +1,9 @@
 package com.toomeet.toomeet_play_api.dto.video;
 
 import com.toomeet.toomeet_play_api.entity.Channel;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor

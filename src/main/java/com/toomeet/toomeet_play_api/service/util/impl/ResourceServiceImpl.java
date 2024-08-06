@@ -4,14 +4,13 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.service.util.ResourceService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -28,13 +27,18 @@ public class ResourceServiceImpl implements ResourceService {
     public ResourceUploaderResponse uploadImage(byte[] file, String publicId, String path) throws IOException {
 
         Map<?, ?> configs = ObjectUtils.asMap(
-                "resource_type", "image",
-                "folder", getCloudPath(path),
-                "public_id", publicId,
-                "overwrite", true,
-                "type", "authenticated",
-                "allowed_formats", "jpg,png,gif"
-        );
+                "resource_type",
+                "image",
+                "folder",
+                getCloudPath(path),
+                "public_id",
+                publicId,
+                "overwrite",
+                true,
+                "type",
+                "authenticated",
+                "allowed_formats",
+                "jpg,png,gif");
 
         return upload(file, configs);
     }
@@ -43,13 +47,18 @@ public class ResourceServiceImpl implements ResourceService {
     public ResourceUploaderResponse uploadVideo(byte[] video, String publicId, String path) throws IOException {
 
         Map<?, ?> configs = ObjectUtils.asMap(
-                "resource_type", "video",
-                "folder", getCloudPath(path),
-                "public_id", publicId,
-                "overwrite", true,
-                "type", "authenticated",
-                "allowed_formats", "mp4"
-        );
+                "resource_type",
+                "video",
+                "folder",
+                getCloudPath(path),
+                "public_id",
+                publicId,
+                "overwrite",
+                true,
+                "type",
+                "authenticated",
+                "allowed_formats",
+                "mp4");
 
         return upload(video, configs);
     }
@@ -62,12 +71,10 @@ public class ResourceServiceImpl implements ResourceService {
         Map options = ObjectUtils.asMap(
                 "resource_type", "image",
                 "type", "authenticated",
-                "expires_at", now.plus(secureUrlExpireIn, ChronoUnit.HOURS).toEpochMilli()
-        );
+                "expires_at", now.plus(secureUrlExpireIn, ChronoUnit.HOURS).toEpochMilli());
 
         return cloudinary.apiSignRequest(options, "EB0sjDs0N22e-7gECIM3YpE_Kuo");
     }
-
 
     @Override
     public void deleteVideo(String publicId, String path) throws IOException {
@@ -76,7 +83,6 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public void deleteImage(String publicId, String path) throws IOException {
-
 
         cloudinary.uploader().destroy(getCloudPath(path) + "/" + publicId, ObjectUtils.asMap("resource_type", "image"));
     }
@@ -100,6 +106,4 @@ public class ResourceServiceImpl implements ResourceService {
     private String getCloudPath(String path) {
         return dirPrefix + (path.startsWith("/") ? path : "/" + path);
     }
-
-
 }

@@ -3,6 +3,8 @@ package com.toomeet.toomeet_play_api.service.util.impl;
 import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.service.util.JwtService;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,9 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +23,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${jwt.key.access_token.expireIn}")
     private Long accessTokenExpiresTime;
+
     @Value("${jwt.key.refresh_token.expireIn}")
     private Long refreshTokenExpiresTime;
 
@@ -75,7 +75,6 @@ public class JwtServiceImpl implements JwtService {
         Instant now = Instant.now();
         return now.plus(refreshTokenExpiresTime, ChronoUnit.HOURS).toEpochMilli();
     }
-
 
     @Override
     public TokenResponse generateTokenPair(Authentication authentication) {

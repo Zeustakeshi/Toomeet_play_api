@@ -1,9 +1,8 @@
 package com.toomeet.toomeet_play_api.dto.response.video;
 
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
-import lombok.Data;
-
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 public class VideoNewsfeedResponse {
@@ -16,4 +15,3 @@ public class VideoNewsfeedResponse {
     private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
 }
-

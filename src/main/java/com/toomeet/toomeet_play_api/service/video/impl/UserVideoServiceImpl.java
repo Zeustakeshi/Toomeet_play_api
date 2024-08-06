@@ -4,7 +4,6 @@
  *  @created 7/31/2024 9:21 PM
  * */
 
-
 package com.toomeet.toomeet_play_api.service.video.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
@@ -58,16 +57,15 @@ public class UserVideoServiceImpl implements UserVideoService {
     @Transactional
     public VideoReactionResponse reactionVideo(String videoId, ReactionType type, Account account) {
 
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+        Video video = videoRepository.findById(videoId).orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         if (video.getVisibility() != Visibility.PUBLIC) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
 
-        User user = userRepository.findById(account.getUserId())
+        User user = userRepository
+                .findById(account.getUserId())
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
-
 
         if (type == ReactionType.LIKE) return likeVideo(video, user);
         else return dislikeVideo(video, user);
@@ -76,20 +74,20 @@ public class UserVideoServiceImpl implements UserVideoService {
     @Override
     @Transactional
     public VideoReactionResponse unReactionVideo(String videoId, ReactionType type, Account account) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+        Video video = videoRepository.findById(videoId).orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
-        User user = userRepository.findById(account.getUserId())
+        User user = userRepository
+                .findById(account.getUserId())
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
         if (type == ReactionType.LIKE) return unLikeVideo(video, user);
         else return unDislikeVideo(video, user);
     }
 
-//    @Override
-//    public VideoInteractionResponse getVideoInteraction(String videoId, Account account) {
-//        return videoRepository.getVideoInteraction(videoId, account.getUserId());
-//    }
+    //    @Override
+    //    public VideoInteractionResponse getVideoInteraction(String videoId, Account account) {
+    //        return videoRepository.getVideoInteraction(videoId, account.getUserId());
+    //    }
 
     private VideoReactionResponse likeVideo(Video video, User user) {
         // TODO: fix lazy load user (don't query user watched list in this case)

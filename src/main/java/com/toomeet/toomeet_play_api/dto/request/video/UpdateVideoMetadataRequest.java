@@ -13,6 +13,4 @@ public class UpdateVideoMetadataRequest {
     @NotEmpty(message = "Description must be not null or empty")
     @Size(min = 5, max = 15000, message = "Invalid description length. Length must be between (5, 15000) characters")
     private String description;
-
-
 }

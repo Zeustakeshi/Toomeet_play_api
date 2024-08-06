@@ -38,8 +38,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResponse createComment(NewCommentRequest request, String videoId, Account account) {
 
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
+        Video video = videoRepository.findById(videoId).orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         checkVideoPermission(video.getId(), account);
 
@@ -50,7 +49,8 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
         if (request.getParentId() != null) {
-            Comment parent = commentRepository.findById(request.getParentId())
+            Comment parent = commentRepository
+                    .findById(request.getParentId())
                     .orElseThrow(() -> new ApiException(ErrorCode.PARENT_COMMENT_NOT_FOUND));
             if (parent.isReply()) comment.setParent(parent.getParent());
             else comment.setParent(parent);
@@ -66,8 +66,8 @@ public class CommentServiceImpl implements CommentService {
 
         checkVideoPermission(videoId, account);
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment =
+                commentRepository.findById(commentId).orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
         checkCommentOwner(commentId, account.getUserId());
 
@@ -83,8 +83,7 @@ public class CommentServiceImpl implements CommentService {
     public String deleteComment(String videoId, String commentId, Account account) {
         checkVideoPermission(videoId, account);
 
-        commentRepository.findById(commentId)
-                .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+        commentRepository.findById(commentId).orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
         checkCommentOwner(commentId, account.getUserId());
 
@@ -95,48 +94,40 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public PageableResponse<CommentResponse> getAllCommentByVideoId(String videoId, int page, int limit, Account account) {
+    public PageableResponse<CommentResponse> getAllCommentByVideoId(
+            String videoId, int page, int limit, Account account) {
 
         checkVideoPermission(videoId, account);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Page<CommentDetailDto> comments = commentRepository.getAllByVideoIdAndParentId(
-                videoId,
-                null,
-                account.getUserId(),
-                PageRequest.of(page, limit, sort)
-        );
+                videoId, null, account.getUserId(), PageRequest.of(page, limit, sort));
 
-        return pageMapper.toPageableResponse(
-                comments.map(commentMapper::toCommentResponse)
-        );
+        return pageMapper.toPageableResponse(comments.map(commentMapper::toCommentResponse));
     }
 
     @Override
-    public PageableResponse<CommentResponse> getAllCommentCommentReplies(String videoId, String parentId, int page, int limit, Account account) {
+    public PageableResponse<CommentResponse> getAllCommentCommentReplies(
+            String videoId, String parentId, int page, int limit, Account account) {
         checkVideoPermission(videoId, account);
         Sort sort = Sort.by(Sort.Direction.ASC, "createdAt");
         Page<CommentDetailDto> comments = commentRepository.getAllByVideoIdAndParentId(
-                videoId,
-                parentId,
-                account.getUserId(),
-                PageRequest.of(page, limit, sort)
-        );
-        return pageMapper.toPageableResponse(
-                comments.map(commentMapper::toCommentResponse)
-        );
+                videoId, parentId, account.getUserId(), PageRequest.of(page, limit, sort));
+        return pageMapper.toPageableResponse(comments.map(commentMapper::toCommentResponse));
     }
 
     @Override
     @Transactional
-    public CommentReactionCountResponse reactionComment(ReactionType reactionType, String commentId, String videoId, Account account) {
+    public CommentReactionCountResponse reactionComment(
+            ReactionType reactionType, String commentId, String videoId, Account account) {
 
         checkVideoPermission(videoId, account);
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment =
+                commentRepository.findById(commentId).orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
-        User user = userRepository.findById(account.getUserId())
+        User user = userRepository
+                .findById(account.getUserId())
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
         if (reactionType == ReactionType.LIKE) return likeComment(comment, user);
@@ -145,14 +136,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentReactionCountResponse unReactionComment(ReactionType reactionType, String commentId, String videoId, Account account) {
+    public CommentReactionCountResponse unReactionComment(
+            ReactionType reactionType, String commentId, String videoId, Account account) {
 
         checkVideoPermission(videoId, account);
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment =
+                commentRepository.findById(commentId).orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
-        User user = userRepository.findById(account.getUserId())
+        User user = userRepository
+                .findById(account.getUserId())
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
         if (reactionType == ReactionType.LIKE) return unLikeComment(comment, user);
@@ -214,6 +207,4 @@ public class CommentServiceImpl implements CommentService {
 
         // check something here
     }
-
-
 }

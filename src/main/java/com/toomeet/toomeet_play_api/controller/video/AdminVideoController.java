@@ -19,11 +19,8 @@ public class AdminVideoController {
     private final AdminVideoService videoService;
 
     @PostMapping("/category")
-    public ResponseEntity<ApiResponse<?>> createCategory(
-            @RequestBody @Valid CreateVideoCategoryRequest request
-    ) {
+    public ResponseEntity<ApiResponse<?>> createCategory(@RequestBody @Valid CreateVideoCategoryRequest request) {
         ApiResponse<?> response = ApiResponse.success(videoService.createCategory(request));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 }

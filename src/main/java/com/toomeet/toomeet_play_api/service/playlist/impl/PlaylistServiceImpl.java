@@ -20,13 +20,12 @@ import com.toomeet.toomeet_play_api.repository.user.UserRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
 import com.toomeet.toomeet_play_api.service.playlist.PlaylistService;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +57,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public PageableResponse<PlaylistResponse> getAllPlayList(int page, int limit, Account account) {
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedAt");
-        Page<PlaylistTotalVideoDto> playlistPage = playlistRepository.findAllByChannelId(account.getChannelId(), PageRequest.of(page, limit, sort));
+        Page<PlaylistTotalVideoDto> playlistPage =
+                playlistRepository.findAllByChannelId(account.getChannelId(), PageRequest.of(page, limit, sort));
         return pageMapper.toPageableResponse(playlistPage.map(playlistMapper::toPlaylistResponse));
     }
 
@@ -91,7 +91,8 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         Playlist playlist = getPlaylistAnhCheckOwnership(playlistId, account);
 
-        Video video = videoRepository.findById(request.getVideoId())
+        Video video = videoRepository
+                .findById(request.getVideoId())
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         if (playlist.getVideos().contains(video)) {
@@ -112,7 +113,8 @@ public class PlaylistServiceImpl implements PlaylistService {
 
         Playlist playlist = getPlaylistAnhCheckOwnership(playlistId, account);
 
-        Video video = videoRepository.findById(request.getVideoId())
+        Video video = videoRepository
+                .findById(request.getVideoId())
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         if (!playlist.getVideos().contains(video)) {
@@ -127,7 +129,8 @@ public class PlaylistServiceImpl implements PlaylistService {
     }
 
     private Playlist getPlaylistAnhCheckOwnership(String playlistId, Account account) {
-        return playlistRepository.getPlaylistByIdAndChannelId(playlistId, account.getChannelId())
+        return playlistRepository
+                .getPlaylistByIdAndChannelId(playlistId, account.getChannelId())
                 .orElseThrow(() -> new ApiException(ErrorCode.PLAYLIST_NOT_FOUND));
     }
 
@@ -136,5 +139,4 @@ public class PlaylistServiceImpl implements PlaylistService {
         playlistResponse.setTotalVideo(playlistRepository.countVideoByPlaylistId(playlist.getId()));
         return playlistResponse;
     }
-
 }

@@ -14,58 +14,41 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/studio/channel")
+@RequestMapping("/studio/channels")
 @RequiredArgsConstructor
 public class StudioChannelController {
     private final StudioChannelService channelService;
 
     @GetMapping("/general")
-    public ResponseEntity<ApiResponse<?>> getChannelGeneral(
-            @AuthenticationPrincipal Account account
-    ) {
+    public ResponseEntity<ApiResponse<?>> getChannelGeneral(@AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(channelService.getChannelGeneral(account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/analytics")
-    public ResponseEntity<ApiResponse<?>> getChannelAnalytics(
-            @AuthenticationPrincipal Account account
-    ) {
+    public ResponseEntity<ApiResponse<?>> getChannelAnalytics(@AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(channelService.getChannelAnalytics(account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/name")
     public ResponseEntity<ApiResponse<?>> updateChannelName(
-            @RequestBody @Valid UpdateChannelNameRequest request,
-            @AuthenticationPrincipal Account account
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                channelService.updateChannelName(request, account)
-        );
+            @RequestBody @Valid UpdateChannelNameRequest request, @AuthenticationPrincipal Account account) {
+        ApiResponse<?> response = ApiResponse.success(channelService.updateChannelName(request, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/description")
     public ResponseEntity<ApiResponse<?>> updateChannelDescription(
-            @RequestBody @Valid UpdateChannelDescriptionRequest request,
-            @AuthenticationPrincipal Account account
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                channelService.updateChannelDescription(request, account)
-        );
+            @RequestBody @Valid UpdateChannelDescriptionRequest request, @AuthenticationPrincipal Account account) {
+        ApiResponse<?> response = ApiResponse.success(channelService.updateChannelDescription(request, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/avatar")
     public ResponseEntity<ApiResponse<?>> updateAvatar(
-            @RequestParam("avatar") MultipartFile avatar,
-            @AuthenticationPrincipal Account account
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                channelService.updateChannelAvatar(avatar, account)
-        );
+            @RequestParam("avatar") MultipartFile avatar, @AuthenticationPrincipal Account account) {
+        ApiResponse<?> response = ApiResponse.success(channelService.updateChannelAvatar(avatar, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 }

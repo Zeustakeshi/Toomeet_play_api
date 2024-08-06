@@ -4,7 +4,6 @@
  *  @created 8/1/2024 12:38 AM
  * */
 
-
 package com.toomeet.toomeet_play_api.service.channel.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.channel.UserChannelBasicInfoResponse;
@@ -32,6 +31,7 @@ public class UserChannelServiceImpl implements UserChannelService {
 
     @Override
     public String subscribe(String channelId, Account account) {
+
         return "";
     }
 

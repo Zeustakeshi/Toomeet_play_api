@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class AnonymousVideoServiceImpl implements AnonymousVideoService {
@@ -38,13 +37,4 @@ public class AnonymousVideoServiceImpl implements AnonymousVideoService {
     public AnonymousVideoDetailResponse getVideoDetails(String videoId) {
         return videoMapper.toAnonymousVideoDetailResponse(videoRepository.getVideoDetail(videoId));
     }
-
-//    @Override
-//    public List<VideoCategoryResponse> getAllCategory() {
-//        return categoryRepository
-//                .findAll()
-//                .stream()
-//                .map(videoCategoryMapper::toCategoryResponse)
-//                .toList();
-//    }
 }

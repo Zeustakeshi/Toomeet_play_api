@@ -7,10 +7,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
     @Mapping(source = "user.id", target = "id")
     @Mapping(source = "user.account.image", target = "avatar")
     @Mapping(source = "user.account.name", target = "name")
-    UserBasicInfoResponse toUserOverviewResponse(User user);
-
+    UserBasicInfoResponse toUserBasicInfoResponse(User user);
 }

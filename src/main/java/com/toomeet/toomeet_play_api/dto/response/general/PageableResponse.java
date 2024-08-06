@@ -1,8 +1,7 @@
 package com.toomeet.toomeet_play_api.dto.response.general;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class PageableResponse<T> {

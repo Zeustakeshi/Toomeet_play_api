@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
 
-
     @Mapping(source = "account.userId", target = "userId")
     AccountResponse toAccountResponse(Account account);
 }

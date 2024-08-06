@@ -12,6 +12,10 @@ import com.toomeet.toomeet_play_api.service.user.AccountService;
 import com.toomeet.toomeet_play_api.service.user.OAuthService;
 import com.toomeet.toomeet_play_api.service.user.UserService;
 import com.toomeet.toomeet_play_api.service.util.JwtService;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -21,11 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,28 +37,35 @@ public class OAuthServiceImpl implements OAuthService {
     private final AccountService accountService;
     private final UserService userService;
 
-
     @Value("${spring.security.oauth2.url.google.oauth_url}")
     private String googleAuthenticationBaseUrl;
+
     @Value("${spring.security.oauth2.url.google.access_token_url}")
     private String googleAccessTokenUrl;
+
     @Value("${spring.security.oauth2.url.google.user_info_url}")
     private String googleUserInfoUrl;
+
     @Value("${spring.security.oauth2.url.github.oauth_url}")
     private String githubAuthenticationBaseUrl;
+
     @Value("${spring.security.oauth2.url.github.access_token_url}")
     private String githubAccessTokenUrl;
+
     @Value("${spring.security.oauth2.url.github.user_info_url}")
     private String githubUserInfoUrl;
+
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
+
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String googleClientSecret;
+
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
     private String githubClientId;
+
     @Value("${spring.security.oauth2.client.registration.github.client-secret}")
     private String githubClientSecret;
-
 
     @Value("${frontend.oauth_callback}")
     private String callbackBaseUrl;
@@ -78,12 +84,7 @@ public class OAuthServiceImpl implements OAuthService {
     public TokenResponse loginWithGoogle(String code) {
         try {
             ResponseEntity<String> responseEntity = getOAuthAccessToken(
-                    googleAccessTokenUrl,
-                    googleClientId,
-                    googleClientSecret,
-                    callbackBaseUrl + "/google",
-                    code
-            );
+                    googleAccessTokenUrl, googleClientId, googleClientSecret, callbackBaseUrl + "/google", code);
 
             String response = responseEntity.getBody();
 
@@ -95,19 +96,13 @@ public class OAuthServiceImpl implements OAuthService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
     public TokenResponse loginWidthGithub(String code) {
         try {
             ResponseEntity<String> responseEntity = getOAuthAccessToken(
-                    githubAccessTokenUrl,
-                    githubClientId,
-                    githubClientSecret,
-                    callbackBaseUrl + "/github",
-                    code
-            );
+                    githubAccessTokenUrl, githubClientId, githubClientSecret, callbackBaseUrl + "/github", code);
 
             String response = responseEntity.getBody();
 
@@ -121,14 +116,13 @@ public class OAuthServiceImpl implements OAuthService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private TokenResponse getAccountAuthenticationResponse(Account account) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
         return jwtService.generateTokenPair(authentication);
     }
-
 
     private Account upsertOauthAccount(Account account) {
         String email = account.getEmail();
@@ -145,12 +139,8 @@ public class OAuthServiceImpl implements OAuthService {
         userInfoHeaders.setBearerAuth(accessToken);
         HttpEntity<String> userInfoRequest = new HttpEntity<>(userInfoHeaders);
 
-        ResponseEntity<String> userInfoResponse = restTemplate.exchange(
-                githubUserInfoUrl,
-                HttpMethod.GET,
-                userInfoRequest,
-                String.class);
-
+        ResponseEntity<String> userInfoResponse =
+                restTemplate.exchange(githubUserInfoUrl, HttpMethod.GET, userInfoRequest, String.class);
 
         String userInfo = userInfoResponse.getBody();
         JsonNode userInfoJson = mapper.readTree(userInfo);
@@ -174,11 +164,8 @@ public class OAuthServiceImpl implements OAuthService {
         userInfoHeaders.setBearerAuth(accessToken);
         HttpEntity<String> userInfoRequest = new HttpEntity<>(userInfoHeaders);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                githubUserInfoUrl + "/emails",
-                HttpMethod.GET,
-                userInfoRequest,
-                String.class);
+        ResponseEntity<String> responseEntity =
+                restTemplate.exchange(githubUserInfoUrl + "/emails", HttpMethod.GET, userInfoRequest, String.class);
 
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
             throw new ApiException(ErrorCode.GITHUB_OAUTH_EMAIL_EXCEPTION);
@@ -198,7 +185,6 @@ public class OAuthServiceImpl implements OAuthService {
         }
 
         return null;
-
     }
 
     private Account getGoogleUserInfo(String accessToken) throws JsonProcessingException {
@@ -206,11 +192,8 @@ public class OAuthServiceImpl implements OAuthService {
         userInfoHeaders.setBearerAuth(accessToken);
         HttpEntity<String> userInfoRequest = new HttpEntity<>(userInfoHeaders);
 
-        ResponseEntity<String> userInfoResponse = restTemplate.exchange(
-                googleUserInfoUrl,
-                HttpMethod.GET,
-                userInfoRequest,
-                String.class);
+        ResponseEntity<String> userInfoResponse =
+                restTemplate.exchange(googleUserInfoUrl, HttpMethod.GET, userInfoRequest, String.class);
 
         if (userInfoResponse.getStatusCode() != HttpStatus.OK) {
             throw new ApiException(ErrorCode.OAUTH_LOAD_USER_INFO_ERROR);
@@ -243,7 +226,9 @@ public class OAuthServiceImpl implements OAuthService {
         return jsonNode.get("access_token").asText();
     }
 
-    private ResponseEntity<String> getOAuthAccessToken(String accessTokenEndpoint, String clientId, String clientSecret, String callbackUri, String code) throws JsonProcessingException {
+    private ResponseEntity<String> getOAuthAccessToken(
+            String accessTokenEndpoint, String clientId, String clientSecret, String callbackUri, String code)
+            throws JsonProcessingException {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", clientId);
         requestBody.add("client_secret", clientSecret);
@@ -255,11 +240,8 @@ public class OAuthServiceImpl implements OAuthService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                accessTokenEndpoint,
-                HttpMethod.POST,
-                requestEntity,
-                String.class);
+        ResponseEntity<String> responseEntity =
+                restTemplate.exchange(accessTokenEndpoint, HttpMethod.POST, requestEntity, String.class);
 
         HttpStatusCode statusCode = responseEntity.getStatusCode();
 
@@ -269,7 +251,6 @@ public class OAuthServiceImpl implements OAuthService {
             throw new ApiException(ErrorCode.OAUTH_ACCESS_TOKEN_ERROR);
         }
         return responseEntity;
-
     }
 
     private String getOAuthUrl(String providerBaseUrl, String id, String scope, String callbackUri) {
@@ -278,10 +259,9 @@ public class OAuthServiceImpl implements OAuthService {
 
         encodedScope = URLEncoder.encode(scope, StandardCharsets.UTF_8);
 
-        return providerBaseUrl + "?client_id=" + id +
-                "&redirect_uri=" + callbackUri +
-                "&response_type=" + responseType +
-                "&scope=" + encodedScope;
+        return providerBaseUrl + "?client_id=" + id + "&redirect_uri="
+                + callbackUri + "&response_type="
+                + responseType + "&scope="
+                + encodedScope;
     }
-
 }

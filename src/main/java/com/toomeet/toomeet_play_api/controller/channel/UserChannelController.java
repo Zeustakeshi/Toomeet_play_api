@@ -18,27 +18,21 @@ public class UserChannelController {
 
     @GetMapping("{channelId}/basic")
     public ResponseEntity<ApiResponse<?>> getChannel(
-            @PathVariable("channelId") String channelId,
-            @AuthenticationPrincipal Account account
-    ) {
+            @PathVariable("channelId") String channelId, @AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(channelService.getBasicInfo(channelId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("{channelId}/subscribe")
     public ResponseEntity<ApiResponse<?>> subscribeChannel(
-            @PathVariable("channelId") String channelId,
-            @AuthenticationPrincipal Account account
-    ) {
+            @PathVariable("channelId") String channelId, @AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(channelService.subscribe(channelId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("{channelId}/un-subscribe")
     public ResponseEntity<ApiResponse<?>> unSubscribeChannel(
-            @PathVariable("channelId") String channelId,
-            @AuthenticationPrincipal Account account
-    ) {
+            @PathVariable("channelId") String channelId, @AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(channelService.unsubscribe(channelId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -1,9 +1,10 @@
 package com.toomeet.toomeet_play_api.exception;
 
-
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import jakarta.validation.UnexpectedTypeException;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,13 +16,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -62,7 +58,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, errorCode.getStatus());
     }
 
-
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<?>> handleApiException(ApiException ex) {
         return errorCodeToResponseEntity(ex.getErrorCode());
@@ -82,10 +77,8 @@ public class GlobalExceptionHandler {
         return errorCodeToResponseEntity(errorCode);
     }
 
-
     private ResponseEntity<ApiResponse<?>> errorCodeToResponseEntity(ErrorCode errorCode) {
         ApiResponse<?> response = ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
         return new ResponseEntity<>(response, errorCode.getStatus());
     }
-
 }

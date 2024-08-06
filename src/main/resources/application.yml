@@ -83,7 +83,6 @@ spring:
           user_info_url: https://api.github.com/user
 
 server:
-  api_version: ${API_VERSION}
   port: ${SERVER_PORT:8080}
   servlet:
     context-path: /api/${API_VERSION}/

@@ -21,20 +21,15 @@ public class UserController {
     private final AccountService accountService;
 
     @GetMapping("/my-info")
-    public ResponseEntity<ApiResponse<?>> getUserAuthenticationInfo(
-            @AuthenticationPrincipal Account account
-    ) {
+    public ResponseEntity<ApiResponse<?>> getUserAuthenticationInfo(@AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(accountService.getAccountInfo(account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/history")
     public ResponseEntity<ApiResponse<?>> addHistory(
-            @RequestBody @Valid AddVideoHistoryRequest request,
-            @AuthenticationPrincipal Account account
-    ) {
+            @RequestBody @Valid AddVideoHistoryRequest request, @AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(userService.addVideoHistory(request, account));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 }

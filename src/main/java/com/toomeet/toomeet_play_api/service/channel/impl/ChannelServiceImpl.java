@@ -15,5 +15,4 @@ public class ChannelServiceImpl implements ChannelService {
     public Long getChannelSubscriberCount(String channelId) {
         return channelRepository.countSubscriber(channelId);
     }
-
 }

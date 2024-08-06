@@ -28,14 +28,17 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ErrorCode.VIDEO_ALREADY_SAVED_IN_HISTORY);
         }
 
-        Video video = videoRepository.findById(request.getVideoId())
+        Video video = videoRepository
+                .findById(request.getVideoId())
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         if (video.getVisibility() != Visibility.PUBLIC) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
 
-        User user = userRepository.findById(account.getUserId()).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository
+                .findById(account.getUserId())
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
         user.getWatchedVideos().add(video);
         userRepository.save(user);
         return "Video has been added to watched list";

@@ -13,6 +13,9 @@ import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.service.user.AccountService;
 import com.toomeet.toomeet_play_api.service.user.AuthService;
 import com.toomeet.toomeet_play_api.service.util.JwtService;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,10 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -58,16 +57,11 @@ public class AuthServiceImpl implements AuthService {
                 .name(account.getUsername())
                 .build();
 
-
         int confirmationExpiresTime = 1;
 
         String confirmationJson = gson.toJson(accountConfirmation);
 
-        jedis.setex(
-                accountConfirmation.getCode(),
-                TimeUnit.HOURS.toSeconds(confirmationExpiresTime),
-                confirmationJson
-        );
+        jedis.setex(accountConfirmation.getCode(), TimeUnit.HOURS.toSeconds(confirmationExpiresTime), confirmationJson);
 
         String username = StringUtils.defaultIfEmpty(account.getName(), account.getEmail());
 
@@ -76,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(account.getEmail())
                 .name(username)
                 .build());
-        
+
         return "Your account has been created. Please check your email to verify your new account.";
     }
 
@@ -85,7 +79,6 @@ public class AuthServiceImpl implements AuthService {
 
         String confirmationJson = Optional.ofNullable(jedis.get(code))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CONFIRMATION_CODE));
-
 
         AccountConfirmation confirmation = gson.fromJson(confirmationJson, AccountConfirmation.class);
 
@@ -106,16 +99,16 @@ public class AuthServiceImpl implements AuthService {
         Account account = Optional.ofNullable(accountService.getAccountByEmail(request.getEmail()))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CREDENTIAL));
 
-        boolean isInValidCredential = account.getPassword() == null || !passwordEncoder.matches(request.getPassword(), account.getPassword());
+        boolean isInValidCredential =
+                account.getPassword() == null || !passwordEncoder.matches(request.getPassword(), account.getPassword());
 
         if (isInValidCredential) throw new ApiException(ErrorCode.INVALID_CREDENTIAL);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(account, null, account.getAuthorities());
 
         return jwtService.generateTokenPair(authentication);
-
     }
-
 
     @Override
     public TokenResponse refreshToken(RefreshTokenRequest request) {

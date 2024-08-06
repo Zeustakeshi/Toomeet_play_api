@@ -1,6 +1,5 @@
 package com.toomeet.toomeet_play_api.event.listener;
 
-
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.event.EmailVerifyAccountEvent;
 import com.toomeet.toomeet_play_api.exception.ApiException;

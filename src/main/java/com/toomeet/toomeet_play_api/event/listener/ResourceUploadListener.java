@@ -1,6 +1,5 @@
 package com.toomeet.toomeet_play_api.event.listener;
 
-
 import com.toomeet.toomeet_play_api.event.UploadChannelAvatarEvent;
 import com.toomeet.toomeet_play_api.event.UploadVideoEvent;
 import com.toomeet.toomeet_play_api.event.UploadVideoThumbnailEvent;
@@ -30,5 +29,4 @@ public class ResourceUploadListener {
     public void handleVideoThumbnailUploadEvent(UploadVideoThumbnailEvent event) {
         studioVideoService.uploadThumbnailAsync(event.getThumbnail(), event.getVideoId(), event.getUserId());
     }
-
 }

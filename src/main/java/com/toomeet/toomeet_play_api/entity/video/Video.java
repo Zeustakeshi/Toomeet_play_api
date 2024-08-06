@@ -7,12 +7,11 @@ import com.toomeet.toomeet_play_api.enums.Language;
 import com.toomeet.toomeet_play_api.enums.ResourceUploadStatus;
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Set;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
-
-import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Data
@@ -73,25 +72,23 @@ public class Video extends Auditable {
             name = "video_view",
             joinColumns = @JoinColumn(name = "video_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"),
-            indexes = @Index(columnList = "video_id")
-    )
+            indexes = @Index(columnList = "video_id"))
     private Set<User> viewers;
 
     @ManyToMany
-    @JoinTable(name = "liked_video",
+    @JoinTable(
+            name = "liked_video",
             joinColumns = @JoinColumn(name = "video_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> likes;
 
     @ManyToMany
-    @JoinTable(name = "disliked_video",
+    @JoinTable(
+            name = "disliked_video",
             joinColumns = @JoinColumn(name = "video_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> dislikes;
 
     @OneToMany(mappedBy = "video", fetch = FetchType.LAZY)
     private Set<Comment> comments;
-
 }

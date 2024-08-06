@@ -22,42 +22,31 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<ApiResponse<?>> createAccount(
-            @RequestBody() @Valid CreateAccountRequest createAccountRequest
-    ) {
+            @RequestBody() @Valid CreateAccountRequest createAccountRequest) {
 
-        ApiResponse<?> response = ApiResponse.success(
-                authService.createAccountWithEmailAndPassword(createAccountRequest)
-        );
+        ApiResponse<?> response =
+                ApiResponse.success(authService.createAccountWithEmailAndPassword(createAccountRequest));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
     @PostMapping("/auth/login")
-    public ResponseEntity<ApiResponse<?>> login(
-            @RequestBody() @Valid LoginRequest loginRequest
-    ) {
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody() @Valid LoginRequest loginRequest) {
         ApiResponse<?> response = ApiResponse.success(authService.loginWithEmailAndPassword(loginRequest));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/auth/refresh-token")
-    public ResponseEntity<ApiResponse<?>> refreshToken(
-            @RequestBody @Valid RefreshTokenRequest refreshTokenRequest
-    ) {
+    public ResponseEntity<ApiResponse<?>> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
         ApiResponse<?> response = ApiResponse.success(authService.refreshToken(refreshTokenRequest));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/auth/verify-account")
-    public ResponseEntity<ApiResponse<?>> verifyConfirmation(
-            @RequestParam("code") String code
-    ) {
+    public ResponseEntity<ApiResponse<?>> verifyConfirmation(@RequestParam("code") String code) {
         ApiResponse<?> response = ApiResponse.success(authService.verifyAccountConfirmation(code));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     @GetMapping("/oauth/google")
     public ResponseEntity<ApiResponse<?>> getGoogleOAuthUrl() {
@@ -71,7 +60,6 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     @GetMapping("/oauth/login/github")
     public ResponseEntity<ApiResponse<?>> loginWithGithub(@RequestParam("code") String code) {
         ApiResponse<?> response = ApiResponse.success(oAuthService.loginWidthGithub(code));
@@ -83,5 +71,4 @@ public class AuthController {
         ApiResponse<?> response = ApiResponse.success(oAuthService.loginWithGoogle(code));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 }

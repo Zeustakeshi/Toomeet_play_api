@@ -9,6 +9,7 @@ public class NewPlaylistRequest {
     @NotEmpty
     @Size(min = 5, max = 100)
     private String name;
+
     @Size(min = 20, max = 15000)
     private String description;
 }

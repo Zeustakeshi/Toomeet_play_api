@@ -17,15 +17,20 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("TooMeet Play - API")
+                .info(new Info()
+                        .title("TooMeet Play - API")
                         .description("Toomeet Play rest api")
-                        .version("1.0").contact(new Contact().name("Minh Hiếu").email("minh.hieu.a.n.o.n.y@gmail.com").url("minh.hieu.a.n.o.n.y@gmail.com"))
-                        .license(new License().name("License of TooMeet")
-                                .url("https://toomeet.click")));
+                        .version("1.0")
+                        .contact(new Contact()
+                                .name("Minh Hiếu")
+                                .email("minh.hieu.a.n.o.n.y@gmail.com")
+                                .url("minh.hieu.a.n.o.n.y@gmail.com"))
+                        .license(new License().name("License of TooMeet").url("https://toomeet.click")));
     }
 
     private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+        return new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
                 .bearerFormat("JWT")
                 .scheme("bearer");
     }

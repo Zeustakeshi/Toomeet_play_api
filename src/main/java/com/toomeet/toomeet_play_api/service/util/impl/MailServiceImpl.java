@@ -35,7 +35,5 @@ public class MailServiceImpl implements MailService {
         helper.setTo(email);
         helper.setFrom(fromEmail);
         sender.send(message);
-
     }
 }
-

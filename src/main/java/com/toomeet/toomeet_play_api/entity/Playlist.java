@@ -3,10 +3,9 @@ package com.toomeet.toomeet_play_api.entity;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Set;
 
 @Entity
 @Data
@@ -37,8 +36,6 @@ public class Playlist extends Auditable {
     @JoinTable(
             name = "video_playlist",
             joinColumns = @JoinColumn(name = "video_id"),
-            inverseJoinColumns = @JoinColumn(name = "playlist_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "playlist_id"))
     private Set<Video> videos;
-
 }

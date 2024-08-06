@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.toomeet.toomeet_play_api.entity.Auditable;
 import com.toomeet.toomeet_play_api.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-
 import java.util.HashSet;
 import java.util.Set;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Data
@@ -39,25 +38,23 @@ public class Comment extends Auditable {
     private Set<Comment> replies = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(name = "liked_comment",
+    @JoinTable(
+            name = "liked_comment",
             joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     @Builder.Default
     private Set<User> likes = new HashSet<>();
 
     @ManyToMany
     @Builder.Default
-    @JoinTable(name = "disliked_comment",
+    @JoinTable(
+            name = "disliked_comment",
             joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> dislikes = new HashSet<>();
-
 
     public void setParent(Comment parent) {
         this.parent = parent;
         this.isReply = true;
     }
-
 }

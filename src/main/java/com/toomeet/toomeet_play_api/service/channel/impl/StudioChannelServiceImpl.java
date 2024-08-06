@@ -4,7 +4,6 @@
  *  @created 7/31/2024 10:53 PM
  * */
 
-
 package com.toomeet.toomeet_play_api.service.channel.impl;
 
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelDescriptionRequest;
@@ -65,8 +64,7 @@ public class StudioChannelServiceImpl implements StudioChannelService {
 
         try {
 
-            UploadChannelAvatarEvent uploadEvent = UploadChannelAvatarEvent
-                    .builder()
+            UploadChannelAvatarEvent uploadEvent = UploadChannelAvatarEvent.builder()
                     .avatar(avatar.getInputStream().readAllBytes())
                     .channelId(channel.getId())
                     .userId(account.getUserId())
@@ -79,23 +77,18 @@ public class StudioChannelServiceImpl implements StudioChannelService {
         } catch (Exception ex) {
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
         }
-
     }
 
     @Async
     @Override
     @Transactional
     public void updateChannelAvatarAsync(byte[] avatar, String channelId, String userId) {
-        Channel channel = channelRepository.findById(channelId)
-                .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
+        Channel channel =
+                channelRepository.findById(channelId).orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
 
         try {
-            ResourceUploaderResponse uploadResponse = resourceService
-                    .uploadImage(
-                            avatar,
-                            channel.getId(),
-                            "channel_avatars"
-                    );
+            ResourceUploaderResponse uploadResponse =
+                    resourceService.uploadImage(avatar, channel.getId(), "channel_avatars");
 
             String avatarUrl = uploadResponse.getUrl();
 
@@ -107,13 +100,12 @@ public class StudioChannelServiceImpl implements StudioChannelService {
             // TODO: Send notification to user (userId)
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
         }
-
     }
-
 
     @Override
     public ChannelBasicInfoResponse getChannelGeneral(Account account) {
-        Channel channel = channelRepository.findById(account.getChannelId())
+        Channel channel = channelRepository
+                .findById(account.getChannelId())
                 .orElseThrow(() -> new ApiException(ErrorCode.CHANNEL_NOT_FOUND));
         return channelMapper.toChannelGeneralResponse(channel);
     }

@@ -5,7 +5,9 @@ import com.toomeet.toomeet_play_api.entity.Channel;
 import com.toomeet.toomeet_play_api.repository.channel.ChannelRepository;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {ChannelRepository.class})
+@Mapper(
+        componentModel = "spring",
+        uses = {ChannelRepository.class})
 public interface ChannelMapper {
     ChannelBasicInfoResponse toChannelGeneralResponse(Channel channel);
 }

@@ -4,7 +4,6 @@
  *  @created 7/31/2024 8:54 PM
  * */
 
-
 package com.toomeet.toomeet_play_api.dto.response.channel;
 
 import lombok.EqualsAndHashCode;
@@ -18,13 +17,7 @@ public class UserChannelBasicInfoResponse extends ChannelBasicInfoResponse {
     private final boolean isMember;
 
     public UserChannelBasicInfoResponse(
-            String id,
-            String name,
-            String avatar,
-            Long subscribeCount,
-            boolean subscribed,
-            boolean isMember
-    ) {
+            String id, String name, String avatar, Long subscribeCount, boolean subscribed, boolean isMember) {
         super(id, name, avatar);
         this.subscribed = subscribed;
         this.subscribeCount = subscribeCount;

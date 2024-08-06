@@ -3,7 +3,7 @@ package com.toomeet.toomeet_play_api.domain.context;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class RequestContext {
-    private final static ThreadLocal<HttpServletRequest> requestHolder = new ThreadLocal<>();
+    private static final ThreadLocal<HttpServletRequest> requestHolder = new ThreadLocal<>();
 
     public static HttpServletRequest getRequest() {
         return requestHolder.get();
@@ -16,5 +16,4 @@ public class RequestContext {
     public static void clean() {
         requestHolder.remove();
     }
-
 }

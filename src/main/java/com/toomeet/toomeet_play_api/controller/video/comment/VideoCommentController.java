@@ -23,8 +23,7 @@ public class VideoCommentController {
     public ResponseEntity<ApiResponse<?>> createComment(
             @PathVariable("videoId") String videoId,
             @RequestBody @Valid NewCommentRequest request,
-            @AuthenticationPrincipal Account account
-    ) {
+            @AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(commentService.createComment(request, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -34,11 +33,9 @@ public class VideoCommentController {
             @PathVariable("videoId") String videoId,
             @RequestParam(value = "p", required = false, defaultValue = "0") int page,
             @RequestParam(value = "l", required = false, defaultValue = "20") int limit,
-            @AuthenticationPrincipal Account account
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                commentService.getAllCommentByVideoId(videoId, page, limit, account)
-        );
+            @AuthenticationPrincipal Account account) {
+        ApiResponse<?> response =
+                ApiResponse.success(commentService.getAllCommentByVideoId(videoId, page, limit, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -48,11 +45,9 @@ public class VideoCommentController {
             @RequestParam(value = "p", required = false, defaultValue = "0") int page,
             @RequestParam(value = "l", required = false, defaultValue = "20") int limit,
             @RequestParam(value = "parentId") String parentId,
-            @AuthenticationPrincipal Account account
-    ) {
+            @AuthenticationPrincipal Account account) {
         ApiResponse<?> response = ApiResponse.success(
-                commentService.getAllCommentCommentReplies(videoId, parentId, page, limit, account)
-        );
+                commentService.getAllCommentCommentReplies(videoId, parentId, page, limit, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -61,11 +56,9 @@ public class VideoCommentController {
             @PathVariable("videoId") String videoId,
             @PathVariable("commentId") String commentId,
             @AuthenticationPrincipal Account account,
-            @RequestBody @Valid UpdateCommentRequest request
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                commentService.updateComment(request, commentId, videoId, account)
-        );
+            @RequestBody @Valid UpdateCommentRequest request) {
+        ApiResponse<?> response =
+                ApiResponse.success(commentService.updateComment(request, commentId, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -73,11 +66,8 @@ public class VideoCommentController {
     public ResponseEntity<ApiResponse<?>> deleteComment(
             @PathVariable("videoId") String videoId,
             @PathVariable("commentId") String commentId,
-            @AuthenticationPrincipal Account account
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                commentService.deleteComment(videoId, commentId, account)
-        );
+            @AuthenticationPrincipal Account account) {
+        ApiResponse<?> response = ApiResponse.success(commentService.deleteComment(videoId, commentId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -86,25 +76,20 @@ public class VideoCommentController {
             @PathVariable("videoId") String videoId,
             @PathVariable("commentId") String commentId,
             @AuthenticationPrincipal Account account,
-            @RequestParam("type") ReactionType type
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                commentService.reactionComment(type, commentId, videoId, account)
-        );
+            @RequestParam("type") ReactionType type) {
+        ApiResponse<?> response =
+                ApiResponse.success(commentService.reactionComment(type, commentId, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 
     @PostMapping("{commentId}/un-reaction")
     public ResponseEntity<ApiResponse<?>> unReactionComment(
             @PathVariable("videoId") String videoId,
             @PathVariable("commentId") String commentId,
             @AuthenticationPrincipal Account account,
-            @RequestParam("type") ReactionType type
-    ) {
-        ApiResponse<?> response = ApiResponse.success(
-                commentService.unReactionComment(type, commentId, videoId, account)
-        );
+            @RequestParam("type") ReactionType type) {
+        ApiResponse<?> response =
+                ApiResponse.success(commentService.unReactionComment(type, commentId, videoId, account));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

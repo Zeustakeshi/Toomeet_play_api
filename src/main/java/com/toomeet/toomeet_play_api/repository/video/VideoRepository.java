@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VideoRepository extends JpaRepository<Video, String> {
-    @Query("select case when (v.visibility = 'PUBLIC' and  v.allowedComment = true) then true else false end from Video v where v.id = :videoId")
+    @Query(
+            "select case when (v.visibility = 'PUBLIC' and  v.allowedComment = true) then true else false end from Video v where v.id = :videoId")
     boolean isCommentAllowedForPublicVideo(String videoId);
 }

@@ -4,12 +4,10 @@
  *  @created 7/31/2024 7:31 PM
  * */
 
-
 package com.toomeet.toomeet_play_api.dto.response.channel;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
 
 @EqualsAndHashCode(callSuper = true)
 @Getter
@@ -21,4 +19,3 @@ public class AnonymousChannelBasicInfoResponse extends ChannelBasicInfoResponse 
         this.subscribeCount = subscribeCount;
     }
 }
-

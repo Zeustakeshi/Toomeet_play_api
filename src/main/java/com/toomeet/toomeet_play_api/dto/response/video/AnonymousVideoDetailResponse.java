@@ -4,12 +4,10 @@
  *  @created 7/31/2024 7:29 PM
  * */
 
-
 package com.toomeet.toomeet_play_api.dto.response.video;
 
-import lombok.Data;
-
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Data
 public class AnonymousVideoDetailResponse {

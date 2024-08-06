@@ -4,7 +4,6 @@
  *  @created 7/31/2024 10:52 PM
  * */
 
-
 package com.toomeet.toomeet_play_api.service.channel;
 
 import com.toomeet.toomeet_play_api.dto.response.channel.UserChannelBasicInfoResponse;

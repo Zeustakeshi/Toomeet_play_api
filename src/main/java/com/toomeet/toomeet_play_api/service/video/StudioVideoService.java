@@ -3,12 +3,12 @@ package com.toomeet.toomeet_play_api.service.video;
 import com.toomeet.toomeet_play_api.dto.request.video.*;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoBasicInfoResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoCategoryResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoSummaryResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface StudioVideoService {
 
@@ -41,4 +41,6 @@ public interface StudioVideoService {
     String deleteVideo(String videoId, Account account);
 
     void deleteVideoResourceAsync(String videoId);
+
+    List<VideoCategoryResponse> getAllCategory();
 }

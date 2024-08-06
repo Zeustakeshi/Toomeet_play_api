@@ -6,5 +6,4 @@ public interface NanoIdService {
     String generateNanoId();
 
     String generateCustomNanoId(int length);
-
 }

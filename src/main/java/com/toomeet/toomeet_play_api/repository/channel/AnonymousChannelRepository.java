@@ -12,15 +12,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AnonymousChannelRepository extends ChannelRepository {
-    @Query("select new com.toomeet.toomeet_play_api.dto.response.channel.AnonymousChannelBasicInfoResponse(" +
-            "c.id, " +
-            "c.name, " +
-            "c.avatar, " +
-            "count(distinct sub.id)" +
-            ") from Channel c " +
-            "left join c.subscribers sub " +
-            "where c.id = :channelId " +
-            "group by c")
+    @Query("select new com.toomeet.toomeet_play_api.dto.response.channel.AnonymousChannelBasicInfoResponse(" + "c.id, "
+            + "c.name, "
+            + "c.avatar, "
+            + "count(distinct sub.id)"
+            + ") from Channel c "
+            + "left join c.subscribers sub "
+            + "where c.id = :channelId "
+            + "group by c")
     AnonymousChannelBasicInfoResponse getBasicInfo(String channelId);
-
 }

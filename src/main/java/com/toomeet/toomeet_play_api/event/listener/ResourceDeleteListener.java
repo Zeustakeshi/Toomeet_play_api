@@ -1,6 +1,5 @@
 package com.toomeet.toomeet_play_api.event.listener;
 
-
 import com.toomeet.toomeet_play_api.event.DeleteVideoResourceEvent;
 import com.toomeet.toomeet_play_api.service.video.StudioVideoService;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +16,4 @@ public class ResourceDeleteListener {
     public void handleDeleteVideoResource(DeleteVideoResourceEvent event) {
         studioVideoService.deleteVideoResourceAsync(event.getPublicId());
     }
-
 }
