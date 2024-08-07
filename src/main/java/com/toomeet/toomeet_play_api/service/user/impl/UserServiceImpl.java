@@ -7,8 +7,7 @@ import com.toomeet.toomeet_play_api.entity.video.Video;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.enums.Visibility;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.mapper.UserMapper;
-import com.toomeet.toomeet_play_api.repository.UserRepository;
+import com.toomeet.toomeet_play_api.repository.user.UserRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
 import com.toomeet.toomeet_play_api.service.user.UserService;
 import jakarta.transaction.Transactional;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final VideoRepository videoRepository;
 
     @Override
@@ -30,14 +28,17 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(ErrorCode.VIDEO_ALREADY_SAVED_IN_HISTORY);
         }
 
-        Video video = videoRepository.findById(request.getVideoId())
+        Video video = videoRepository
+                .findById(request.getVideoId())
                 .orElseThrow(() -> new ApiException(ErrorCode.VIDEO_NOT_FOUND));
 
         if (video.getVisibility() != Visibility.PUBLIC) {
             throw new ApiException(ErrorCode.ACCESS_DENIED);
         }
 
-        User user = userRepository.findById(account.getUserId()).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository
+                .findById(account.getUserId())
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
         user.getWatchedVideos().add(video);
         userRepository.save(user);
         return "Video has been added to watched list";

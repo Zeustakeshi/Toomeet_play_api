@@ -16,6 +16,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
+
     properties:
       hibernate:
         format_sql: true
@@ -82,7 +83,6 @@ spring:
           user_info_url: https://api.github.com/user
 
 server:
-  api_version: ${API_VERSION}
   port: ${SERVER_PORT:8080}
   servlet:
     context-path: /api/${API_VERSION}/
@@ -90,7 +90,6 @@ server:
     path: /error
     whitelabel:
       enabled: true
-
 
 
 

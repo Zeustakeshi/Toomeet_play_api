@@ -3,16 +3,14 @@ package com.toomeet.toomeet_play_api.entity;
 import com.toomeet.toomeet_play_api.entity.auditing.AccountEntityListener;
 import com.toomeet.toomeet_play_api.enums.Role;
 import jakarta.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Entity
 @AllArgsConstructor
@@ -20,7 +18,9 @@ import java.util.Set;
 @Data
 @SuperBuilder
 @Table(name = "Account", indexes = @Index(columnList = "email"))
-@EqualsAndHashCode(callSuper = true, exclude = {"user", "channel"})
+@EqualsAndHashCode(
+        callSuper = true,
+        exclude = {"user", "channel"})
 @EntityListeners(AccountEntityListener.class)
 public class Account extends BaseEntity implements UserDetails {
 
@@ -37,7 +37,6 @@ public class Account extends BaseEntity implements UserDetails {
     @Column(name = "_channel_id", unique = true, nullable = false, updatable = false)
     private String channelId;
 
-
     private String image;
 
     private boolean isVerified;
@@ -48,7 +47,6 @@ public class Account extends BaseEntity implements UserDetails {
     @Builder.Default
     private Set<Role> authorities = new HashSet<>();
 
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(unique = true, updatable = false)
     private User user;
@@ -57,15 +55,12 @@ public class Account extends BaseEntity implements UserDetails {
     @JoinColumn(unique = true, updatable = false)
     private Channel channel;
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return this.authorities
-                .stream()
-                .map(
-                        role -> new SimpleGrantedAuthority("ROLE_" + role.name())
-                ).toList();
+        return this.authorities.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .toList();
     }
 
     public void setUser(User user) {
@@ -115,6 +110,4 @@ public class Account extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return isVerified;
     }
-
-
 }

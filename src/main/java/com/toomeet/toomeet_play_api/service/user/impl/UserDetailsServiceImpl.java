@@ -2,7 +2,7 @@ package com.toomeet.toomeet_play_api.service.user.impl;
 
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
-import com.toomeet.toomeet_play_api.repository.AccountRepository;
+import com.toomeet.toomeet_play_api.repository.user.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

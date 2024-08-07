@@ -12,6 +12,7 @@ public class AccountConfirmation {
     @Builder.Default
     @Setter(AccessLevel.PRIVATE)
     private String code = NanoIdUtils.randomNanoId();
+
     private String email;
     private String password;
     private String name;

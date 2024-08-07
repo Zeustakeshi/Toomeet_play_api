@@ -1,12 +1,12 @@
 package com.toomeet.toomeet_play_api.service.video;
 
-import com.toomeet.toomeet_play_api.dto.response.video.VideoCategoryResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoPreviewResponse;
-
-import java.util.List;
+import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.AnonymousVideoDetailResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoNewsfeedResponse;
 
 public interface AnonymousVideoService {
-    List<VideoPreviewResponse> getAllVideo();
 
-    List<VideoCategoryResponse> getAllCategory();
+    PageableResponse<VideoNewsfeedResponse> getNewsfeeds(int page, int limit);
+
+    AnonymousVideoDetailResponse getVideoDetails(String videoId);
 }

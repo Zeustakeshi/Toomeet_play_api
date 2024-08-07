@@ -1,6 +1,5 @@
 package com.toomeet.toomeet_play_api.exception;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import lombok.Builder;
@@ -18,6 +17,4 @@ public class ApiException extends RuntimeException {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
-
-
 }

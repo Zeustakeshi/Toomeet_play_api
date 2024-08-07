@@ -8,10 +8,9 @@ import com.toomeet.toomeet_play_api.entity.video.Category;
 import com.toomeet.toomeet_play_api.enums.Language;
 import com.toomeet.toomeet_play_api.enums.ResourceUploadStatus;
 import com.toomeet.toomeet_play_api.enums.Visibility;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -29,7 +28,7 @@ public class VideoResponse {
     private LocalDateTime recordDate;
     private boolean allowedComment;
     private boolean forKid;
-    
+
     @JsonProperty("category")
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)

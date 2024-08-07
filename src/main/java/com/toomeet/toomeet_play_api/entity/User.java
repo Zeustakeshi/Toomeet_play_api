@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Set;
-
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -30,7 +28,6 @@ public class User extends BaseEntity {
     @ManyToMany(mappedBy = "subscribers")
     private Set<Channel> subscribedChannels;
 
-
     @ManyToMany(mappedBy = "members")
     private Set<Channel> memberChannels;
 
@@ -39,8 +36,6 @@ public class User extends BaseEntity {
             name = "watched_list",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "video_id"),
-            indexes = @Index(columnList = "user_id")
-    )
+            indexes = @Index(columnList = "user_id"))
     private Set<Video> watchedVideos;
-
 }

@@ -14,8 +14,10 @@ public class CreateAccountRequest {
     private String email;
 
     @NotEmpty(message = "Password can not be empty or null")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
-            message = "Password must be at least 8 character, one numeric character, one special character, without space and including lowercase, uppercase character")
+    @Pattern(
+            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
+            message =
+                    "Password must be at least 8 character, one numeric character, one special character, without space and including lowercase, uppercase character")
     private String password;
 
     @NotEmpty(message = "Name can not be empty or null")

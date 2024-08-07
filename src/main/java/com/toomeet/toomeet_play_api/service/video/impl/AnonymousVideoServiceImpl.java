@@ -1,59 +1,40 @@
 package com.toomeet.toomeet_play_api.service.video.impl;
 
-import com.toomeet.toomeet_play_api.dto.response.channel.ChannelGeneralResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoCategoryResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoPreviewResponse;
-import com.toomeet.toomeet_play_api.entity.video.Video;
-import com.toomeet.toomeet_play_api.mapper.ChannelMapper;
-import com.toomeet.toomeet_play_api.mapper.VideoCategoryMapper;
+import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.AnonymousVideoDetailResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.VideoNewsfeedResponse;
+import com.toomeet.toomeet_play_api.dto.video.VideoNewsfeedDto;
+import com.toomeet.toomeet_play_api.mapper.PageMapper;
 import com.toomeet.toomeet_play_api.mapper.VideoMapper;
 import com.toomeet.toomeet_play_api.repository.video.AnonymousVideoRepository;
-import com.toomeet.toomeet_play_api.repository.video.CategoryRepository;
-import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
 import com.toomeet.toomeet_play_api.service.video.AnonymousVideoService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
 public class AnonymousVideoServiceImpl implements AnonymousVideoService {
 
     private final VideoMapper videoMapper;
-    private final ChannelMapper channelMapper;
-    private final CategoryRepository categoryRepository;
-    private final VideoCategoryMapper videoCategoryMapper;
-    private final AnonymousVideoRepository anonymousVideoRepository;
-    private final VideoRepository videoRepository;
+    private final AnonymousVideoRepository videoRepository;
+    private final PageMapper pageMapper;
 
     @Override
-    @Transactional
-    public List<VideoPreviewResponse> getAllVideo() {
-        List<Video> videos = anonymousVideoRepository.getAllAnonymous();
+    public PageableResponse<VideoNewsfeedResponse> getNewsfeeds(int page, int limit) {
 
-        return videos.stream().map(video -> {
-            VideoPreviewResponse videoResponse = videoMapper.toVideoPreviewResponse(video);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
 
-            ChannelGeneralResponse channelResponse = channelMapper.toChannelGeneralResponse(video.getChannel());
+        Page<VideoNewsfeedDto> videos = videoRepository.getNewsfeeds(PageRequest.of(page, limit, sort));
 
-            videoResponse.setViewCount(videoRepository.countVideoView(video.getId()));
-            videoResponse.setChannel(channelResponse);
-
-            return videoResponse;
-        }).collect(Collectors.toList());
-
+        Page<VideoNewsfeedResponse> videoResponses = videos.map(videoMapper::toVideoPreviewResponse);
+        return pageMapper.toPageableResponse(videoResponses);
     }
 
     @Override
-    public List<VideoCategoryResponse> getAllCategory() {
-        return categoryRepository
-                .findAll()
-                .stream()
-                .map(videoCategoryMapper::toCategoryResponse)
-                .toList();
+    public AnonymousVideoDetailResponse getVideoDetails(String videoId) {
+        return videoMapper.toAnonymousVideoDetailResponse(videoRepository.getVideoDetail(videoId));
     }
 }

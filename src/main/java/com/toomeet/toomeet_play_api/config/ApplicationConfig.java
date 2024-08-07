@@ -21,6 +21,4 @@ public class ApplicationConfig {
         Converters.registerLocalDateTime(gsonBuilder);
         return gsonBuilder.create();
     }
-
-
 }

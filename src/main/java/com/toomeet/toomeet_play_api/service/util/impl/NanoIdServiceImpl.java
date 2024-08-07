@@ -2,9 +2,8 @@ package com.toomeet.toomeet_play_api.service.util.impl;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.toomeet.toomeet_play_api.service.util.NanoIdService;
-import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
+import org.springframework.stereotype.Service;
 
 @Service
 public class NanoIdServiceImpl implements NanoIdService {
@@ -25,6 +24,4 @@ public class NanoIdServiceImpl implements NanoIdService {
     public String generateCustomNanoId(int length) {
         return NanoIdUtils.randomNanoId(random, alphabet, length);
     }
-
-
 }

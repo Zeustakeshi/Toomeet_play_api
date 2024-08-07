@@ -1,19 +1,26 @@
 package com.toomeet.toomeet_play_api.mapper;
 
-import com.toomeet.toomeet_play_api.dto.response.video.StudioVideoSummaryResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoPreviewResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
-import com.toomeet.toomeet_play_api.dto.response.video.VideoSmallResponse;
+import com.toomeet.toomeet_play_api.dto.response.video.*;
+import com.toomeet.toomeet_play_api.dto.video.VideoDetailDto;
+import com.toomeet.toomeet_play_api.dto.video.VideoNewsfeedDto;
 import com.toomeet.toomeet_play_api.entity.video.Video;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+        componentModel = "spring",
+        uses = {ChannelMapper.class})
 public interface VideoMapper {
+
+    VideoBasicInfoResponse toVideoBasicInfoResponse(Video video);
+
     VideoResponse toVideoResponse(Video video);
 
-    VideoPreviewResponse toVideoPreviewResponse(Video video);
+    VideoNewsfeedResponse toVideoPreviewResponse(VideoNewsfeedDto video);
 
-    VideoSmallResponse toVideoSmallResponse(Video video);
+    @Mapping(source = "channelId", target = "channelId")
+    UserVideoDetailResponse toUserVideoDetailResponse(VideoDetailDto video);
 
-    StudioVideoSummaryResponse toStudioVideoSummaryResponse(Video video);
+    @Mapping(source = "channelId", target = "channelId")
+    AnonymousVideoDetailResponse toAnonymousVideoDetailResponse(VideoDetailDto video);
 }

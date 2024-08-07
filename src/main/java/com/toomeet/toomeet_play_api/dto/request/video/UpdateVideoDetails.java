@@ -5,10 +5,9 @@ import com.toomeet.toomeet_play_api.enums.Visibility;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.Set;
+import lombok.Data;
 
 @Data
 public class UpdateVideoDetails {
@@ -33,5 +32,4 @@ public class UpdateVideoDetails {
 
     @NotNull(message = "RecordDate must be not null or empty")
     private LocalDateTime recordDate;
-
 }

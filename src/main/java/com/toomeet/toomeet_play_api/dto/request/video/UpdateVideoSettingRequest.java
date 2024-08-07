@@ -14,6 +14,4 @@ public class UpdateVideoSettingRequest {
 
     @NotNull(message = "VideoForKid must be not null or empty")
     private boolean videoForKid;
-
-
 }

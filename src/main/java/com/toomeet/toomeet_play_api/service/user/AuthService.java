@@ -3,13 +3,13 @@ package com.toomeet.toomeet_play_api.service.user;
 import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.response.account.CreateAccountResponse;
+import com.toomeet.toomeet_play_api.dto.request.auth.VerifyAccountRequest;
 import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 
 public interface AuthService {
-    CreateAccountResponse createAccountWithEmailAndPassword(CreateAccountRequest request);
+    String createAccountWithEmailAndPassword(CreateAccountRequest request);
 
-    String verifyAccountConfirmation(String code);
+    String verifyAccountConfirmation(VerifyAccountRequest request);
 
     TokenResponse loginWithEmailAndPassword(LoginRequest request);
 

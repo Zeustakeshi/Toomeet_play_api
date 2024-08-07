@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ChannelAnalyticsResponse {
-    private int subscribers;
-    private int members;
-    private int videos;
+    private long subscribers;
+    private long members;
+    private long videos;
 }

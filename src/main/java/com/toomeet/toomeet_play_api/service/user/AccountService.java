@@ -15,5 +15,4 @@ public interface AccountService {
     AccountResponse getAccountInfo(Account account);
 
     Account saveNewAccount(Account account);
-
 }

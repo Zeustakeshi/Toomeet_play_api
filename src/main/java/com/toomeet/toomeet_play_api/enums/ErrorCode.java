@@ -12,13 +12,18 @@ public enum ErrorCode {
     REQUEST_VALIDATION_FAILED(1004, "Request validation failed", HttpStatus.BAD_REQUEST),
     INVALID_CONFIRMATION_CODE(1005, "Invalid or expired confirmation code", HttpStatus.FORBIDDEN),
     INVALID_OAUTH_CODE(1006, "Invalid OAuth code", HttpStatus.BAD_REQUEST),
-    OAUTH_ACCESS_TOKEN_ERROR(1007, "Failed to retrieve access token from OAuth server", HttpStatus.INTERNAL_SERVER_ERROR),
-    OAUTH_LOAD_USER_INFO_ERROR(1008, "Failed to fetch user information from OAuth server", HttpStatus.INTERNAL_SERVER_ERROR),
-    GITHUB_OAUTH_EMAIL_EXCEPTION(1009, "Failed to retrieve email information from GitHub", HttpStatus.INTERNAL_SERVER_ERROR),
-    SEND_EMAIL_VERIFY_NEW_ACCOUNT_FAIL(1010, "can't send verify email to your account", HttpStatus.INTERNAL_SERVER_ERROR),
+    OAUTH_ACCESS_TOKEN_ERROR(
+            1007, "Failed to retrieve access token from OAuth server", HttpStatus.INTERNAL_SERVER_ERROR),
+    OAUTH_LOAD_USER_INFO_ERROR(
+            1008, "Failed to fetch user information from OAuth server", HttpStatus.INTERNAL_SERVER_ERROR),
+    GITHUB_OAUTH_EMAIL_EXCEPTION(
+            1009, "Failed to retrieve email information from GitHub", HttpStatus.INTERNAL_SERVER_ERROR),
+    SEND_EMAIL_VERIFY_NEW_ACCOUNT_FAIL(
+            1010, "can't send verify email to your account", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_CREDENTIAL(1011, "Invalid username or password", HttpStatus.UNAUTHORIZED),
     CHANNEL_NOT_FOUND(1012, "Channel not found", HttpStatus.NOT_FOUND),
-    USER_ALREADY_A_OWNER_CHANNEL(1013, "You are already a channel owner and cannot create a new channel.", HttpStatus.CONFLICT),
+    USER_ALREADY_A_OWNER_CHANNEL(
+            1013, "You are already a channel owner and cannot create a new channel.", HttpStatus.CONFLICT),
     USER_NOT_FOUND(1014, "User not found", HttpStatus.NOT_FOUND),
     PLAYLIST_ALREADY_EXIST(1015, "Playlist already exist.", HttpStatus.CONFLICT),
     INVALID_VIDEO_FORMAT(1016, "Videos in the wrong format. Only .mp4 files are allowed.", HttpStatus.BAD_REQUEST),
@@ -29,7 +34,10 @@ public enum ErrorCode {
     UPLOAD_IMAGE_EXCEPTION(1021, "Upload image error", HttpStatus.INTERNAL_SERVER_ERROR),
     CATEGORY_NAME_ALREADY_EXISTS(1022, "Category name already exists", HttpStatus.CONFLICT),
     CATEGORY_NOT_FOUND(1023, "Category not found", HttpStatus.NOT_FOUND),
-    PUBLIC_VIDEO_ERROR(1024, "Something went wrong!. Can't public this video, please check video information again.", HttpStatus.BAD_REQUEST),
+    PUBLIC_VIDEO_ERROR(
+            1024,
+            "Something went wrong!. Can't public this video, please check video information again.",
+            HttpStatus.BAD_REQUEST),
     INVALID_TOKEN_ERROR(1025, "Invalid token", HttpStatus.FORBIDDEN),
     VIDEO_ALREADY_SAVED_IN_HISTORY(1026, "Video already saved in history", HttpStatus.CONFLICT),
     USER_ALREADY_LIKED_VIDEO(1027, "User already liked video", HttpStatus.CONFLICT),
@@ -42,7 +50,10 @@ public enum ErrorCode {
     COMMENT_NOT_DISLIKED_YET(1034, "This comment has not been disliked by the user.", HttpStatus.BAD_REQUEST),
     USER_ALREADY_LIKED_COMMENT(1035, "User already liked comment", HttpStatus.CONFLICT),
     USER_ALREADY_DISLIKED_COMMENT(1036, "User already disliked comment", HttpStatus.CONFLICT),
-    VIDEO_COMMENT_UNAVAILABLE(1037, "Video comment unavailable", HttpStatus.FORBIDDEN);;
+    VIDEO_COMMENT_UNAVAILABLE(1037, "Video comment unavailable", HttpStatus.FORBIDDEN),
+    VIDEO_ALREADY_EXISTED_IN_PLAYLIST(1038, "Video already existed in this playlist", HttpStatus.CONFLICT),
+    VIDEO_NOT_FOUND_IN_PLAYLIST(1038, "Video not found in this playlist", HttpStatus.NOT_FOUND),
+    ;
 
     private final String message;
     private final HttpStatus status;

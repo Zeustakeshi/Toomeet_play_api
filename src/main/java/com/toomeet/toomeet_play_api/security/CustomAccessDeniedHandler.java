@@ -13,19 +13,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final HandlerExceptionResolver resolver;
 
-    public CustomAccessDeniedHandler(
-            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolveException
-    ) {
+    public CustomAccessDeniedHandler(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolveException) {
         this.resolver = resolveException;
     }
 
-
     @Override
     public void handle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AccessDeniedException accessDeniedException
-    ) {
+            HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) {
         resolver.resolveException(request, response, null, accessDeniedException);
     }
 }

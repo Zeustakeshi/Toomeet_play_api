@@ -8,14 +8,13 @@ import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.enums.Role;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.AccountMapper;
-import com.toomeet.toomeet_play_api.repository.AccountRepository;
+import com.toomeet.toomeet_play_api.repository.user.AccountRepository;
 import com.toomeet.toomeet_play_api.service.user.AccountService;
 import com.toomeet.toomeet_play_api.service.util.NanoIdService;
 import jakarta.transaction.Transactional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -54,14 +53,12 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public Account saveNewAccount(Account account) {
 
-        User user = User.builder()
-                .account(account)
-                .build();
+        User user = User.builder().account(account).build();
 
         Channel channel = Channel.builder()
                 .account(account)
                 .avatar(account.getImage())
-                .name(account.getUsername() + nanoIdService.generateCustomNanoId(8))
+                .name("channel-" + nanoIdService.generateCustomNanoId(5))
                 .build();
 
         account.addAllAuthority(Set.of(Role.NORMAL_USER));
@@ -71,5 +68,4 @@ public class AccountServiceImpl implements AccountService {
 
         return accountRepository.save(account);
     }
-
 }

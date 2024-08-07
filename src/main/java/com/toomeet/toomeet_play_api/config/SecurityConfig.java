@@ -54,35 +54,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(apiConfigurationSource()))
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(
-                        handler -> handler
-                                .authenticationEntryPoint(authenticationEntryPoint)
-                                .accessDeniedHandler(accessDeniedHandler)
-                )
-                .authorizeHttpRequests(request ->
-                        request
-                                .requestMatchers(
-                                        "/docs",
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui.html",
-                                        "/swagger-ui/**",
-                                        "/auth/**",
-                                        "/oauth/**",
-                                        "/anonymous/**"
-                                ).permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
-                )
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
+                .authorizeHttpRequests(request -> request.requestMatchers(
+                                "/docs",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/auth/**",
+                                "/oauth/**",
+                                "/anonymous/**")
+                        .permitAll()
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
+                        .anyRequest()
+                        .authenticated())
                 .addFilterBefore(httpServletRequestFilter, BearerTokenAuthenticationFilter.class)
-                .oauth2ResourceServer(oauth -> oauth.jwt(
-                                jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)
-
-                        ).authenticationEntryPoint(authenticationEntryPoint)
-                );
+                .oauth2ResourceServer(
+                        oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
+                                .authenticationEntryPoint(authenticationEntryPoint));
         return http.build();
     }
 
@@ -107,8 +100,7 @@ public class SecurityConfig {
     @Bean
     @Primary
     JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey
-                .Builder(keyUtils.getAccessTokenPublicKey())
+        JWK jwk = new RSAKey.Builder(keyUtils.getAccessTokenPublicKey())
                 .privateKey(keyUtils.getAccessTokenPrivateKey())
                 .build();
         JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
@@ -118,6 +110,7 @@ public class SecurityConfig {
     @Bean
     @Primary
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey()).build();
+        return NimbusJwtDecoder.withPublicKey(keyUtils.getAccessTokenPublicKey())
+                .build();
     }
 }

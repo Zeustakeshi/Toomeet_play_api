@@ -5,6 +5,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +14,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Data
 @MappedSuperclass
@@ -38,5 +38,20 @@ public class BaseEntity {
         if (this.id == null) {
             this.id = NanoIdUtils.randomNanoId();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseEntity that = (BaseEntity) o;
+        return Objects.equals(getId(), that.getId())
+                && Objects.equals(getCreatedAt(), that.getCreatedAt())
+                && Objects.equals(getUpdatedAt(), that.getUpdatedAt());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getCreatedAt(), getUpdatedAt());
     }
 }

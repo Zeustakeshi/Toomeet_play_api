@@ -2,10 +2,9 @@ package com.toomeet.toomeet_play_api.dto.response.general;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.toomeet.toomeet_play_api.domain.context.RequestContext;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -19,7 +18,6 @@ public class ApiResponse<T> {
     private boolean isSuccess;
     private LocalDateTime timestamp;
     private String path;
-
 
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
@@ -40,5 +38,4 @@ public class ApiResponse<T> {
                 .path(RequestContext.getRequest().getRequestURI())
                 .build();
     }
-
 }
