@@ -4,15 +4,16 @@ import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelDescription
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelNameRequest;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelAnalyticsResponse;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
+import com.toomeet.toomeet_play_api.dto.response.general.UpdateResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface StudioChannelService {
-    String updateChannelName(UpdateChannelNameRequest request, Account account);
+    UpdateResponse<String> updateChannelName(UpdateChannelNameRequest request, Account account);
 
-    String updateChannelDescription(UpdateChannelDescriptionRequest request, Account account);
+    UpdateResponse<String> updateChannelDescription(UpdateChannelDescriptionRequest request, Account account);
 
-    String updateChannelAvatar(MultipartFile avatar, Account account);
+    UpdateResponse<String> updateChannelAvatar(MultipartFile avatar, Account account);
 
     void updateChannelAvatarAsync(byte[] avatar, String channelId, String userId);
 

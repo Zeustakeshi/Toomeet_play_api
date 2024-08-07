@@ -10,6 +10,7 @@ import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelDescription
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdateChannelNameRequest;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelAnalyticsResponse;
 import com.toomeet.toomeet_play_api.dto.response.channel.ChannelBasicInfoResponse;
+import com.toomeet.toomeet_play_api.dto.response.general.UpdateResponse;
 import com.toomeet.toomeet_play_api.dto.uploader.ResourceUploaderResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Channel;
@@ -38,28 +39,26 @@ public class StudioChannelServiceImpl implements StudioChannelService {
 
     @Override
     @Transactional
-    public String updateChannelName(UpdateChannelNameRequest request, Account account) {
+    public UpdateResponse<String> updateChannelName(UpdateChannelNameRequest request, Account account) {
         Channel channel = channelRepository.findByAccountId(account.getId());
         channel.setName(request.getName());
-
         channelRepository.save(channel);
-
-        return "Update channel name to \"" + request.getName() + "\" success.";
+        return UpdateResponse.success(request.getName());
     }
 
     @Override
     @Transactional
-    public String updateChannelDescription(UpdateChannelDescriptionRequest request, Account account) {
+    public UpdateResponse<String> updateChannelDescription(UpdateChannelDescriptionRequest request, Account account) {
         Channel channel = channelRepository.findByAccountId(account.getId());
         channel.setDescription(request.getDescription());
 
         channelRepository.save(channel);
 
-        return "Update channel description to \"" + request.getDescription() + "\" success.";
+        return UpdateResponse.success(request.getDescription());
     }
 
     @Override
-    public String updateChannelAvatar(MultipartFile avatar, Account account) {
+    public UpdateResponse<String> updateChannelAvatar(MultipartFile avatar, Account account) {
         Channel channel = channelRepository.findByAccountId(account.getId());
 
         try {
@@ -72,7 +71,7 @@ public class StudioChannelServiceImpl implements StudioChannelService {
 
             publisher.publishEvent(uploadEvent);
 
-            return "Your channel avatar has been successfully uploaded and is now pending processing.";
+            return UpdateResponse.pending("Your channel avatar has been successfully uploaded and is now pending processing.");
 
         } catch (Exception ex) {
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
