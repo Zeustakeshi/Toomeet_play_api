@@ -1,9 +1,6 @@
 package com.toomeet.toomeet_play_api.controller.user;
 
-import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
-import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
-import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
-import com.toomeet.toomeet_play_api.dto.request.auth.VerifyAccountRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.*;
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.service.user.AuthService;
 import com.toomeet.toomeet_play_api.service.user.OAuthService;
@@ -63,15 +60,19 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/oauth/login/github")
-    public ResponseEntity<ApiResponse<?>> loginWithGithub(@RequestParam("code") String code) {
-        ApiResponse<?> response = ApiResponse.success(oAuthService.loginWidthGithub(code));
+    @PostMapping("/oauth/login/github")
+    public ResponseEntity<ApiResponse<?>> loginWithGithub(
+            @RequestBody @Valid OauthLoginRequest request
+    ) {
+        ApiResponse<?> response = ApiResponse.success(oAuthService.loginWidthGithub(request.getCode()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/oauth/login/google")
-    public ResponseEntity<ApiResponse<?>> loginWithGoogle(@RequestParam("code") String code) {
-        ApiResponse<?> response = ApiResponse.success(oAuthService.loginWithGoogle(code));
+    @PostMapping("/oauth/login/google")
+    public ResponseEntity<ApiResponse<?>> loginWithGoogle(
+            @RequestBody @Valid OauthLoginRequest request
+    ) {
+        ApiResponse<?> response = ApiResponse.success(oAuthService.loginWithGoogle(request.getCode()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
