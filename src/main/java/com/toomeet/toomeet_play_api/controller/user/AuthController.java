@@ -41,9 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/verify-account")
-    public ResponseEntity<ApiResponse<?>> verifyConfirmation(
-            @RequestBody @Valid VerifyAccountRequest request
-    ) {
+    public ResponseEntity<ApiResponse<?>> verifyConfirmation(@RequestBody @Valid VerifyAccountRequest request) {
         ApiResponse<?> response = ApiResponse.success(authService.verifyAccountConfirmation(request));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -61,17 +59,13 @@ public class AuthController {
     }
 
     @PostMapping("/oauth/login/github")
-    public ResponseEntity<ApiResponse<?>> loginWithGithub(
-            @RequestBody @Valid OauthLoginRequest request
-    ) {
+    public ResponseEntity<ApiResponse<?>> loginWithGithub(@RequestBody @Valid OauthLoginRequest request) {
         ApiResponse<?> response = ApiResponse.success(oAuthService.loginWidthGithub(request.getCode()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/oauth/login/google")
-    public ResponseEntity<ApiResponse<?>> loginWithGoogle(
-            @RequestBody @Valid OauthLoginRequest request
-    ) {
+    public ResponseEntity<ApiResponse<?>> loginWithGoogle(@RequestBody @Valid OauthLoginRequest request) {
         ApiResponse<?> response = ApiResponse.success(oAuthService.loginWithGoogle(request.getCode()));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

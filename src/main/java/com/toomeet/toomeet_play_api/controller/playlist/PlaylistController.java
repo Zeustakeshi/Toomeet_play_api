@@ -6,7 +6,7 @@ import com.toomeet.toomeet_play_api.dto.request.channel.NewPlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdatePlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
-import com.toomeet.toomeet_play_api.service.playlist.PlaylistService;
+import com.toomeet.toomeet_play_api.service.playlist.UserPlaylistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,28 +18,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/playlists")
 @RequiredArgsConstructor
 public class PlaylistController {
-    private final PlaylistService playlistService;
+    private final UserPlaylistService userPlaylistService;
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<?>> getAllPlaylist(
             @AuthenticationPrincipal Account account,
             @RequestParam(value = "p", required = false, defaultValue = "0") int page,
             @RequestParam(value = "l", required = false, defaultValue = "20") int limit) {
-        ApiResponse<?> response = ApiResponse.success(playlistService.getAllPlayList(page, limit, account));
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        ApiResponse<?> response = ApiResponse.success(userPlaylistService.getAllPlayList(page, limit, account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("{playlistId}")
     public ResponseEntity<ApiResponse<?>> getPlaylistById(
             @AuthenticationPrincipal Account account, @PathVariable("playlistId") String playlistId) {
-        ApiResponse<?> response = ApiResponse.success(playlistService.getPlayListById(playlistId, account));
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        ApiResponse<?> response = ApiResponse.success(userPlaylistService.getPlayListById(playlistId, account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<ApiResponse<?>> createPlaylist(
             @RequestBody @Valid NewPlaylistRequest request, @AuthenticationPrincipal Account account) {
-        ApiResponse<?> response = ApiResponse.success(playlistService.createPlaylist(request, account));
+        ApiResponse<?> response = ApiResponse.success(userPlaylistService.createPlaylist(request, account));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -49,8 +49,9 @@ public class PlaylistController {
             @RequestBody() AddVideoPlaylistRequest request,
             @PathVariable("playlistId") String playlistId) {
 
-        ApiResponse<?> response = ApiResponse.success(playlistService.addVideoToPlaylist(request, playlistId, account));
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        ApiResponse<?> response =
+                ApiResponse.success(userPlaylistService.addVideoToPlaylist(request, playlistId, account));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("{playlistId}/video")
@@ -58,7 +59,7 @@ public class PlaylistController {
             @AuthenticationPrincipal Account account,
             @RequestBody() DeleteVideoPlaylistRequest request,
             @PathVariable("playlistId") String playlistId) {
-        ApiResponse<?> response = ApiResponse.success(playlistService.deleteVideo(request, playlistId, account));
+        ApiResponse<?> response = ApiResponse.success(userPlaylistService.deleteVideo(request, playlistId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -67,14 +68,14 @@ public class PlaylistController {
             @AuthenticationPrincipal Account account,
             @RequestBody @Valid UpdatePlaylistRequest request,
             @PathVariable("playlistId") String playlistId) {
-        ApiResponse<?> response = ApiResponse.success(playlistService.updatePlaylist(request, playlistId, account));
+        ApiResponse<?> response = ApiResponse.success(userPlaylistService.updatePlaylist(request, playlistId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("{playlistId}")
     public ResponseEntity<ApiResponse<?>> deletePlaylist(
             @AuthenticationPrincipal Account account, @PathVariable("playlistId") String playlistId) {
-        ApiResponse<?> response = ApiResponse.success(playlistService.deletePlaylist(playlistId, account));
+        ApiResponse<?> response = ApiResponse.success(userPlaylistService.deletePlaylist(playlistId, account));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

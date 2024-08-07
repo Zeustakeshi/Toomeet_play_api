@@ -6,6 +6,7 @@ import com.toomeet.toomeet_play_api.dto.request.channel.DeleteVideoPlaylistReque
 import com.toomeet.toomeet_play_api.dto.request.channel.NewPlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdatePlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.general.UpdateResponse;
 import com.toomeet.toomeet_play_api.dto.response.playlist.PlaylistResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.entity.Playlist;
@@ -14,11 +15,9 @@ import com.toomeet.toomeet_play_api.enums.ErrorCode;
 import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.mapper.PageMapper;
 import com.toomeet.toomeet_play_api.mapper.PlaylistMapper;
-import com.toomeet.toomeet_play_api.repository.channel.ChannelRepository;
-import com.toomeet.toomeet_play_api.repository.playlist.PlaylistRepository;
-import com.toomeet.toomeet_play_api.repository.user.UserRepository;
+import com.toomeet.toomeet_play_api.repository.playlist.UserPlaylistRepository;
 import com.toomeet.toomeet_play_api.repository.video.VideoRepository;
-import com.toomeet.toomeet_play_api.service.playlist.PlaylistService;
+import com.toomeet.toomeet_play_api.service.playlist.UserPlaylistService;
 import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +28,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class PlaylistServiceImpl implements PlaylistService {
-    private final PlaylistRepository playlistRepository;
-    private final ChannelRepository channelRepository;
-    private final UserRepository userRepository;
+public class UserPlaylistServiceImpl implements UserPlaylistService {
+    private final UserPlaylistRepository playlistRepository;
     private final PlaylistMapper playlistMapper;
     private final VideoRepository videoRepository;
     private final PageMapper pageMapper;
@@ -70,12 +67,14 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     @Transactional
-    public PlaylistResponse updatePlaylist(UpdatePlaylistRequest request, String playlistId, Account account) {
+    public UpdateResponse<PlaylistResponse> updatePlaylist(
+            UpdatePlaylistRequest request, String playlistId, Account account) {
         Playlist playlist = getPlaylistAnhCheckOwnership(playlistId, account);
         playlist.setName(request.getName());
         playlist.setDescription(request.getDescription());
+        playlist.setVisibility(request.getVisibility());
         Playlist updatedPlaylist = playlistRepository.save(playlist);
-        return toPlaylistResponse(updatedPlaylist);
+        return UpdateResponse.success(toPlaylistResponse(updatedPlaylist));
     }
 
     @Override

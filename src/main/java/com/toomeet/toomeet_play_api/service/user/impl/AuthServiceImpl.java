@@ -14,6 +14,9 @@ import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.service.user.AccountService;
 import com.toomeet.toomeet_play_api.service.user.AuthService;
 import com.toomeet.toomeet_play_api.service.util.JwtService;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,10 +25,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor

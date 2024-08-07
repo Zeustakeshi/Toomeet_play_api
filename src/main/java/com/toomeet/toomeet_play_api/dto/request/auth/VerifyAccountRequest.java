@@ -4,7 +4,6 @@
  *  @created 8/7/2024 11:24 AM
  * */
 
-
 package com.toomeet.toomeet_play_api.dto.request.auth;
 
 import jakarta.validation.constraints.NotBlank;

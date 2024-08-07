@@ -110,7 +110,7 @@ public class StudioVideoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/category")
+    @GetMapping("/categories")
     public ResponseEntity<ApiResponse<?>> getAllCategory() {
         ApiResponse<?> response = ApiResponse.success(videoService.getAllCategory());
         return new ResponseEntity<>(response, HttpStatus.OK);

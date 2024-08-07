@@ -5,13 +5,9 @@ import org.junit.jupiter.api.Test;
 
 class AuthControllerTest {
 
-
     @BeforeEach
-    void setUp() {
-    }
+    void setUp() {}
 
     @Test
-    void login() {
-
-    }
+    void login() {}
 }

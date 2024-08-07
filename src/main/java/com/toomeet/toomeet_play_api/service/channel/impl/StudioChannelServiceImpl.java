@@ -71,7 +71,8 @@ public class StudioChannelServiceImpl implements StudioChannelService {
 
             publisher.publishEvent(uploadEvent);
 
-            return UpdateResponse.pending("Your channel avatar has been successfully uploaded and is now pending processing.");
+            return UpdateResponse.pending(
+                    "Your channel avatar has been successfully uploaded and is now pending processing.");
 
         } catch (Exception ex) {
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
