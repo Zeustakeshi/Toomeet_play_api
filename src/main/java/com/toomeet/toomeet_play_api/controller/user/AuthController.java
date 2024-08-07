@@ -3,6 +3,7 @@ package com.toomeet.toomeet_play_api.controller.user;
 import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.VerifyAccountRequest;
 import com.toomeet.toomeet_play_api.dto.response.general.ApiResponse;
 import com.toomeet.toomeet_play_api.service.user.AuthService;
 import com.toomeet.toomeet_play_api.service.user.OAuthService;
@@ -42,9 +43,11 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/auth/verify-account")
-    public ResponseEntity<ApiResponse<?>> verifyConfirmation(@RequestParam("code") String code) {
-        ApiResponse<?> response = ApiResponse.success(authService.verifyAccountConfirmation(code));
+    @PostMapping("/auth/verify-account")
+    public ResponseEntity<ApiResponse<?>> verifyConfirmation(
+            @RequestBody @Valid VerifyAccountRequest request
+    ) {
+        ApiResponse<?> response = ApiResponse.success(authService.verifyAccountConfirmation(request));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -5,6 +5,7 @@ import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
 import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.VerifyAccountRequest;
 import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
@@ -13,9 +14,6 @@ import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.service.user.AccountService;
 import com.toomeet.toomeet_play_api.service.user.AuthService;
 import com.toomeet.toomeet_play_api.service.util.JwtService;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,6 +22,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
+
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -75,11 +77,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String verifyAccountConfirmation(String code) {
-
-        String confirmationJson = Optional.ofNullable(jedis.get(code))
+    public String verifyAccountConfirmation(VerifyAccountRequest request) {
+        String confirmationJson = Optional.ofNullable(jedis.get(request.getCode()))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CONFIRMATION_CODE));
-
+        
         AccountConfirmation confirmation = gson.fromJson(confirmationJson, AccountConfirmation.class);
 
         accountService.saveNewAccount(Account.builder()
@@ -89,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
                 .isVerified(true)
                 .build());
 
-        jedis.del(code);
+        jedis.del(request.getCode());
         return "Your account has been verified. Please login !";
     }
 
