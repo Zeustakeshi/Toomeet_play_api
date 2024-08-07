@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -45,14 +46,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AuthenticationException ex) {
+    public ResponseEntity<ApiResponse<?>> handleAuthenticationException(AuthenticationException ex) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED_ERROR;
         ApiResponse<?> response = ApiResponse.error(errorCode.getCode(), ex.getMessage());
         return new ResponseEntity<>(response, errorCode.getStatus());
     }
 
-    @ExceptionHandler(InvalidBearerTokenException.class)
-    public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(InvalidBearerTokenException ex) {
+    @ExceptionHandler({InvalidBearerTokenException.class, JwtException.class})
+    public ResponseEntity<ApiResponse<?>> handleTokenException(Exception ex) {
         ErrorCode errorCode = ErrorCode.INVALID_TOKEN_ERROR;
         ApiResponse<?> response = ApiResponse.error(errorCode.getCode(), ex.getMessage());
         return new ResponseEntity<>(response, errorCode.getStatus());

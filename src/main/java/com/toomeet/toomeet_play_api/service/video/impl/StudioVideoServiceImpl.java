@@ -5,6 +5,7 @@ import static com.toomeet.toomeet_play_api.enums.ResourceUploadStatus.PROCESSING
 
 import com.toomeet.toomeet_play_api.dto.request.video.*;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.general.UpdateResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoBasicInfoResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoCategoryResponse;
 import com.toomeet.toomeet_play_api.dto.response.video.VideoResponse;
@@ -117,20 +118,22 @@ public class StudioVideoServiceImpl implements StudioVideoService {
 
     @Override
     @Transactional
-    public VideoResponse updateVideoMetadata(UpdateVideoMetadataRequest request, String videoId, Account account) {
+    public UpdateResponse<VideoResponse> updateVideoMetadata(
+            UpdateVideoMetadataRequest request, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         video.setTitle(request.getTitle());
         video.setDescription(request.getDescription());
-        return videoMapper.toVideoResponse(videoRepository.save(video));
+        return UpdateResponse.success(videoMapper.toVideoResponse(videoRepository.save(video)));
     }
 
     @Override
     @Transactional
-    public VideoResponse updateVideoSettings(UpdateVideoSettingRequest request, String videoId, Account account) {
+    public UpdateResponse<VideoResponse> updateVideoSettings(
+            UpdateVideoSettingRequest request, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         video.setAllowedComment(request.isAllowedComment());
         updateVideoVisibility(video, request.getVisibility());
-        return videoMapper.toVideoResponse(videoRepository.save(video));
+        return UpdateResponse.success(videoMapper.toVideoResponse(videoRepository.save(video)));
     }
 
     @Override
@@ -146,7 +149,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
     }
 
     @Override
-    public String uploadThumbnail(MultipartFile thumbnail, String videoId, Account account) {
+    public UpdateResponse<String> uploadThumbnail(MultipartFile thumbnail, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         try {
 
@@ -158,7 +161,8 @@ public class StudioVideoServiceImpl implements StudioVideoService {
 
             publisher.publishEvent(uploadEvent);
 
-            return "Your video thumbnail has been successfully uploaded and is now pending processing.";
+            return UpdateResponse.pending(
+                    "Your video thumbnail has been successfully uploaded and is now pending processing.");
         } catch (Exception ex) {
             throw new ApiException(ErrorCode.UPLOAD_IMAGE_EXCEPTION);
         }
@@ -184,19 +188,20 @@ public class StudioVideoServiceImpl implements StudioVideoService {
 
     @Override
     @Transactional
-    public String updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account) {
+    public UpdateResponse<Set<String>> updateVideoTag(UpdateVideoTagRequest request, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         updateVideoTag(video, request.getTags());
-        return "Video tag has been updated";
+        return UpdateResponse.success(request.getTags());
     }
 
     @Override
     @Transactional
-    public String updateVideoCategory(UpdateVideoCategoryRequest request, String videoId, Account account) {
+    public UpdateResponse<String> updateVideoCategory(
+            UpdateVideoCategoryRequest request, String videoId, Account account) {
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
         updateVideoCategory(video, request.getCategory());
         videoRepository.save(video);
-        return "update video category successful";
+        return UpdateResponse.success(request.getCategory());
     }
 
     private void updateVideoVisibility(Video video, Visibility visibility) {
@@ -207,7 +212,8 @@ public class StudioVideoServiceImpl implements StudioVideoService {
 
     @Override
     @Transactional
-    public VideoResponse updateVideoDetails(UpdateVideoDetails request, String videoId, Account account) {
+    public UpdateResponse<VideoResponse> updateVideoDetails(
+            UpdateVideoDetails request, String videoId, Account account) {
 
         Video video = getVideoByIdWithOwnershipCheck(videoId, account);
 
@@ -221,7 +227,7 @@ public class StudioVideoServiceImpl implements StudioVideoService {
         updateVideoVisibility(video, request.getVisibility());
 
         videoRepository.save(video);
-        return videoMapper.toVideoResponse(video);
+        return UpdateResponse.success(videoMapper.toVideoResponse(video));
     }
 
     @Override

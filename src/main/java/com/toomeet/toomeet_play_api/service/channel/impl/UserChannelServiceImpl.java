@@ -31,7 +31,6 @@ public class UserChannelServiceImpl implements UserChannelService {
 
     @Override
     public String subscribe(String channelId, Account account) {
-
         return "";
     }
 

@@ -5,6 +5,7 @@ import com.toomeet.toomeet_play_api.domain.account.AccountConfirmation;
 import com.toomeet.toomeet_play_api.dto.request.auth.CreateAccountRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.LoginRequest;
 import com.toomeet.toomeet_play_api.dto.request.auth.RefreshTokenRequest;
+import com.toomeet.toomeet_play_api.dto.request.auth.VerifyAccountRequest;
 import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 import com.toomeet.toomeet_play_api.enums.ErrorCode;
@@ -75,9 +76,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String verifyAccountConfirmation(String code) {
-
-        String confirmationJson = Optional.ofNullable(jedis.get(code))
+    public String verifyAccountConfirmation(VerifyAccountRequest request) {
+        String confirmationJson = Optional.ofNullable(jedis.get(request.getCode()))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CONFIRMATION_CODE));
 
         AccountConfirmation confirmation = gson.fromJson(confirmationJson, AccountConfirmation.class);
@@ -89,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
                 .isVerified(true)
                 .build());
 
-        jedis.del(code);
+        jedis.del(request.getCode());
         return "Your account has been verified. Please login !";
     }
 
@@ -112,6 +112,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponse refreshToken(RefreshTokenRequest request) {
-        return jwtService.refreshToken(request.getToken());
+        return jwtService.refreshToken(request.getRefreshToken());
     }
 }

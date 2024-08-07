@@ -5,10 +5,11 @@ import com.toomeet.toomeet_play_api.dto.request.channel.DeleteVideoPlaylistReque
 import com.toomeet.toomeet_play_api.dto.request.channel.NewPlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.request.channel.UpdatePlaylistRequest;
 import com.toomeet.toomeet_play_api.dto.response.general.PageableResponse;
+import com.toomeet.toomeet_play_api.dto.response.general.UpdateResponse;
 import com.toomeet.toomeet_play_api.dto.response.playlist.PlaylistResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
 
-public interface PlaylistService {
+public interface UserPlaylistService {
 
     PageableResponse<PlaylistResponse> getAllPlayList(int page, int limit, Account account);
 
@@ -16,7 +17,7 @@ public interface PlaylistService {
 
     String addVideoToPlaylist(AddVideoPlaylistRequest request, String playlistId, Account account);
 
-    PlaylistResponse updatePlaylist(UpdatePlaylistRequest request, String playlistId, Account account);
+    UpdateResponse<PlaylistResponse> updatePlaylist(UpdatePlaylistRequest request, String playlistId, Account account);
 
     PlaylistResponse getPlayListById(String playlistId, Account account);
 

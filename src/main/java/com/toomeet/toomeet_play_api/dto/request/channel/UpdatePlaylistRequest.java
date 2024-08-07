@@ -1,5 +1,6 @@
 package com.toomeet.toomeet_play_api.dto.request.channel;
 
+import com.toomeet.toomeet_play_api.enums.Visibility;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -12,4 +13,6 @@ public class UpdatePlaylistRequest {
 
     @Size(min = 20, max = 15000)
     private String description;
+
+    private Visibility visibility;
 }
