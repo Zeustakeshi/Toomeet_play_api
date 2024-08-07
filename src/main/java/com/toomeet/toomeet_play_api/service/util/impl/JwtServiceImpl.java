@@ -2,9 +2,10 @@ package com.toomeet.toomeet_play_api.service.util.impl;
 
 import com.toomeet.toomeet_play_api.dto.response.account.TokenResponse;
 import com.toomeet.toomeet_play_api.entity.Account;
+import com.toomeet.toomeet_play_api.enums.ErrorCode;
+import com.toomeet.toomeet_play_api.enums.TokenType;
+import com.toomeet.toomeet_play_api.exception.ApiException;
 import com.toomeet.toomeet_play_api.service.util.JwtService;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +43,7 @@ public class JwtServiceImpl implements JwtService {
                 .issuer("Toomeet Play")
                 .claim("email", account.getEmail())
                 .claim("scope", account.getAuthorities())
-                .claim("type", "access_token")
+                .claim("type", TokenType.ACCESS_TOKEN)
                 .expiresAt(now.plus(accessTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
 
@@ -58,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
                 .issuer("Toomeet Play")
                 .claim("email", account.getEmail())
                 .claim("scope", account.getAuthorities())
-                .claim("type", "refresh")
+                .claim("type", TokenType.REFRESH_TOKEN)
                 .expiresAt(now.plus(refreshTokenExpiresTime, ChronoUnit.HOURS))
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
@@ -89,6 +93,10 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public TokenResponse refreshToken(String refreshToken) {
         Jwt jwt = jwtDecoder.decode(refreshToken);
+        if (!jwt.getClaim("type").toString().equals(TokenType.REFRESH_TOKEN.toString())) {
+            throw new ApiException(ErrorCode.INVALID_TOKEN_ERROR);
+        }
+
         String userId = jwt.getSubject();
         Account user = (Account) userDetailsService.loadUserByUsername(userId);
         Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

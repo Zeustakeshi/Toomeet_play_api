@@ -80,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
     public String verifyAccountConfirmation(VerifyAccountRequest request) {
         String confirmationJson = Optional.ofNullable(jedis.get(request.getCode()))
                 .orElseThrow(() -> new ApiException(ErrorCode.INVALID_CONFIRMATION_CODE));
-        
+
         AccountConfirmation confirmation = gson.fromJson(confirmationJson, AccountConfirmation.class);
 
         accountService.saveNewAccount(Account.builder()
@@ -113,6 +113,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenResponse refreshToken(RefreshTokenRequest request) {
-        return jwtService.refreshToken(request.getToken());
+        return jwtService.refreshToken(request.getRefreshToken());
     }
 }
