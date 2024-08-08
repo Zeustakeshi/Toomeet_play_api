@@ -52,7 +52,9 @@ public enum ErrorCode {
     USER_ALREADY_DISLIKED_COMMENT(1036, "User already disliked comment", HttpStatus.CONFLICT),
     VIDEO_COMMENT_UNAVAILABLE(1037, "Video comment unavailable", HttpStatus.FORBIDDEN),
     VIDEO_ALREADY_EXISTED_IN_PLAYLIST(1038, "Video already existed in this playlist", HttpStatus.CONFLICT),
-    VIDEO_NOT_FOUND_IN_PLAYLIST(1038, "Video not found in this playlist", HttpStatus.NOT_FOUND),
+    VIDEO_NOT_FOUND_IN_PLAYLIST(1039, "Video not found in this playlist", HttpStatus.NOT_FOUND),
+    USER_ALREADY_SUBSCRIBED_CHANNEL(1040, "User already subscribed this channel", HttpStatus.BAD_REQUEST),
+    USER_NOT_SUBSCRIBED_CHANNEL(1040, "User not this channel", HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;

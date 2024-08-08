@@ -7,6 +7,8 @@
 package com.toomeet.toomeet_play_api.repository.channel;
 
 import com.toomeet.toomeet_play_api.dto.response.channel.UserChannelBasicInfoResponse;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +27,25 @@ public interface UserChannelRepository extends ChannelRepository {
             + "where c.id = :channelId "
             + "group by c")
     UserChannelBasicInfoResponse getBasicInfo(String channelId, String userId);
+
+
+    @Query("select " +
+            "case when (count(distinct sub.id) > 0) " +
+            "then true else false end " +
+            "from Channel c " +
+            "join c.subscribers sub on sub.id = :userId " +
+            "where c.id = :channelId"
+    )
+    boolean isSubscribedChannel(String channelId, String userId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into channel_subscriber (channel_id, subscriber_id) VALUES (:channelId, :userId)", nativeQuery = true)
+    void addSubscriberToChannel(String channelId, String userId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from channel_subscriber sub where sub.channel_id = :channelId and sub.subscriber_id = :userId", nativeQuery = true)
+    void deleteSubscriberToChannel(String channelId, String userId);
+
 }

@@ -31,11 +31,20 @@ public class UserChannelServiceImpl implements UserChannelService {
 
     @Override
     public String subscribe(String channelId, Account account) {
-        return "";
+        if (channelRepository.isSubscribedChannel(channelId, account.getUserId())) {
+            throw new ApiException(ErrorCode.USER_ALREADY_SUBSCRIBED_CHANNEL);
+        }
+        channelRepository.addSubscriberToChannel(channelId, account.getUserId());
+
+        return "Subscribe channel successfully!";
     }
 
     @Override
     public String unsubscribe(String channelId, Account account) {
-        return "";
+        if (!channelRepository.isSubscribedChannel(channelId, account.getUserId())) {
+            throw new ApiException(ErrorCode.USER_NOT_SUBSCRIBED_CHANNEL);
+        }
+        channelRepository.deleteSubscriberToChannel(channelId, account.getUserId());
+        return "Unsubscribe channel successfully!";
     }
 }

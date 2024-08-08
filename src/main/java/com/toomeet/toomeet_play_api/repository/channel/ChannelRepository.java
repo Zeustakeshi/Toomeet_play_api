@@ -11,4 +11,6 @@ public interface ChannelRepository extends JpaRepository<Channel, String> {
 
     @Query("select count(u) from Channel c left join c.subscribers u where c.id = :channelId")
     Long countSubscriber(String channelId);
+
+
 }
